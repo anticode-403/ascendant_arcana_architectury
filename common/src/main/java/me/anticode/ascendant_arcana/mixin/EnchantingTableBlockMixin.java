@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(EnchantmentTableBlock.class)
 public class EnchantingTableBlockMixin {
     @ModifyReturnValue(method = "getMenuProvider", at = @At("RETURN"))
-    private MenuProvider createScreenHandlerFactory(MenuProvider original, @Local(argsOnly = true) Level level, @Local(argsOnly = true) BlockPos pos) {
+    private MenuProvider createMenuProvider(MenuProvider original, @Local(argsOnly = true) Level level, @Local(argsOnly = true) BlockPos pos) {
         if (original == null) return null;
         else return new SimpleMenuProvider((syncId, inventory, player) -> new AArcanaEnchantingMenu(syncId, inventory, ContainerLevelAccess.create(level, pos)), Component.translatable("container.enchant"));
     }
