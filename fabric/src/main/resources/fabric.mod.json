@@ -30,6 +30,7 @@
   },
   "mixins": [
     "ascendant_arcana.mixins.json",
+    "ascendant_arcana.fabric.mixins.json",
     {
       "config": "ascendant_arcana.client.mixins.json",
       "environment": "client"

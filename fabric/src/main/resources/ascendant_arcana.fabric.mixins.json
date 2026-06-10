@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "me.anticode.ascendant_arcana.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "client": [
+  ],
+  "mixins": [
+    "RegistrarManagerImplRegistrarImplMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
