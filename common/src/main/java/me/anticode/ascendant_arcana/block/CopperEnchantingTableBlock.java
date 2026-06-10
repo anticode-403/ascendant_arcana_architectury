@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CopperEnchantingTableBlock extends EnchantmentTableBlock {
@@ -24,7 +25,7 @@ public class CopperEnchantingTableBlock extends EnchantmentTableBlock {
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public @NotNull BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new CopperEnchantingTableBlockEntity(pos, state);
     }
 
