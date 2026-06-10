@@ -3,6 +3,8 @@ package me.anticode.ascendant_arcana.mixin;
 import me.anticode.ascendant_arcana.api.EnchantedTrident;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
+import me.anticode.ascendant_arcana.logic.RelicHelper;
+import me.anticode.ascendant_arcana.logic.Relics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -10,7 +12,9 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -27,6 +31,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ThrownTrident.class)
@@ -58,6 +63,9 @@ public class ThrownTridentMixin implements EnchantedTrident {
 
     @Unique
     private float ascendant_arcana$stabTicks = 0;
+
+    @Unique
+    private float ascendant_arcana$relicDamageMultiplier = 1;
 
     @Override
     public LivingEntity ascendant_arcana$getStuckEntity() {
@@ -106,6 +114,7 @@ public class ThrownTridentMixin implements EnchantedTrident {
         ascendant_arcana$setAmbushLevel(ambushLevel);
         ascendant_arcana$setLifetideLevel(lifetideLevel);
         ascendant_arcana$setSunderingLevel(sunderingLevel);
+        this.ascendant_arcana$relicDamageMultiplier = 1 + (float)RelicHelper.getTooltipStrength(Relics.DAMAGE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.DAMAGE))*0.01F;
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
@@ -116,6 +125,7 @@ public class ThrownTridentMixin implements EnchantedTrident {
         nbt.putInt("ticksStuck", ascendant_arcana$ticksStuck);
         nbt.putFloat("renderTicks", ascendant_arcana$renderTicks);
         nbt.putFloat("stabTicks", ascendant_arcana$stabTicks);
+        nbt.putFloat("relicDamageMultiplier", ascendant_arcana$relicDamageMultiplier);
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
@@ -126,6 +136,7 @@ public class ThrownTridentMixin implements EnchantedTrident {
         this.ascendant_arcana$ticksStuck = nbt.getInt("ticksStuck");
         this.ascendant_arcana$renderTicks = nbt.getFloat("renderTicks");
         this.ascendant_arcana$stabTicks = nbt.getFloat("stabTicks");
+        this.ascendant_arcana$relicDamageMultiplier = nbt.getFloat("relicDamageMultiplier");
     }
 
     @Inject(method = "onHitEntity", at = @At("HEAD"), cancellable = true)
@@ -146,7 +157,7 @@ public class ThrownTridentMixin implements EnchantedTrident {
                         }
                     }
                     projectile.level().playSound(null, projectile.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, soundCategory, 1, 2);
-                    ascendant_arcana$stuckEntity.heal(4);
+                    ascendant_arcana$stuckEntity.heal(4 * ascendant_arcana$relicDamageMultiplier);
                 } else if (ascendant_arcana$sunderingLevel >= 1) {
                     if (projectile.level() instanceof ServerLevel serverWorld) {
                         for(int i = 0; i < 5; ++i) {
@@ -179,6 +190,11 @@ public class ThrownTridentMixin implements EnchantedTrident {
                 pathAware.getNavigation().stop();
             }
         }
+    }
+
+    @Redirect(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
+    private boolean applyDamageRelic(Entity instance, DamageSource arg, float f) {
+        return instance.hurt(arg, f * ascendant_arcana$relicDamageMultiplier);
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -218,7 +234,7 @@ public class ThrownTridentMixin implements EnchantedTrident {
                                 }
                             }
                             trident.level().playSound(null, trident.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, ascendant_arcana$stuckEntity.getSoundSource(), 1, 2);
-                            ascendant_arcana$stuckEntity.heal(2);
+                            ascendant_arcana$stuckEntity.heal(2 * ascendant_arcana$relicDamageMultiplier);
                             living.heal(1);
                         } else if (ascendant_arcana$sunderingLevel >= 1) {
                             if (trident.level() instanceof ServerLevel serverWorld) {
@@ -229,7 +245,7 @@ public class ThrownTridentMixin implements EnchantedTrident {
                             }
                             trident.level().playSound(null, trident.blockPosition(), SoundEvents.ITEM_BREAK, ascendant_arcana$stuckEntity.getSoundSource(), 1, 0.5F);
                             ascendant_arcana$stuckEntity.addEffect(new MobEffectInstance(AArcanaMobEffects.SUNDERED.get(), 60, 0, true, false, true));
-                            ascendant_arcana$stuckEntity.hurt(trident.damageSources().trident(trident, trident.getOwner()), 1);
+                            ascendant_arcana$stuckEntity.hurt(trident.damageSources().trident(trident, trident.getOwner()), 1 * ascendant_arcana$relicDamageMultiplier);
                         }
                         ascendant_arcana$stabTicks = 1;
                     }

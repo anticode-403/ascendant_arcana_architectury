@@ -31,14 +31,17 @@ public class ItemHelper {
         }
     }
 
-    public static void applyPpeRelicsAndEnchantments(AbstractArrow persistentProjectileEntity, ItemStack itemStack) {
+    public static void applyPpeRelicsAndEnchantments(AbstractArrow abstractArrow, ItemStack itemStack) {
+        double damageMultiplier = 1 + RelicHelper.getTooltipStrength(Relics.DAMAGE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.DAMAGE))*0.01;
         int archersGambitLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.ARCHERS_GAMBIT.get(), itemStack);
         int evokersWrathLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.EVOKERS_WRATH.get(), itemStack);
         int rejuvenatingShotLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REJUVENATING_SHOT.get(), itemStack);
         int ricochetLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.RICOCHET.get(), itemStack);
         int hobblingShotLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.HOBBLING_SHOT.get(), itemStack);
 
-        EnchantedArrow enchantedArrow = (EnchantedArrow) persistentProjectileEntity;
+        abstractArrow.setBaseDamage(abstractArrow.getBaseDamage() * damageMultiplier);
+
+        EnchantedArrow enchantedArrow = (EnchantedArrow) abstractArrow;
         enchantedArrow.ascendant_arcana$setArchersGambitLevel(archersGambitLevel);
         enchantedArrow.ascendant_arcana$setEvokersWrathLevel(evokersWrathLevel);
         enchantedArrow.ascendant_arcana$setRejuvenatingShotLevel(rejuvenatingShotLevel);
