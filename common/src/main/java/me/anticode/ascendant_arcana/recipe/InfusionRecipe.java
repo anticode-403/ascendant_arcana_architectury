@@ -1,0 +1,112 @@
+package me.anticode.ascendant_arcana.recipe;
+
+import com.google.gson.JsonObject;
+import me.anticode.ascendant_arcana.init.AArcanaItems;
+import me.anticode.ascendant_arcana.init.AArcanaRecipes;
+import me.anticode.ascendant_arcana.init.AArcanaTags;
+import me.anticode.ascendant_arcana.item.RelicItem;
+import me.anticode.ascendant_arcana.logic.RelicHelper;
+import me.anticode.ascendant_arcana.logic.Relics;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SmithingRecipe;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+
+public class InfusionRecipe implements SmithingRecipe {
+    private final ResourceLocation id;
+
+    InfusionRecipe(ResourceLocation id) {
+        this.id = id;
+    }
+
+    @Override
+    public boolean isTemplateIngredient(ItemStack stack) {
+        return stack.is(AArcanaItems.INFUSION_SMITHING_TEMPLATE.get());
+    }
+
+    @Override
+    public boolean isBaseIngredient(ItemStack stack) {
+        if (stack.isEnchantable() || stack.isDamageableItem() || stack.getItem() instanceof ArmorItem || stack.getItem() instanceof TieredItem || stack.getItem() instanceof BowItem || stack.getItem() instanceof CrossbowItem) {
+            return RelicHelper.fromNbt(stack.getOrCreateTag()).size() <= 2;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isAdditionIngredient(ItemStack stack) {
+        return stack.is(AArcanaTags.Items.RELICS);
+    }
+
+    @Override
+    public boolean matches(Container inventory, Level level) {
+        if (!(this.isTemplateIngredient(inventory.getItem(0)) && this.isBaseIngredient(inventory.getItem(1)) && this.isAdditionIngredient(inventory.getItem(2)))) return false;
+        ItemStack baseStack = inventory.getItem(1);
+        ItemStack relicStack = inventory.getItem(2);
+        return matches(baseStack, relicStack);
+    }
+
+    public boolean matches (ItemStack baseStack, ItemStack relicStack) {
+        Map<Relics, Integer> relicMap = RelicHelper.fromNbt(baseStack.getOrCreateTag());
+        Relics relicType = RelicItem.getRelicType(relicStack);
+        if (relicMap.size() < RelicHelper.getRelicCapacity(baseStack)) {
+            if (relicType == Relics.DURABILITY && baseStack.isDamageableItem()) return true;
+            if (relicType == Relics.ENCHANTMENT_CAPACITY && (baseStack.isEnchantable() || baseStack.isEnchanted())) return true;
+            else if ((relicType == Relics.HASTE || relicType == Relics.DAMAGE) && (baseStack.getItem() instanceof TieredItem || baseStack.getItem() instanceof BowItem || baseStack.getItem() instanceof CrossbowItem)) return true;
+            else return relicType == Relics.PROTECTION && baseStack.getItem() instanceof ArmorItem;
+        }
+        else if (relicStack.getItem() instanceof  RelicItem) {
+            if (relicMap.containsKey(relicType)) {
+                return RelicItem.getRelicStrength(relicStack) > relicMap.get(relicType);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public @NotNull ItemStack assemble(Container inventory, RegistryAccess registryManager) {
+        return getOutput(inventory.getItem(1), inventory.getItem(2));
+    }
+
+    public ItemStack getOutput(ItemStack baseStack, ItemStack relicStack) {
+        ItemStack newStack = baseStack.copy();
+        int relicStrength = RelicItem.getRelicStrength(relicStack);
+        Relics relicType = RelicItem.getRelicType(relicStack);
+        Map<Relics, Integer> relicsMap = RelicHelper.fromNbt(newStack.getOrCreateTag());
+        relicsMap.put(relicType, relicStrength);
+        newStack.getOrCreateTag().put(RelicHelper.RELICS_KEY, RelicHelper.toNbt(relicsMap));
+        return newStack;
+    }
+
+    @Override
+    public @NotNull ItemStack getResultItem(RegistryAccess registryManager) {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public @NotNull ResourceLocation getId() {
+        return this.id;
+    }
+
+    @Override
+    public @NotNull RecipeSerializer<?> getSerializer() {
+        return AArcanaRecipes.INFUSION_RECIPE_SERIALIZER.get();
+    }
+
+    public static class Serializer implements RecipeSerializer<InfusionRecipe> {
+        public @NotNull InfusionRecipe fromJson(ResourceLocation id, JsonObject json) {
+            return new InfusionRecipe(id);
+        }
+
+        public @NotNull InfusionRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
+            return new InfusionRecipe(id);
+        }
+        public void toNetwork(FriendlyByteBuf buf, InfusionRecipe recipe) {}
+    }
+}

@@ -7,6 +7,11 @@ architectury {
     fabric()
 }
 
+loom {
+    //noinspection GroovyAccessibility
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+}
+
 configurations {
     common {
         canBeResolved = true
@@ -30,6 +35,12 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
 
     modImplementation "dev.architectury:architectury-fabric:$rootProject.architectury_api_version"
+
+    modApi("me.shedaniel.cloth:cloth-config-fabric:$rootProject.cloth_config_version") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+    modCompileOnly "dev.emi:emi-fabric:$rootProject.emi_version:api"
+    modLocalRuntime "dev.emi:emi-fabric:$rootProject.emi_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')

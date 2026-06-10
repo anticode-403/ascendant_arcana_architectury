@@ -11,6 +11,6 @@ public final class AscendantArcanaFabric implements ModInitializer {
         // Proceed with mild caution.
 
         // Run our common setup.
-        AscendantArcana.init();
+        AscendantArcana.initialize();
     }
 }

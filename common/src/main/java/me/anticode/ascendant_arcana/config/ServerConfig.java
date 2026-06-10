@@ -1,0 +1,125 @@
+package me.anticode.ascendant_arcana.config;
+
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Config(name = "server")
+public class ServerConfig implements ConfigData {
+    @Comment("Multiplies the base enchantment capacity and all gains by this value. 1.0 is recommended.")
+    public double capacity_multiplier = 1.0D;
+
+    @Comment("Default relic capacity of an item, recommended is 2 but 1 could provide for more interesting gameplay.")
+    public int base_relic_capacity = 2;
+
+    @Comment("XP is by default disabled in Ascendant Arcana, but can be optionally enabled and is fully supported if you do so.")
+    public boolean disable_xp = true;
+
+    @Comment("Levels are linear if enabled. This adjusts the XP required to level up each time.")
+    public int xp_per_level = 30;
+
+    @Comment("Some vanilla mobs drop relics on death, like Witches, Wither Skeletons, and bosses. Recommended.")
+    public boolean add_relics_to_entities = true;
+
+    @Comment("Relics are automatically added to ANY chest loot table containing an enchanted book. Recommended.")
+    public boolean add_relics_to_chests = true;
+
+    @Comment("Add restorine to any chests containing amethyst shards or diamonds")
+    public boolean add_restorine_to_chests = true;
+
+    @Comment("Add unique boss drops, like the Warden Heart. Disabling this will make some enchantments unobtainable.")
+    public boolean add_boss_drops = true;
+
+    @Comment("The minimum amount of power (bookshelves and enchanted books within range of an enchanting table) to enchant.")
+    public int minimum_enchanting_power = 0;
+
+    @Comment("The minimum amount of power required to enchant uncommon enchantments.")
+    public int uncommon_enchanting_power = 22;
+
+    @Comment("The minimum amount of power required to enchant rare enchantments.")
+    public int rare_enchanting_power = 55;
+
+    @Comment("The minimum amount of power required to enchant very rare enchantments.")
+    public int very_rare_enchanting_power = 100;
+
+    @Comment("Enchanted Books can only have one enchantment on them. Otherwise, they use the regular capacity system.")
+    public boolean single_enchantment_books = true;
+
+    @Comment("""
+            Ascendant Arcana disables many vanilla enchantments because they stress the capacity system too much with
+            'required' enchantments. Enchantments are generally meant to be more interesting and meaningfully impactful
+            but this list is configurable so you can enable or disable whatever you want.
+            
+            Do note that most enchantments on this list by default DO NOT come with recipes, so in order to see them in
+            the Enchanting Table you must create your own enchantment recipes for them with a datapack.""")
+    public Set<String> disabled_enchantments;
+
+    @Comment("Items which have their base relic capacity value overwritten.")
+    public Map<String, Integer> base_relic_capacity_overrides = new HashMap<>(Map.of(
+            "minecraft:crossbow",
+            1
+    ));
+
+    @Comment("Items which have their base enchantment capacity overwritten")
+    public Map<String, Integer> base_enchantment_capacity_overrides = new HashMap<>(Map.of(
+            "minecraft:bow",
+            20,
+            "minecraft:crossbow",
+            20,
+            "minecraft:enchanted_book",
+            12,
+            "minecraft:shield",
+            15,
+            "minecraft:trident",
+            15
+    ));
+
+    @Comment("Enchantments which have their base rarity overwritten. Common is 1, Uncommon is 2, Rare is 3, Very Rare is 4. This might not work on modded enchantments.")
+    public Map<String, Integer> overwritten_rarities = new HashMap<>(Map.ofEntries(
+            Map.entry("minecraft:knockback", 1),
+            Map.entry("minecraft:fire_aspect", 2),
+            Map.entry("minecraft:punch", 1),
+            Map.entry("minecraft:flame", 2),
+            Map.entry("minecraft:respiration", 2),
+            Map.entry("minecraft:sweeping", 2),
+            Map.entry("minecraft:fortune", 4),
+            Map.entry("minecraft:looting", 4),
+            Map.entry("minecraft:infinity", 3),
+            Map.entry("minecraft:lure", 1),
+            Map.entry("minecraft:frost_walker", 2),
+            Map.entry("minecraft:thorns", 2)
+    ));
+
+    @Override
+    public void validatePostLoad() throws ValidationException {
+        ConfigData.super.validatePostLoad();
+        if (disabled_enchantments == null) {
+            disabled_enchantments = new LinkedHashSet<>();
+            disabled_enchantments.add("minecraft:protection");
+            disabled_enchantments.add("minecraft:sharpness");
+            disabled_enchantments.add("minecraft:efficiency");
+            disabled_enchantments.add("minecraft:quick_charge");
+            disabled_enchantments.add("minecraft:power");
+            disabled_enchantments.add("minecraft:bane_of_arthropods");
+            disabled_enchantments.add("minecraft:blast_protection");
+            disabled_enchantments.add("minecraft:projectile_protection");
+            disabled_enchantments.add("minecraft:fire_protection");
+            disabled_enchantments.add("minecraft:smite");
+            disabled_enchantments.add("minecraft:impaling");
+            disabled_enchantments.add("minecraft:mending");
+            disabled_enchantments.add("minecraft:unbreaking");
+            disabled_enchantments.add("majruszsenchantments:misanthropy");
+            disabled_enchantments.add("majruszsenchantments:gold_fuelled");
+            disabled_enchantments.add("majruszsenchantments:smelter");
+            disabled_enchantments.add("majruszsenchantments:magic_protection");
+            disabled_enchantments.add("majruszsenchantments:dodge");
+            disabled_enchantments.add("majruszsenchantments:enlightenment");
+            disabled_enchantments.add("majruszsenchantments:immortality");
+            disabled_enchantments.add("ascendant_arcana:coldheart");
+            disabled_enchantments.add("ascendant_arcana:heart_of_the_storm");
+        }
+    }
+}

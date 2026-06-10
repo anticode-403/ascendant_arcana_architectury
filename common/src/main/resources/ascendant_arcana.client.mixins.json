@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.anticode.ascendant_arcana.client.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "LocalPlayerMixin",
+    "GuiMixin",
+    "ThrownTridentRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

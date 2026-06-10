@@ -9,7 +9,7 @@ version = "${version}"
 displayName = "Ascendant Arcana"
 authors = "anticode"
 description = '''
-An expansive enchantment overhaul mod
+A mod that overhauls enchanting and some other forms of Minecraft magic.
 '''
 #logoFile = ""
 
@@ -33,3 +33,17 @@ mandatory = true
 versionRange = "[9.2.14,)"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.ascendant_arcana]]
+modId = "cloth_config"
+mandatory = true
+versionRange = "[11.1.136,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.ascendant_arcana]]
+modId = "emi"
+mandatory = false
+versionRange = "[1.1.0,)"
+ordering = "NONE"
+side = "CLIENT"

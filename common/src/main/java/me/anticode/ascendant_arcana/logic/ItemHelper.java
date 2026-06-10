@@ -1,0 +1,64 @@
+package me.anticode.ascendant_arcana.logic;
+
+import me.anticode.ascendant_arcana.api.EnchantedArrow;
+import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+
+import java.util.LinkedList;
+import java.util.List;
+
+public class ItemHelper {
+    public static void forEachEnchantment(Consumer consumer, ItemStack stack, boolean allowEmpty)
+    {
+        if(!stack.isEmpty() || allowEmpty)
+        {
+            ListTag listTag = stack.getEnchantmentTags();
+
+            for(int i = 0; i < listTag.size(); ++i)
+            {
+                String string = listTag.getCompound(i).getString("id");
+                int j = listTag.getCompound(i).getInt("lvl");
+                BuiltInRegistries.ENCHANTMENT.getOptional(ResourceLocation.tryParse(string)).ifPresent((enchantment)->
+                        consumer.accept(enchantment, stack, j));
+            }
+        }
+    }
+
+    public static void applyPpeRelicsAndEnchantments(AbstractArrow persistentProjectileEntity, ItemStack itemStack) {
+        int archersGambitLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.ARCHERS_GAMBIT.get(), itemStack);
+        int evokersWrathLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.EVOKERS_WRATH.get(), itemStack);
+        int rejuvenatingShotLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REJUVENATING_SHOT.get(), itemStack);
+        int ricochetLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.RICOCHET.get(), itemStack);
+        int hobblingShotLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.HOBBLING_SHOT.get(), itemStack);
+
+        EnchantedArrow enchantedArrow = (EnchantedArrow) persistentProjectileEntity;
+        enchantedArrow.ascendant_arcana$setArchersGambitLevel(archersGambitLevel);
+        enchantedArrow.ascendant_arcana$setEvokersWrathLevel(evokersWrathLevel);
+        enchantedArrow.ascendant_arcana$setRejuvenatingShotLevel(rejuvenatingShotLevel);
+        enchantedArrow.ascendant_arcana$setRicochetLevel(ricochetLevel);
+        enchantedArrow.ascendant_arcana$setHobblingShotLevel(hobblingShotLevel);
+    }
+
+    public static List<AttributeModifier> multiplyAttributeList(List<AttributeModifier> attributes, double multiplier) {
+        List<AttributeModifier> newModifiers = new LinkedList<>();
+        for (AttributeModifier mod : attributes) {
+            double newValue = mod.getAmount() * (1 + multiplier);
+            AttributeModifier newMod = new AttributeModifier(mod.getId(), mod.getName(), newValue, mod.getOperation());
+            newModifiers.add(newMod);
+        }
+        return newModifiers;
+    }
+
+    @FunctionalInterface
+    public interface Consumer
+    {
+        void accept(Enchantment enchantment, ItemStack stack, int level);
+    }
+}

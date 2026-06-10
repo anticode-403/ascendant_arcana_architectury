@@ -3,8 +3,15 @@ plugins {
 }
 
 loom {
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+
     forge {
+        convertAccessWideners = true
+
+        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
+
         mixinConfig "ascendant_arcana.mixins.json"
+        mixinConfig "ascendant_arcana.client.mixins.json"
     }
 }
 
@@ -34,6 +41,9 @@ dependencies {
     forge "net.minecraftforge:forge:$rootProject.forge_version"
 
     modImplementation "dev.architectury:architectury-forge:$rootProject.architectury_api_version"
+    modApi("me.shedaniel.cloth:cloth-config-forge:$rootProject.cloth_config_version")
+    modRuntimeOnly("dev.emi:emi-forge:$rootProject.emi_version")
+    modCompileOnly("dev.emi:emi-forge:$rootProject.emi_version:api")
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
