@@ -85,6 +85,7 @@ public class AArcanaBlocks {
 
     public static void initialize() {
         BLOCKS.register();
+        BLOCK_ENTITY_TYPES.register();
 //        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register((itemGroup) -> {
 //            itemGroup.addAfter(after(Items.AMETHYST_CLUSTER), AArcanaBlocks.MASSIVE_RESTORINE_CLUSTER);
 //            itemGroup.addAfter(after(Items.AMETHYST_CLUSTER), AArcanaBlocks.RESTORINE_CLUSTER);
