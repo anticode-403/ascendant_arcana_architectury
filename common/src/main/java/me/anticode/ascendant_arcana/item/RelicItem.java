@@ -26,7 +26,7 @@ public class RelicItem extends Item {
     @Override
     public @NotNull Component getName(ItemStack stack) {
         if (getRelicStrength(stack) == 0) return Component.translatable("item.relics.unknown");
-        return Component.translatable(toString(), RelicHelper.getRelicStrengthName(getRelicStrength(stack)), RelicHelper.getRelicTypeName(getRelicType(stack)));
+        return Component.translatable(getDescriptionId(), RelicHelper.getRelicStrengthName(getRelicStrength(stack)), RelicHelper.getRelicTypeName(getRelicType(stack)));
     }
 
     @Override
