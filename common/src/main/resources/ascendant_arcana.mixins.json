@@ -10,6 +10,7 @@
     "AbstractFurnaceBlockEntityAccessor",
     "AnvilMenuMixin",
     "BlockMixin",
+    "BowItemMixin",
     "CreativeModeTabItemDisplayBuilderMixin",
     "CrossbowItemMixin",
     "DragonFireballMixin",
