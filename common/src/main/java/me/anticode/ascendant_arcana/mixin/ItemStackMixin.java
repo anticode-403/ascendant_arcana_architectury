@@ -1,5 +1,6 @@
 package me.anticode.ascendant_arcana.mixin;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -30,9 +31,11 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
@@ -145,31 +148,35 @@ public abstract class ItemStackMixin {
         return miningSpeedMultiplier *  (1 + (hasteValue * 0.01F));
     }
 
-    @Inject(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hasTag()Z", ordinal = 0, shift = At.Shift.AFTER))
+    @Inject(method = "getTooltipLines", at = @At(value = "RETURN"))
     private void addRelicTooltipInfo(Player player, TooltipFlag tooltipFlag, CallbackInfoReturnable<List<Component>> cir) {
         List<Component> tooltip = cir.getReturnValue();
         if (!hasTag()) return;
         Map<Relics, Integer> relics = RelicHelper.fromNbt(getOrCreateTag());
         if (relics.isEmpty()) return;
-        tooltip.add(Component.empty());
-        tooltip.add(Component.translatable("item.relics.tooltip.on_tool", relics.size(), RelicHelper.getRelicCapacity((ItemStack)(Object)this)).withStyle(ChatFormatting.GRAY));
+        int i = 1;
+        tooltip.add(i++, Component.empty());
+        tooltip.add(i++, Component.translatable("item.relics.tooltip.on_tool", relics.size(), RelicHelper.getRelicCapacity((ItemStack)(Object)this)).withStyle(ChatFormatting.GRAY));
         for (Map.Entry<Relics, Integer> entry : relics.entrySet()) {
             int visualStrength = RelicHelper.getTooltipStrength(entry.getKey(), entry.getValue());
             Component relicName = Component.translatable("item.relics.type." + entry.getKey().toString().toLowerCase());
             String hasPercent = (entry.getKey() == Relics.HASTE || entry.getKey() == Relics.PROTECTION || entry.getKey() == Relics.DAMAGE) ? "%" : "";
             Component line = Component.translatable("item.relics.tooltip", visualStrength, relicName, hasPercent).withStyle(ChatFormatting.BLUE);
-            tooltip.add(line);
+            tooltip.add(i++, line);
         }
     }
 
     @Redirect(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getAttributeModifiers(Lnet/minecraft/world/entity/EquipmentSlot;)Lcom/google/common/collect/Multimap;"))
     private Multimap<Attribute, AttributeModifier> removeProtectionAttributeFromTooltip(ItemStack instance, EquipmentSlot slot) {
-        Multimap<Attribute, AttributeModifier> modifiers = instance.getAttributeModifiers(slot);
+        Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
+        for (Map.Entry<Attribute, AttributeModifier> entry : instance.getAttributeModifiers(slot).entries().stream().filter((entry) -> entry.getKey() != AArcanaAttributes.PROTECTION.get()).collect(Collectors.toSet())) {
+            modifiers.put(entry.getKey(), entry.getValue());
+        }
         modifiers.removeAll(AArcanaAttributes.PROTECTION.get());
         return modifiers;
     }
 
-    @Inject(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isDamaged()Z", shift = At.Shift.AFTER))
+    @Inject(method = "getTooltipLines", at = @At(value = "RETURN"))
     private void addEnchantmentCapacityTooltipWhileAdvanced(Player player, TooltipFlag tooltipFlag, CallbackInfoReturnable<List<Component>> cir) {
         List<Component> tooltip = cir.getReturnValue();
         ItemStack itemStack = (ItemStack)(Object)this;
@@ -178,7 +185,7 @@ public abstract class ItemStackMixin {
         }
     }
 
-    @Inject(method = "getTooltipLines", at = @At(value = "TAIL"))
+    @Inject(method = "getTooltipLines", at = @At(value = "RETURN"))
     private void addTreasureEnchantmentInfo(Player player, TooltipFlag tooltipFlag, CallbackInfoReturnable<List<Component>> cir) {
         if (getItem() instanceof EnchantedBookItem) {
             List<Component> tooltip = cir.getReturnValue();
