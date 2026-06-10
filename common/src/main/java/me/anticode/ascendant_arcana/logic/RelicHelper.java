@@ -17,8 +17,8 @@ public class RelicHelper {
 
     public static int getRelicCapacity(ItemStack stack) {
         int base_capacity = AscendantArcana.config.base_relic_capacity;
-        if (AscendantArcana.config.base_enchantment_capacity_overrides.containsKey(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString())) {
-            base_capacity = AscendantArcana.config.base_enchantment_capacity_overrides.get(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
+        if (AscendantArcana.config.base_relic_capacity_overrides.containsKey(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString())) {
+            base_capacity = AscendantArcana.config.base_relic_capacity_overrides.get(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
         }
         if (!stack.hasTag()) {
             return base_capacity;
