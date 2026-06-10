@@ -26,6 +26,7 @@ public class BowItemMixin {
 
         RandomSource random = RandomSource.createNewThreadLocalInstance();
         int inaccuracy = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.INACCURACY_CURSE.get(), stack);
+        if (inaccuracy == 0) return;
         float rand_pitch = random.nextFloat() * inaccuracy * 2f;
         float rand_yaw = random.nextFloat() * inaccuracy * 2f;
         float pitch = user.getXRot() + (random.nextBoolean() ? rand_pitch : -rand_pitch);
