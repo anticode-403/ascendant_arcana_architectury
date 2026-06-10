@@ -26,7 +26,7 @@ public final class AscendantArcanaForge {
 
         // Run our common setup.
         // For some reason Forge requires attributes to be registered twice
-//        AArcanaAttributes.initialize();
+        AArcanaAttributes.initialize();
         AscendantArcana.initialize();
     }
 

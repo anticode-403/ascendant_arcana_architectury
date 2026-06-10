@@ -37,6 +37,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 
@@ -104,12 +105,10 @@ public abstract class LivingEntityMixin {
         return baseValue - (baseValue - original)/2;
     }
 
-    @ModifyReturnValue(method = "createLivingAttributes", at = @At("RETURN"))
-    private static AttributeSupplier.Builder createLivingAttributes(AttributeSupplier.Builder original) {
+    @Inject(method = "createLivingAttributes", at = @At("RETURN"))
+    private static void createLivingAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
         if (!AArcanaAttributes.DAMAGE_TAKEN.isPresent()) AArcanaAttributes.initialize();
-        original.add(AArcanaAttributes.PROTECTION.get());
-        original.add(AArcanaAttributes.DAMAGE_TAKEN.get());
-        return original;
+        cir.getReturnValue().add(AArcanaAttributes.PROTECTION.get()).add(AArcanaAttributes.DAMAGE_TAKEN.get());
     }
 
     @ModifyReturnValue(method = "getJumpPower", at = @At("RETURN"))
