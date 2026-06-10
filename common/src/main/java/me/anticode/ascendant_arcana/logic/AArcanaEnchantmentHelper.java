@@ -56,7 +56,7 @@ public class AArcanaEnchantmentHelper {
             base_capacity = armorItem.getEnchantmentValue();
         } else if (item instanceof TieredItem toolItem) {
             base_capacity = toolItem.getEnchantmentValue();
-        } else if (item.getEnchantmentValue() > 10) {
+        } else if (item.getEnchantmentValue() > base_capacity) {
             base_capacity = item.getEnchantmentValue();
         }
         if (AscendantArcana.config.base_enchantment_capacity_overrides.containsKey(BuiltInRegistries.ITEM.getKey(item).toString())) {
