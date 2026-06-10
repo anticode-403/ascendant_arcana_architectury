@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -15,7 +14,7 @@ import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = CrossbowItem.class, priority = 1500)
@@ -28,18 +27,19 @@ public class CrossbowItemMixin {
         }
     }
 
-    @Inject(method = "shootProjectile", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/Projectile;shoot(DDDFF)V", shift = At.Shift.AFTER))
+    @Redirect(method = "shootProjectile", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/Projectile;shoot(DDDFF)V"))
     private static void applyCrossbowEnchantmentLevels(
-            Level level, LivingEntity livingEntity, InteractionHand interactionHand, ItemStack crossbow, ItemStack itemStack2, float f, boolean bl, float g, float h, float i, CallbackInfo ci, @Local Projectile projectileEntity) {
+            Projectile projectile, double d, double e, double f, float g, float h) {
         RandomSource random = RandomSource.createNewThreadLocalInstance();
-
-        float base_yaw = -projectileEntity.getYRot();
-        float base_pitch = -projectileEntity.getXRot();
-        int inaccuracy = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.INACCURACY_CURSE.get(), crossbow);
-        float rand_pitch = random.nextFloat() * inaccuracy * 2f;
-        float rand_yaw = random.nextFloat() * inaccuracy * 2f;
-        float pitch = base_pitch + (random.nextBoolean() ? rand_pitch : -rand_pitch);
-        float yaw = base_yaw + (random.nextBoolean() ? rand_yaw : -rand_yaw);
-        projectileEntity.shootFromRotation(livingEntity, pitch, yaw, 0.0f, g, h);
+        if (projectile.getOwner() instanceof LivingEntity livingOwner) {
+            float base_yaw = -projectile.getYRot();
+            float base_pitch = -projectile.getXRot();
+            int inaccuracy = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.INACCURACY_CURSE.get(), livingOwner);
+            float rand_pitch = random.nextFloat() * inaccuracy * 2f;
+            float rand_yaw = random.nextFloat() * inaccuracy * 2f;
+            float pitch = base_pitch + (random.nextBoolean() ? rand_pitch : -rand_pitch);
+            float yaw = base_yaw + (random.nextBoolean() ? rand_yaw : -rand_yaw);
+            projectile.shootFromRotation(livingOwner, pitch, yaw, 0.0f, g, h);
+        }
     }
 }

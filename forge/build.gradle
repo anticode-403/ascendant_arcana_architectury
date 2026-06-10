@@ -12,6 +12,7 @@ loom {
 
         mixinConfig "ascendant_arcana.mixins.json"
         mixinConfig "ascendant_arcana.client.mixins.json"
+        mixinConfig "ascendant_arcana.forge.mixins.json"
     }
 }
 

@@ -43,7 +43,7 @@ public abstract class ItemStackMixin {
     public abstract Item getItem();
 
     @Shadow
-    public abstract ListTag getEnchantmentTags();
+    public abstract boolean hasTag();
 
     @Unique
     private static Enchantment replacement = null;
@@ -145,8 +145,10 @@ public abstract class ItemStackMixin {
         return miningSpeedMultiplier *  (1 + (hasteValue * 0.01F));
     }
 
-    @Inject(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shouldShowInTooltip(ILnet/minecraft/world/item/ItemStack$TooltipPart;)Z", ordinal = 1))
-    private void addRelicTooltipInfo(Player player, TooltipFlag tooltipFlag, CallbackInfoReturnable<List<Component>> cir, @Local List<Component> tooltip) {
+    @Inject(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hasTag()Z", ordinal = 0, shift = At.Shift.AFTER))
+    private void addRelicTooltipInfo(Player player, TooltipFlag tooltipFlag, CallbackInfoReturnable<List<Component>> cir) {
+        List<Component> tooltip = cir.getReturnValue();
+        if (!hasTag()) return;
         Map<Relics, Integer> relics = RelicHelper.fromNbt(getOrCreateTag());
         if (relics.isEmpty()) return;
         tooltip.add(Component.empty());
@@ -168,7 +170,8 @@ public abstract class ItemStackMixin {
     }
 
     @Inject(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isDamaged()Z", shift = At.Shift.AFTER))
-    private void addEnchantmentCapacityTooltipWhileAdvanced(Player player, TooltipFlag tooltipFlag, CallbackInfoReturnable<List<Component>> cir, @Local List<Component> tooltip) {
+    private void addEnchantmentCapacityTooltipWhileAdvanced(Player player, TooltipFlag tooltipFlag, CallbackInfoReturnable<List<Component>> cir) {
+        List<Component> tooltip = cir.getReturnValue();
         ItemStack itemStack = (ItemStack)(Object)this;
         if (tooltipFlag.isAdvanced() && (itemStack.isEnchanted() || itemStack.isEnchantable() || itemStack.getItem() instanceof EnchantedBookItem)) {
             tooltip.add(Component.translatable("item.enchantment_capacity", AArcanaEnchantmentHelper.getEnchantmentUsage(itemStack), AArcanaEnchantmentHelper.getEnchantmentCapacity(itemStack)));
@@ -176,8 +179,9 @@ public abstract class ItemStackMixin {
     }
 
     @Inject(method = "getTooltipLines", at = @At(value = "TAIL"))
-    private void addTreasureEnchantmentInfo(Player player, TooltipFlag tooltipFlag, CallbackInfoReturnable<List<Component>> cir, @Local List<Component> tooltip) {
+    private void addTreasureEnchantmentInfo(Player player, TooltipFlag tooltipFlag, CallbackInfoReturnable<List<Component>> cir) {
         if (getItem() instanceof EnchantedBookItem) {
+            List<Component> tooltip = cir.getReturnValue();
             Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments((ItemStack)(Object) this);
             boolean hasTreasure = false;
             for (Enchantment enchantment : enchantments.keySet()) {

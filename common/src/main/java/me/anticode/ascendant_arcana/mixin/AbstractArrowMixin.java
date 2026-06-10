@@ -176,29 +176,32 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
     }
 
     @Inject(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), cancellable = true)
-    private void healInsteadOfDamage(EntityHitResult entityHitResult, CallbackInfo ci, @Local(ordinal = 0) Entity target, @Local(ordinal = 1) Entity owner, @Local(ordinal = 0) int amount) {
+    private void healInsteadOfDamage(EntityHitResult entityHitResult, CallbackInfo ci) {
         if (ascendant_arcana$rejuvenatingShotLevel < 1) return;
-        Projectile Projectile = (Projectile) (Object) this;
-        if (target instanceof LivingEntity livingTarget) {
-            if (target == owner) return;
-            livingTarget.heal((float) amount / 2);
+        AbstractArrow projectile = (AbstractArrow) (Object) this;
+        Entity entity2 = projectile.getOwner();
+        Entity attacker = entityHitResult.getEntity();
+        int damage = Mth.ceil(Mth.clamp((double)projectile.getDeltaMovement().length() * projectile.getBaseDamage(), (double)0.0F, (double)Integer.MAX_VALUE));;
+        if (attacker instanceof LivingEntity livingTarget) {
+            if (attacker == entity2) return;
+            livingTarget.heal((float) damage / 2);
             doPostHurtEffects(livingTarget);
-            if (!Projectile.level().isClientSide()) {
+            if (!projectile.level().isClientSide()) {
                 if (getPierceLevel() <= 0) livingTarget.setArrowCount(livingTarget.getArrowCount() + 1);
-                for(int i = 0; i < 5; ++i) {
+                for(int j = 0; j < 5; ++j) {
                     double offset = livingTarget.getRandom().nextGaussian() * 0.02;
                     ((ServerLevel)livingTarget.level()).sendParticles(ParticleTypes.HEART, livingTarget.getX(2 * livingTarget.getRandom().nextDouble() - 1), livingTarget.getRandomY(), livingTarget.getZ(2 * livingTarget.getRandom().nextDouble() - 1), 5, offset, offset, offset, 1);
                 }
                 SoundSource soundCategory = SoundSource.PLAYERS;
-                if (Projectile.getOwner() != null) soundCategory = Projectile.getOwner().getSoundSource();
+                if (projectile.getOwner() != null) soundCategory = projectile.getOwner().getSoundSource();
                 livingTarget.level().playSound(null, livingTarget.getX(), livingTarget.getY(), livingTarget.getZ(), SoundEvents.ARROW_HIT_PLAYER, soundCategory, 1.0F, 1.0F);
             }
-            if (livingTarget instanceof Player && owner instanceof ServerPlayer && !Projectile.isSilent()) {
-                ((ServerPlayer)owner).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
+            if (livingTarget instanceof Player && entity2 instanceof ServerPlayer && !projectile.isSilent()) {
+                ((ServerPlayer) entity2).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
             }
         }
         if (getPierceLevel() <= 0) {
-            Projectile.discard();
+            projectile.discard();
         }
         ci.cancel();
     }

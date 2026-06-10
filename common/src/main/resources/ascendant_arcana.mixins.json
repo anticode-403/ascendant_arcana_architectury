@@ -34,7 +34,6 @@
     "SmallFireballMixin",
     "TagEntryMixin",
     "ThrownTridentMixin",
-    "TridentItemMixin",
     "WitherSkullMixin"
   ],
   "injectors": {

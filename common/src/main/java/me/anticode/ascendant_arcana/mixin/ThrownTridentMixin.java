@@ -1,6 +1,7 @@
 package me.anticode.ascendant_arcana.mixin;
 
 import me.anticode.ascendant_arcana.api.EnchantedTrident;
+import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,6 +15,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.ThrownTrident;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.EntityHitResult;
@@ -92,6 +95,17 @@ public class ThrownTridentMixin implements EnchantedTrident {
     @Override
     public int ascendant_arcana$getLoyaltyLevel() {
         return ((ThrownTrident)(Object)this).getEntityData().get(ID_LOYALTY);
+    }
+
+    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V", at = @At("RETURN"))
+    private void addEnchantmentsToTrident(Level level, LivingEntity livingEntity, ItemStack itemStack, CallbackInfo ci) {
+        int ambushLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.AMBUSH.get(), itemStack);
+        int lifetideLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.LIFETIDE.get(), itemStack);
+        int sunderingLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SUNDERING.get(), itemStack);
+
+        ascendant_arcana$setAmbushLevel(ambushLevel);
+        ascendant_arcana$setLifetideLevel(lifetideLevel);
+        ascendant_arcana$setSunderingLevel(sunderingLevel);
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
