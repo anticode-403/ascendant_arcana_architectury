@@ -150,8 +150,8 @@ public class AArcanaEnchantmentHelper {
             AttributeInstance entityAttributeInstance = entity.getAttributes().getInstance(attributeEntry.getKey());
             if(entityAttributeInstance != null)
             {
+                if (entity.getAttributes().hasModifier(attributeEntry.getKey(), getUUID(slot.toString()))) continue;
                 AttributeModifier mod = attributeEntry.getValue();
-                entityAttributeInstance.removeModifier(mod);
                 entityAttributeInstance.addTransientModifier(new AttributeModifier(getUUID(slot.toString()), enchantment.getDescriptionId() + " " + level, mod.getAmount() * (double) level, mod.getOperation()));
 
             }
