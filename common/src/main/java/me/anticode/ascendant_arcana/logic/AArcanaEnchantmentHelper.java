@@ -5,6 +5,7 @@ import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -50,7 +51,7 @@ public class AArcanaEnchantmentHelper {
     }
 
     public static int getBaseEnchantmentCapacity(Item item) {
-        int base_capacity = (int)Math.floor(10 * AscendantArcana.config.capacity_multiplier);
+        int base_capacity = 10;
         if (item instanceof ArmorItem armorItem) {
             base_capacity = armorItem.getEnchantmentValue();
         } else if (item instanceof TieredItem toolItem) {
@@ -61,7 +62,7 @@ public class AArcanaEnchantmentHelper {
         if (AscendantArcana.config.base_enchantment_capacity_overrides.containsKey(BuiltInRegistries.ITEM.getKey(item).toString())) {
             base_capacity = AscendantArcana.config.base_enchantment_capacity_overrides.get(BuiltInRegistries.ITEM.getKey(item).toString());
         }
-        return base_capacity;
+        return Mth.floor(base_capacity * AscendantArcana.config.capacity_multiplier);
     }
 
     public static int getEnchantmentCapacity(ItemStack stack) {
