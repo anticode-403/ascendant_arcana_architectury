@@ -1,0 +1,22 @@
+{
+  "type": "ascendant_arcana:restorine_growth",
+  "config": {
+    "search_range": 10,
+    "width": {
+      "type": "minecraft:uniform",
+      "value": {
+        "min_inclusive": 2,
+        "max_inclusive": 3
+      }
+    },
+    "ratio": {
+      "type": "minecraft:uniform",
+      "value": {
+        "min_inclusive": 1,
+        "max_exclusive": 2
+      }
+    },
+    "stalagmite_percentage": 0.5,
+    "restorine_percentage": 0.2
+  }
+}

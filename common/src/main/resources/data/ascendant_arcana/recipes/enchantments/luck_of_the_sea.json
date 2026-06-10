@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:luck_of_the_sea",
+  "level_cost": 3,
+  "magical_scrap_cost": 4,
+  "primary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "item": "minecraft:rabbit_foot"
+    }
+  }
+}

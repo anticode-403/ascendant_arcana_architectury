@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:respiration",
+  "level_cost": 3,
+  "magical_scrap_cost": 3,
+  "primary_ingredient": {
+    "count": 2,
+    "ingredient": {
+      "item": "minecraft:glass_bottle"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "item": "minecraft:bamboo"
+    }
+  }
+}

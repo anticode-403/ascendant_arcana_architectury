@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:sonic_blast",
+  "level_cost": 9,
+  "magical_scrap_cost": 6,
+  "primary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "tag": "ascendant_arcana:heart_items"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 6,
+    "ingredient": {
+      "item": "minecraft:echo_shard"
+    }
+  }
+}

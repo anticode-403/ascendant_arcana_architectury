@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:soul_speed",
+  "level_cost": 6,
+  "magical_scrap_cost": 6,
+  "primary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "item": "minecraft:sculk_catalyst"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 2,
+    "ingredient": {
+      "item": "minecraft:feather"
+    }
+  }
+}

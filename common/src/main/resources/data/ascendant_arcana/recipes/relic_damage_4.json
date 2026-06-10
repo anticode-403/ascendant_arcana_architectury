@@ -1,0 +1,17 @@
+{
+  "type": "ascendant_arcana:relic_crafting_recipe",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ascendant_arcana:relic"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:blaze_powder"
+    }
+  ],
+  "relic": 0,
+  "strength": 4
+}

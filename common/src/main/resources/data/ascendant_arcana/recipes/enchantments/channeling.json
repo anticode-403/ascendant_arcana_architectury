@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:channeling",
+  "level_cost": 3,
+  "magical_scrap_cost": 5,
+  "primary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "item": "minecraft:lightning_rod"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 3,
+    "ingredient": {
+      "item": "minecraft:gold_ingot"
+    }
+  }
+}

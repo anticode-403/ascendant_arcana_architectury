@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:heart_of_the_storm",
+  "level_cost": 15,
+  "magical_scrap_cost": 12,
+  "primary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "tag": "ascendant_arcana:heart_items"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 6,
+    "ingredient": {
+      "item": "minecraft:lightning_rod"
+    }
+  }
+}

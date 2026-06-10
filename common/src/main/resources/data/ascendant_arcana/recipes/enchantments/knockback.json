@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:knockback",
+  "level_cost": 3,
+  "magical_scrap_cost": 1,
+  "primary_ingredient": {
+    "count": 2,
+    "ingredient": {
+      "item": "minecraft:piston"
+    }
+  }
+}

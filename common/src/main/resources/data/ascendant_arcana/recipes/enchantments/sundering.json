@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:sundering",
+  "level_cost": 6,
+  "magical_scrap_cost": 4,
+  "primary_ingredient": {
+    "count": 2,
+    "ingredient": {
+      "item": "minecraft:torchflower"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 4,
+    "ingredient": {
+      "item": "minecraft:fermented_spider_eye"
+    }
+  }
+}

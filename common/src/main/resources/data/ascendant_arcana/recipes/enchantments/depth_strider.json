@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:depth_strider",
+  "level_cost": 3,
+  "magical_scrap_cost": 6,
+  "primary_ingredient": {
+    "count": 4,
+    "ingredient": {
+      "item": "minecraft:scute"
+    }
+  }
+}

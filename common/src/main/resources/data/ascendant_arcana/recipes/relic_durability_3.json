@@ -1,0 +1,26 @@
+{
+  "type": "ascendant_arcana:relic_crafting_recipe",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ascendant_arcana:relic"
+    },
+    {
+      "item": "ascendant_arcana:restorine"
+    },
+    {
+      "item": "ascendant_arcana:restorine"
+    },
+    {
+      "item": "ascendant_arcana:restorine"
+    },
+    {
+      "item": "minecraft:terracotta"
+    },
+    {
+      "item": "minecraft:terracotta"
+    }
+  ],
+  "relic": 1,
+  "strength": 3
+}

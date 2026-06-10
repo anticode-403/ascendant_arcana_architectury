@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "ascendant_arcana:block/small_restorine_bud"
+  }
+}

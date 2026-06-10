@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "ascendant_arcana:block/budding_restorine"
+  }
+}

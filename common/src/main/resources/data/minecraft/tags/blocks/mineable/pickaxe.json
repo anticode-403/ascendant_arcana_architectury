@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "ascendant_arcana:small_restorine_bud",
+    "ascendant_arcana:medium_restorine_bud",
+    "ascendant_arcana:large_restorine_bud",
+    "ascendant_arcana:restorine_cluster",
+    "ascendant_arcana:massive_restorine_cluster",
+    "ascendant_arcana:budding_restorine",
+    "ascendant_arcana:copper_enchanting_table"
+  ]
+}

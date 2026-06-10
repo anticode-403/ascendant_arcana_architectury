@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:alchemists_heart",
+  "level_cost": 15,
+  "magical_scrap_cost": 12,
+  "primary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "tag": "ascendant_arcana:heart_items"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 16,
+    "ingredient": {
+      "item": "minecraft:glistering_melon_slice"
+    }
+  }
+}

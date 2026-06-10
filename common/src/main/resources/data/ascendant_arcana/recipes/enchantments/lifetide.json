@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:lifetide",
+  "level_cost": 9,
+  "magical_scrap_cost": 12,
+  "primary_ingredient": {
+    "count": 6,
+    "ingredient": {
+      "item": "minecraft:ghast_tear"
+    }
+  }
+}

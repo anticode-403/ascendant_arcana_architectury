@@ -1,0 +1,17 @@
+{
+  "type": "ascendant_arcana:relic_crafting_recipe",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:amethyst_shard"
+    },
+    {
+      "item": "minecraft:clay_ball"
+    },
+    {
+      "item": "minecraft:clay_ball"
+    }
+  ],
+  "relic": 2,
+  "strength": 1
+}

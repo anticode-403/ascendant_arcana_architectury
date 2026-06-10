@@ -1,0 +1,23 @@
+{
+  "type": "ascendant_arcana:relic_crafting_recipe",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ascendant_arcana:relic"
+    },
+    {
+      "item": "minecraft:torchflower_seeds"
+    },
+    {
+      "item": "minecraft:torchflower_seeds"
+    },
+    {
+      "item": "minecraft:bone"
+    },
+    {
+      "item": "minecraft:bone"
+    }
+  ],
+  "relic": 0,
+  "strength": 3
+}

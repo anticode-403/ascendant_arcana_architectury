@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "ascendant_arcana:item/enchanted_scrap"
+  }
+}

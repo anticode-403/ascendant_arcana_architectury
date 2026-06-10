@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "majruszsenchantments:leech",
+  "level_cost": 3,
+  "magical_scrap_cost": 3,
+  "primary_ingredient": {
+    "count": 4,
+    "ingredient": {
+      "item": "minecraft:ghast_tear"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 2,
+    "ingredient": {
+      "item": "minecraft:fermented_spider_eye"
+    }
+  }
+}

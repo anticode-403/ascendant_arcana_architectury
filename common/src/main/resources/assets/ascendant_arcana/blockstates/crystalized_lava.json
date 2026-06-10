@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "age=0": {
+      "model": "ascendant_arcana:block/crystalized_lava_0"
+    },
+    "age=1": {
+      "model": "ascendant_arcana:block/crystalized_lava_1"
+    },
+    "age=2": {
+      "model": "ascendant_arcana:block/crystalized_lava_2"
+    },
+    "age=3": {
+      "model": "ascendant_arcana:block/crystalized_lava_3"
+    }
+  }
+}

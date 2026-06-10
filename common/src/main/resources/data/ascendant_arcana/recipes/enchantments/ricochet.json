@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:ricochet",
+  "level_cost": 6,
+  "magical_scrap_cost": 6,
+  "primary_ingredient": {
+    "count": 23,
+    "ingredient": {
+      "item": "minecraft:slime_ball"
+    }
+  }
+}

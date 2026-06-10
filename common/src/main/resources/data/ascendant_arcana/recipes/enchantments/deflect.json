@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:deflect",
+  "level_cost": 5,
+  "magical_scrap_cost": 4,
+  "primary_ingredient": {
+    "count": 4,
+    "ingredient": {
+      "item": "minecraft:slime_ball"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 2,
+    "ingredient": {
+      "item": "minecraft:scute"
+    }
+  }
+}

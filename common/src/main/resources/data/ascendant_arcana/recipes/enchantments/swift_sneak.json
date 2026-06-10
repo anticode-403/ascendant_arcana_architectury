@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:swift_sneak",
+  "level_cost": 6,
+  "magical_scrap_cost": 6,
+  "primary_ingredient": {
+    "count": 5,
+    "ingredient": {
+      "item": "minecraft:feather"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "item": "minecraft:echo_shard"
+    }
+  }
+}

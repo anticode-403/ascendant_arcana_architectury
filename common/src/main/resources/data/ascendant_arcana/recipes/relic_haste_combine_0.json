@@ -1,0 +1,14 @@
+{
+  "type": "ascendant_arcana:relic_crafting_recipe",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ascendant_arcana:relic"
+    },
+    {
+      "item": "ascendant_arcana:relic"
+    }
+  ],
+  "relic": 3,
+  "strength": 2
+}

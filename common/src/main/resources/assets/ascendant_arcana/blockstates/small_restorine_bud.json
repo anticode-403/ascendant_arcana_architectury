@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "ascendant_arcana:block/small_restorine_bud",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "ascendant_arcana:block/small_restorine_bud",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "ascendant_arcana:block/small_restorine_bud",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "ascendant_arcana:block/small_restorine_bud",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "ascendant_arcana:block/small_restorine_bud"
+    },
+    "facing=west": {
+      "model": "ascendant_arcana:block/small_restorine_bud",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

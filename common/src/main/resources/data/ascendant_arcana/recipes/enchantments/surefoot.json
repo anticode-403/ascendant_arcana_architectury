@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:surefoot",
+  "level_cost": 6,
+  "magical_scrap_cost": 6,
+  "primary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "item": "minecraft:anvil"
+    }
+  }
+}

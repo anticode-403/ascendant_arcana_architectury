@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:smelting",
+  "level_cost": 3,
+  "magical_scrap_cost": 3,
+  "primary_ingredient": {
+    "count": 2,
+    "ingredient": {
+      "item": "minecraft:blaze_rod"
+    }
+  }
+}

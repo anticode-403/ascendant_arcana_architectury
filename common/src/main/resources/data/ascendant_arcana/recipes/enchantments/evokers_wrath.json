@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:evokers_wrath",
+  "level_cost": 3,
+  "magical_scrap_cost": 2,
+  "primary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "item": "minecraft:totem_of_undying"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:riptide",
+  "level_cost": 9,
+  "magical_scrap_cost": 9,
+  "primary_ingredient": {
+    "count": 2,
+    "ingredient": {
+      "item": "minecraft:nautilus_shell"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 3,
+    "ingredient": {
+      "item": "minecraft:prismarine_crystals"
+    }
+  }
+}

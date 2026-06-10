@@ -1,0 +1,14 @@
+{
+  "type": "ascendant_arcana:relic_crafting_recipe",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:amethyst_shard"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    }
+  ],
+  "relic": 0,
+  "strength": 1
+}

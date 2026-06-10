@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:hellwalker",
+  "level_cost": 6,
+  "magical_scrap_cost": 12,
+  "primary_ingredient": {
+    "count": 2,
+    "ingredient": {
+      "item": "minecraft:blaze_rod"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "item": "minecraft:torchflower"
+    }
+  }
+}

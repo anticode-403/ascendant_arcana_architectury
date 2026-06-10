@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:strafe",
+  "level_cost": 4,
+  "magical_scrap_cost": 6,
+  "primary_ingredient": {
+    "count": 12,
+    "ingredient": {
+      "item": "minecraft:feather"
+    }
+  }
+}

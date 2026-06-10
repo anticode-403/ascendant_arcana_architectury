@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "majruszsenchantments:sixth_sense",
+  "level_cost": 3,
+  "magical_scrap_cost": 3,
+  "primary_ingredient": {
+    "count": 4,
+    "ingredient": {
+      "item": "minecraft:ender_eye"
+    }
+  }
+}

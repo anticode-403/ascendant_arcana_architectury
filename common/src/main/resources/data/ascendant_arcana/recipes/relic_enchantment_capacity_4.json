@@ -1,0 +1,35 @@
+{
+  "type": "ascendant_arcana:relic_crafting_recipe",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ascendant_arcana:relic"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:lapis_lazuli"
+    },
+    {
+      "item": "minecraft:lapis_lazuli"
+    },
+    {
+      "item": "ascendant_arcana:enchanted_scrap"
+    },
+    {
+      "item": "ascendant_arcana:enchanted_scrap"
+    },
+    {
+      "item": "ascendant_arcana:enchanted_scrap"
+    },
+    {
+      "item": "ascendant_arcana:enchanted_scrap"
+    },
+    {
+      "item": "ascendant_arcana:enchanted_scrap"
+    }
+  ],
+  "relic": 4,
+  "strength": 4
+}

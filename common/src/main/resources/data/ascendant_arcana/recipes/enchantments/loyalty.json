@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:loyalty",
+  "level_cost": 5,
+  "magical_scrap_cost": 4,
+  "primary_ingredient": {
+    "count": 6,
+    "ingredient": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "item": "minecraft:salmon"
+    }
+  }
+}

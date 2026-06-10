@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:feather_falling",
+  "level_cost": 3,
+  "magical_scrap_cost": 2,
+  "primary_ingredient": {
+    "count": 5,
+    "ingredient": {
+      "item": "minecraft:feather"
+    }
+  }
+}

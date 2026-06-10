@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:punch",
+  "level_cost": 4,
+  "magical_scrap_cost": 2,
+  "primary_ingredient": {
+    "count": 2,
+    "ingredient": {
+      "item": "minecraft:piston"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 4,
+    "ingredient": {
+      "item": "minecraft:redstone"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:calcite"
+    },
+    "r": {
+      "item": "ascendant_arcana:restorine"
+    }
+  },
+  "pattern": [
+    " c ",
+    "rrr",
+    "ccc"
+  ],
+  "result": {
+    "item": "ascendant_arcana:infusion_smithing_template"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:multishot",
+  "level_cost": 3,
+  "magical_scrap_cost": 6,
+  "primary_ingredient": {
+    "count": 2,
+    "ingredient": {
+      "item": "minecraft:echo_shard"
+    }
+  }
+}

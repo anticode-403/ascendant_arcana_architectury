@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "majruszsenchantments:harvester",
+  "level_cost": 3,
+  "magical_scrap_cost": 3,
+  "primary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "item": "minecraft:dispenser"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 64,
+    "ingredient": {
+      "item": "minecraft:wheat_seeds"
+    }
+  }
+}

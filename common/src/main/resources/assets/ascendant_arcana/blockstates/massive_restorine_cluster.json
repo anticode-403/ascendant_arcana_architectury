@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "ascendant_arcana:block/massive_restorine_cluster",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "ascendant_arcana:block/massive_restorine_cluster",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "ascendant_arcana:block/massive_restorine_cluster",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "ascendant_arcana:block/massive_restorine_cluster",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "ascendant_arcana:block/massive_restorine_cluster"
+    },
+    "facing=west": {
+      "model": "ascendant_arcana:block/massive_restorine_cluster",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

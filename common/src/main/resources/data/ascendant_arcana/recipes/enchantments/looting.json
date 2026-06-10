@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:looting",
+  "level_cost": 3,
+  "magical_scrap_cost": 12,
+  "primary_ingredient": {
+    "count": 3,
+    "ingredient": {
+      "item": "minecraft:ender_pearl"
+    }
+  }
+}

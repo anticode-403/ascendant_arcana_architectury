@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "minecraft:piercing",
+  "level_cost": 3,
+  "magical_scrap_cost": 2,
+  "primary_ingredient": {
+    "count": 3,
+    "ingredient": {
+      "item": "minecraft:stone"
+    }
+  }
+}

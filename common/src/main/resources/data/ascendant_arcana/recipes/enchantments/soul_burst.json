@@ -1,0 +1,18 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:soul_burst",
+  "level_cost": 3,
+  "magical_scrap_cost": 3,
+  "primary_ingredient": {
+    "count": 1,
+    "ingredient": {
+      "item": "minecraft:sculk_catalyst"
+    }
+  },
+  "secondary_ingredient": {
+    "count": 12,
+    "ingredient": {
+      "item": "minecraft:gunpowder"
+    }
+  }
+}
