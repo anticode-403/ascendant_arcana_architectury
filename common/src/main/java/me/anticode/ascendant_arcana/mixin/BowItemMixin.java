@@ -30,6 +30,6 @@ public class BowItemMixin {
         float rand_yaw = random.nextFloat() * inaccuracy * 2f;
         float pitch = user.getXRot() + (random.nextBoolean() ? rand_pitch : -rand_pitch);
         float yaw = user.getYRot() + (random.nextBoolean() ? rand_yaw : -rand_yaw);
-        projectile.shootFromRotation(user, pitch, yaw, 0.0f, f * 3.0f, 1.0f);
+        projectile.shootFromRotation(user, pitch, yaw, 0.0f, f, 1.0f);
     }
 }
