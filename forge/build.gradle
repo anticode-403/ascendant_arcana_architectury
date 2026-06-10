@@ -41,6 +41,9 @@ configurations {
 dependencies {
     forge "net.minecraftforge:forge:$rootProject.forge_version"
 
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.4"))
+    implementation(include("io.github.llamalad7:mixinextras-forge:0.5.4"))
+
     modImplementation "dev.architectury:architectury-forge:$rootProject.architectury_api_version"
     modApi("me.shedaniel.cloth:cloth-config-forge:$rootProject.cloth_config_version")
     modRuntimeOnly("dev.emi:emi-forge:$rootProject.emi_version")
