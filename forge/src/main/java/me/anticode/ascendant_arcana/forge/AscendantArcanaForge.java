@@ -30,6 +30,8 @@ public final class AscendantArcanaForge {
         AscendantArcana.initialize();
     }
 
+    // TODO: Create a Global Loot Table Modification for relics and restorine.
+
     @Mod.EventBusSubscriber(modid = AscendantArcana.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class AscendantArcanaForgeClient {
         @SubscribeEvent
