@@ -113,6 +113,67 @@ public final class AscendantArcanaForge {
         }
     }
 
+    @Mod.EventBusSubscriber(modid = AscendantArcana.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public static class AscendantArcanaForgeEvents {
+        @SubscribeEvent
+        public static void lootLoad(LootTableLoadEvent event) {
+            ResourceLocation identifier = event.getName();
+            LootTable lootTable = event.getTable();
+            List<LootPool> lootPoolList = new ArrayList<>(((LootTableAccess)lootTable).ascendant_arcana$getLootPools());
+            if (identifier.getPath().contains("chests") && AscendantArcana.config.add_relics_to_chests || AscendantArcana.config.add_restorine_to_chests) {
+                for (LootPool lootPool : lootPoolList) {
+                    LootPool.Builder poolBuilder = LootPool.lootPool();
+                    LootPoolEntryContainer[] entries = ((LootPoolAccess)lootPool).getEntries();
+                    int totalWeight = 0;
+                    int addedWeights = 0;
+                    for (LootPoolEntryContainer entry : entries) {
+                        if (entry instanceof LootItem lootItem) {
+                            Item item = ((ItemEntryAccess)lootItem).ascendantArcana$getItem();
+                            if (item == Items.BOOK && AscendantArcana.config.add_relics_to_chests) {
+                                boolean enchanted = false;
+                                boolean bonus = false;
+                                for (LootItemFunction function : ((LeafEntryAccess) entry).ascendantArcana$getFunctions()) {
+                                    if (function instanceof EnchantRandomlyFunction || function instanceof EnchantWithLevelsFunction) {
+                                        enchanted = true;
+                                        if (function instanceof EnchantRandomlyFunction) bonus = true;
+                                        break;
+                                    }
+                                }
+                                if (!enchanted) continue;
+                                LootPoolSingletonContainer.Builder<?> entryBuilder = LootItem.lootTableItem(AArcanaItems.RELIC.get());
+                                entryBuilder.setWeight(((LeafEntryAccess) entry).ascendantArcana$getWeight());
+                                addedWeights += ((LeafEntryAccess) entry).ascendantArcana$getWeight();
+                                entryBuilder.setQuality(((LeafEntryAccess) entry).ascendantArcana$getQuality());
+                                entryBuilder.apply(PopulateRelicLootFunction.builder(UniformGenerator.between(1, !bonus ? 3 : 4), new int[]{0, 1, 2, 4}));
+                                // I can't figure out how to replicate conditions, so in the off chance the enchanted book has a conditional drop, we will unfortunately ignore it
+                                poolBuilder.add(entryBuilder);
+                            } else if ((((ItemEntryAccess)entry).ascendantArcana$getItem() == Items.AMETHYST_SHARD || ((ItemEntryAccess)entry).ascendantArcana$getItem() == Items.DIAMOND) && AscendantArcana.config.add_restorine_to_chests) {
+                                LootPoolSingletonContainer.Builder<?> entryBuilder = LootItem.lootTableItem(AArcanaItems.RESTORINE.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 15)));
+                                int targetWeight;
+                                if (((ItemEntryAccess)entry).ascendantArcana$getItem() == Items.DIAMOND) {
+                                    targetWeight = ((LeafEntryAccess) entry).ascendantArcana$getWeight() / 4;
+                                } else {
+                                    targetWeight = ((LeafEntryAccess) entry).ascendantArcana$getWeight() / 2;
+                                }
+                                entryBuilder.setWeight(targetWeight);
+                                addedWeights += targetWeight;
+                                entryBuilder.setQuality(((LeafEntryAccess) entry).ascendantArcana$getQuality());
+                                poolBuilder.add(entryBuilder);
+                            }
+                        }
+                        totalWeight += ((LeafEntryAccess)entry).ascendantArcana$getWeight();
+                    }
+                    if (addedWeights != 0) {
+                        poolBuilder.add(EmptyLootItem.emptyItem().setWeight(totalWeight - addedWeights));
+                        poolBuilder.setRolls(lootPool.getRolls());
+                        poolBuilder.setBonusRolls(lootPool.getBonusRolls());
+                        lootTable.addPool(poolBuilder.build());
+                    }
+                }
+            }
+        }
+    }
+
     @Mod.EventBusSubscriber(modid = AscendantArcana.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class AscendantArcanaForgeClient {
         @SubscribeEvent
