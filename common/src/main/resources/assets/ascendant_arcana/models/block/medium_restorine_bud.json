@@ -2,5 +2,6 @@
   "parent": "minecraft:block/cross",
   "textures": {
     "cross": "ascendant_arcana:block/medium_restorine_bud"
-  }
+  },
+  "render_type": "cutout"
 }

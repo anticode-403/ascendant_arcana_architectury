@@ -2,5 +2,6 @@
   "parent": "minecraft:block/cross",
   "textures": {
     "cross": "ascendant_arcana:block/massive_restorine_cluster"
-  }
+  },
+  "render_type": "cutout"
 }
