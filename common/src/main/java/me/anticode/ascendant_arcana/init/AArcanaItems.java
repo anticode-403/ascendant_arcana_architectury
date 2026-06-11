@@ -1,15 +1,19 @@
 package me.anticode.ascendant_arcana.init;
 
+import com.google.common.collect.Lists;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.item.*;
+import me.anticode.ascendant_arcana.logic.Relics;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.item.*;
 
 import java.util.List;
@@ -63,8 +67,20 @@ public class AArcanaItems {
     public static void initialize() {
         ITEMS.register();
 
-//        CreativeTabRegistry.modifyBuiltin(BuiltInRegistries.CREATIVE_MODE_TAB.get(CreativeModeTabs.INGREDIENTS), (tab, filler, t) -> {
-//
-//        });
+        List<Supplier<ItemStack>> relicEntries = Lists.newArrayList();
+        for (int i = 0; i < Relics.values().length * 5; i++) {
+            int relicId = Mth.floor((double) i / 5);
+            int strength = i + 1 - (relicId * 5);
+            Relics relicType = Relics.fromId(relicId);
+            relicEntries.add(() -> {
+                ItemStack relic = new ItemStack(RELIC.get());
+                RelicItem.writeRelicData(relic, relicType, strength);
+                return relic;
+            });
+        }
+
+        CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, ENCHANTED_SCRAP, RESTORINE, WARDEN_HEART);
+
+        CreativeTabRegistry.appendStack(AscendantArcana.ASCENDANT_ARCANA_TAB, relicEntries.stream());
     }
 }
