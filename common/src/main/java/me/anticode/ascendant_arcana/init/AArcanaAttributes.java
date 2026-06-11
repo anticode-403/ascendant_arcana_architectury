@@ -12,6 +12,7 @@ public class AArcanaAttributes {
 
     public static final RegistrySupplier<Attribute> PROTECTION = register("generic.protection", new RangedAttribute("attribute.ascendant_arcana.generic.protection", 1.0d, 0.0d, 100.0d));
     public static final RegistrySupplier<Attribute> DAMAGE_TAKEN = register("generic.damage_taken", new RangedAttribute("attribute.ascendant_arcana.generic.damage_taken", 1.0d, 0.0d, 100.0d));
+    public static final RegistrySupplier<Attribute> DRAW_SPEED = register("generic.draw_speed", new RangedAttribute("attribute.ascendant_arcana.generic.draw_speed", 1.0d, 0.0d, 100.0d));
 
     private static RegistrySupplier<Attribute> register(String id, final Attribute attribute) {
         return ATTRIBUTES.register(id, () -> attribute);

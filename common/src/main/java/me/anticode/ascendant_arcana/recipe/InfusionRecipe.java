@@ -33,7 +33,7 @@ public class InfusionRecipe implements SmithingRecipe {
 
     @Override
     public boolean isBaseIngredient(ItemStack stack) {
-        if (stack.isEnchantable() || stack.isDamageableItem() || stack.getItem() instanceof ArmorItem || stack.getItem() instanceof TieredItem || stack.getItem() instanceof BowItem || stack.getItem() instanceof CrossbowItem) {
+        if (stack.isEnchantable() || stack.isDamageableItem() || stack.getItem() instanceof ArmorItem || stack.getItem() instanceof TieredItem || stack.getItem() instanceof BowItem || stack.getItem() instanceof CrossbowItem || stack.getItem() instanceof TridentItem) {
             return RelicHelper.fromNbt(stack.getOrCreateTag()).size() < RelicHelper.getRelicCapacity(stack);
         }
         return false;

@@ -113,7 +113,7 @@ public abstract class ItemStackMixin {
                 modifiers.put(AArcanaAttributes.PROTECTION.get(), modifier);
             }
         }
-        else if (getItem() instanceof TieredItem) {
+        else if (getItem().getMaxDamage() > 1) {
             if (slot != EquipmentSlot.MAINHAND) return modifiers;
             Map<Relics, Integer> relics = RelicHelper.fromNbt(getOrCreateTag());
             if (relics.isEmpty()) return modifiers;
@@ -124,21 +124,14 @@ public abstract class ItemStackMixin {
                 modifiers.replaceValues(Attributes.ATTACK_DAMAGE, newModifiers);
             }
         }
-        else if (getItem() instanceof CrossbowItem || getItem() instanceof BowItem) {
+        else if (getItem() instanceof CrossbowItem || getItem() instanceof BowItem || getItem() instanceof TridentItem) {
             if (slot != EquipmentSlot.MAINHAND && slot != EquipmentSlot.OFFHAND) return modifiers;
             Map<Relics, Integer> relics = RelicHelper.fromNbt(getOrCreateTag());
             if (relics.isEmpty()) return modifiers;
-            if (relics.containsKey(Relics.DAMAGE)) {
-                // TODO: Fix crossbow and bow relics
-                double damageValue = RelicHelper.getTooltipStrength(Relics.DAMAGE, relics.get(Relics.DAMAGE)) * 0.01;
-//                List<EntityAttributeModifier> oldDamageModifiers = modifiers.get(EntityAttributes_RangedWeapon.DAMAGE.attribute).stream().toList();
-//                List<EntityAttributeModifier> newModifiers = ItemHelper.multiplyAttributeList(oldDamageModifiers, damageValue);
-//                modifiers.replaceValues(EntityAttributes_RangedWeapon.DAMAGE.attribute, newModifiers);
-            }
             if (relics.containsKey(Relics.HASTE)) {
                 double hasteValue = RelicHelper.getTooltipStrength(Relics.HASTE, relics.get(Relics.HASTE)) * 0.005;
-//                EntityAttributeModifier modifier = new EntityAttributeModifier(UUID.fromString("f2bb3e62-513f-4804-a194-2965d232c7ad"), "Haste Relic Bonus", hasteValue, EntityAttributeModifier.Operation.MULTIPLY_BASE);
-//                modifiers.put(EntityAttributes_RangedWeapon.HASTE.attribute, modifier);
+                AttributeModifier modifier = new AttributeModifier(UUID.fromString("f2bb3e62-513f-4804-a194-2965d232c7ad"), "Haste Relic Bonus", hasteValue, AttributeModifier.Operation.MULTIPLY_BASE);
+                modifiers.put(AArcanaAttributes.DRAW_SPEED.get(), modifier);
             }
         }
         return modifiers;

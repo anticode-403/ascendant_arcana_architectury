@@ -26,6 +26,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -71,6 +72,12 @@ public abstract class LivingEntityMixin {
     @Shadow
     public abstract boolean addEffect(MobEffectInstance effect, @Nullable Entity source);
 
+    @Shadow
+    protected int useItemRemaining;
+
+    @Shadow
+    protected ItemStack useItem;
+
     @Unique
     private Map<AArcanaEnchantments.IndirectHeartDamageTypes, Integer> heartAttackers = new EnumMap<>(AArcanaEnchantments.IndirectHeartDamageTypes.class);
 
@@ -108,7 +115,7 @@ public abstract class LivingEntityMixin {
     @Inject(method = "createLivingAttributes", at = @At("RETURN"))
     private static void createLivingAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
         if (!AArcanaAttributes.DAMAGE_TAKEN.isPresent()) AArcanaAttributes.initialize();
-        cir.getReturnValue().add(AArcanaAttributes.PROTECTION.get()).add(AArcanaAttributes.DAMAGE_TAKEN.get());
+        cir.getReturnValue().add(AArcanaAttributes.PROTECTION.get()).add(AArcanaAttributes.DAMAGE_TAKEN.get()).add(AArcanaAttributes.DRAW_SPEED.get());
     }
 
     @ModifyReturnValue(method = "getJumpPower", at = @At("RETURN"))
@@ -134,6 +141,21 @@ public abstract class LivingEntityMixin {
         double protectionStrength = getAttributeValue(AArcanaAttributes.PROTECTION.get());
         float multiplier = 2F - (float) protectionStrength;
         return original * multiplier;
+    }
+
+    @Inject(method = "getUseItemRemainingTicks", at = @At("HEAD"), cancellable = true)
+    private void getItemUseTimeLeft(CallbackInfoReturnable<Integer> info) {
+        var value  = useItemRemaining;
+        var entity = (LivingEntity)(Object)this;
+        if (entity.isUsingItem())  {
+            var useAction = useItem.getUseAnimation();
+            if (useAction == UseAnim.BOW || useAction == UseAnim.CROSSBOW || useAction == UseAnim.SPEAR) {
+                var progress = useItem.getUseDuration() - value;
+                var haste = entity.getAttributeValue(AArcanaAttributes.DRAW_SPEED.get());
+                var newProgress = (int) (progress * haste);
+                info.setReturnValue(useItem.getUseDuration() - newProgress);
+            }
+        }
     }
 
     @ModifyVariable(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At("HEAD"), ordinal = 0, argsOnly = true)
