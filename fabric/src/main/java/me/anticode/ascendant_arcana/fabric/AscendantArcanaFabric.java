@@ -30,13 +30,11 @@ public final class AscendantArcanaFabric implements ModInitializer {
         AscendantArcana.initialize();
 
         LootTableEvents.MODIFY.register(((resourceManager, lootDataManager, identifier, builder, lootTableSource) -> {
-            if (lootTableSource.isBuiltin() && (AscendantArcana.config.add_boss_drops || AscendantArcana.config.add_relics_to_entities)) {
-                if (AscendantArcana.config.add_relics_to_entities) {
-                    if (identifier.equals(ResourceLocation.tryBuild("minecraft", "gameplay/piglin_bartering"))) {
-                        builder.modifyPools((poolBuilder) -> poolBuilder.add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new int[]{3})).setWeight(13)));
-                    } else if (identifier.getPath().contains("archaeology/")) {
-                        builder.modifyPools((poolBuilder) -> poolBuilder.add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new int[]{1}))));
-                    }
+            if (lootTableSource.isBuiltin() && AscendantArcana.config.add_relics_to_entities) {
+                if (identifier.equals(ResourceLocation.tryBuild("minecraft", "gameplay/piglin_bartering"))) {
+                    builder.modifyPools((poolBuilder) -> poolBuilder.add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new int[]{3})).setWeight(13)));
+                } else if (identifier.getPath().contains("archaeology/")) {
+                    builder.modifyPools((poolBuilder) -> poolBuilder.add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new int[]{1}))));
                 }
             }
             if (identifier.getPath().contains("chests") && AscendantArcana.config.add_relics_to_chests || AscendantArcana.config.add_restorine_to_chests) {

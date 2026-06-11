@@ -6,6 +6,8 @@
   "client": [
   ],
   "mixins": [
+    "LootPoolAccessor",
+    "LootTableAccessor",
     "RegistrarManagerImplVanillaBackedRegistryImplMixin"
   ],
   "injectors": {
