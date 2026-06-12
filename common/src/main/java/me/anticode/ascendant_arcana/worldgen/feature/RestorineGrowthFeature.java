@@ -46,7 +46,7 @@ public class RestorineGrowthFeature extends Feature<RestorineGrowthFeatureConfig
             else if (column instanceof Column.Ray && column.getFloor().isPresent()) isStalagmite = false;
 
             int y = isStalagmite ? column.getCeiling().getAsInt() : column.getFloor().getAsInt();
-            RestorineGrowthGenerator generator = new RestorineGrowthGenerator(pos.atY(y), isStalagmite, width, 0.1, heightScale);
+            RestorineGrowthGenerator generator = new RestorineGrowthGenerator(pos.atY(y), isStalagmite, width, 0.1, heightScale, config.netherrack());
             if (!generator.canGenerate(level)) return false;
 
             generator.generate(level, random);
@@ -59,7 +59,7 @@ public class RestorineGrowthFeature extends Feature<RestorineGrowthFeatureConfig
     }
 
     private static boolean canReplaceOrLava(BlockState state) {
-        return state.is(Blocks.DRIPSTONE_BLOCK) || state.is(BlockTags.DRIPSTONE_REPLACEABLE) || state.is(Blocks.LAVA);
+        return state.is(BlockTags.DRIPSTONE_REPLACEABLE) || state.is(BlockTags.BASE_STONE_NETHER) || state.is(Blocks.LAVA);
     }
 
     static final class RestorineGrowthGenerator {
@@ -68,13 +68,15 @@ public class RestorineGrowthFeature extends Feature<RestorineGrowthFeatureConfig
         private int scale;
         private final double bluntness;
         private final double heightScale;
+        private final boolean netherrack;
 
-        RestorineGrowthGenerator(BlockPos pos, boolean isStalagmite, int scale, double bluntness, double heightScale) {
+        RestorineGrowthGenerator(BlockPos pos, boolean isStalagmite, int scale, double bluntness, double heightScale, boolean netherrack) {
             this.pos = pos;
             this.isStalagmite = isStalagmite;
             this.scale = scale;
             this.bluntness = bluntness;
             this.heightScale = heightScale;
+            this.netherrack = netherrack;
         }
 
         private int getBaseScale() {
@@ -168,9 +170,9 @@ public class RestorineGrowthFeature extends Feature<RestorineGrowthFeatureConfig
                             for(int m = 0; m < k && mutable.getY() < l; ++m) {
                                 if (canGenerateOrLava(level, mutable)) {
                                     bl = true;
-                                    Block block = Blocks.STONE;
+                                    Block block = netherrack ? Blocks.NETHERRACK : Blocks.STONE;
                                     if (random.nextFloat() < 0.2F) {
-                                        block = AArcanaBlocks.BUDDING_RESTORINE.get();
+                                        block = netherrack ? AArcanaBlocks.NETHERRACK_BUDDING_RESTORINE.get() : AArcanaBlocks.BUDDING_RESTORINE.get();
                                         budding_restorine.add(mutable.mutable());
                                     }
                                     level.setBlock(mutable, block.defaultBlockState(), 2);
