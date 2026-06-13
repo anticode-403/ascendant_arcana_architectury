@@ -181,7 +181,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
                 EnchantmentRecipe recipe = recipes.get(selectedTile);
                 boolean withinCapacity = AArcanaEnchantmentHelper.testEnchantmentCost(stack, AArcanaEnchantmentHelper.getEnchantmentCost(recipe.enchantment));
 
-                if (anySelected && !tile.locked && !tile.maxLevel && withinCapacity) {
+                if (anySelected && !tile.locked && !tile.maxLevel && withinCapacity && !tile.incompatible) {
                     if (AscendantArcana.config.disable_xp) {
                         context.blit(OVERLAYS, panelX + 1, panelY + 105, 12, 8, 9, 7);
                     } else {
@@ -192,7 +192,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
                         }
                         context.blit(OVERLAYS, panelX + 1, panelY + 113, 12, 8, 9, 7);
                     }
-                } else if (anySelected && (tile.locked || !withinCapacity)) {
+                } else if (anySelected && (tile.locked || !withinCapacity || tile.incompatible)) {
                     context.blit(OVERLAYS, panelX + 2, panelY + 47, 135, 0, 56, 57);
                     context.pose().pushPose();
                     context.pose().last().pose().scale(0.5F, 0.5F, 0.5F);
@@ -203,6 +203,8 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
                         text = Component.translatable("gui.enchanting.low_level");
                     } else if (!withinCapacity) {
                         text = Component.translatable("gui.enchanting.max_capacity");
+                    } else if (tile.incompatible) {
+                        text = Component.translatable("gui.enchanting.incompatible");
                     }
                     context.drawWordWrap(font, text, scaledPanelX + 4, scaledPanelY + 100, scaledPanelWidth, 5592405);
                     context.pose().popPose();
@@ -220,7 +222,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
                     }
                     context.drawCenteredString(font, enchantmentTitle, scaledPanelX + 60, scaledPanelY + 2, 16777215);
                     context.drawWordWrap(font, enchantmentDescription, scaledPanelX + 2, scaledPanelY + 14, scaledPanelWidth, 5592405);
-                    if (!tile.locked && !tile.maxLevel && withinCapacity) {
+                    if (!tile.locked && !tile.maxLevel && withinCapacity && !tile.incompatible) {
                         int scrapColor = 16777215;
                         ItemStack scrapStack = getMenu().getSlot(1).getItem();
                         if (scrapStack.getCount() < recipe.magicalScrapCost) {
@@ -305,7 +307,10 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
         int requiredPower = AArcanaEnchantmentHelper.getRequiredEnchantmentPower(recipe.enchantment);
         if (power < requiredPower) locked = true;
         if (recipe.enchantment.isTreasureOnly() && !getMenu().unlockedTreasures.contains(recipe.enchantment)) locked = true;
-        EnchantmentTile tile = new EnchantmentTile(recipe, buttonX, buttonY, i, locked);
+        Map<Enchantment, Integer> appliedEnchantments = EnchantmentHelper.getEnchantments(lastItem);
+        boolean incompatible = !EnchantmentHelper.isEnchantmentCompatible(appliedEnchantments.keySet(), recipe.enchantment);
+        if (appliedEnchantments.containsKey(recipe.enchantment)) incompatible = false;
+        EnchantmentTile tile = new EnchantmentTile(recipe, buttonX, buttonY, i, locked, incompatible);
         enchantments.add(tile);
         addRenderableWidget(tile);
     }
@@ -371,11 +376,13 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
         private final int i;
         protected boolean locked;
         protected boolean maxLevel = false;
+        protected boolean incompatible = false;
         private int offset = 0;
 
-        public EnchantmentTile(EnchantmentRecipe recipe, int x, int y, int i, boolean locked) {
+        public EnchantmentTile(EnchantmentRecipe recipe, int x, int y, int i, boolean locked, boolean incompatible) {
             super(x, y, 0, 27, Component.translatable(recipe.enchantment.getDescriptionId()));
             this.locked = locked;
+            this.incompatible = incompatible;
             this.i = i;
             this.recipe = recipe;
             this.width = 84;
@@ -390,8 +397,8 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
         protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
             int v = 27;
             if (selectedTile == i && anySelected) v += 57;
-            if (this.locked) v += 19;
-            else if (this.maxLevel) v += 38;
+            if (locked || incompatible) v += 19;
+            else if (maxLevel) v += 38;
 
 
             context.blit(OVERLAYS, getX(), getY(), 0, v + offset, width, getHeight());
@@ -419,7 +426,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
             if (locked) enchantComponent.withStyle(ChatFormatting.OBFUSCATED);
             if (getHeight() > 6) font.drawInBatch(enchantComponent, scaledX + 12, scaledY + 4, 5592405, false, positionMatrix, context.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
             MutableComponent levelText = null;
-            if (maxLevel && !locked) levelText = Component.translatable("gui.enchanting.max_level");
+            if (maxLevel && !locked && !incompatible) levelText = Component.translatable("gui.enchanting.max_level");
             else if (!locked && height == getHeight()) {
                 int level = 1;
                 if (lastItem.isEnchanted() && EnchantmentHelper.getEnchantments(lastItem).containsKey(recipe.enchantment)) level = EnchantmentHelper.getEnchantments(lastItem).get(recipe.enchantment) + 1;
@@ -429,7 +436,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
 
             ItemStack magicalScraps = new ItemStack(AArcanaItems.ENCHANTED_SCRAP.get(), recipe.magicalScrapCost);
 
-            if (!maxLevel && !locked && (getHeight() > 10 && offset == 0)) {
+            if (!maxLevel && !locked && !incompatible && (getHeight() > 10 && offset == 0)) {
                 int itemX = scaledX + 108;
                 int itemY = scaledY + 4;
                 context.renderItem(magicalScraps, itemX, itemY);

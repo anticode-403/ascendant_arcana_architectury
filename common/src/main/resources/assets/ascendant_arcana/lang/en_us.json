@@ -94,6 +94,7 @@
   "gui.enchanting.no_item_title": "Ascendant Arcana",
   "gui.enchanting.no_selection_body": "Select an enchantment and place the ingredients below. Capacity can be increased with relics.",
   "gui.enchanting.treasure": "This enchantment is too exotic to decrypt without a copy nearby.",
+  "gui.enchanting.incompatible": "This enchantment is incompatible with another on the item!",
   "item.ascendant_arcana.enchanted_scrap": "Enchanted Scrap",
   "item.ascendant_arcana.enchanted_scrap.description": "An item made from the scrap of enchanted items and materials, used to make more enchantments.",
   "item.ascendant_arcana.relic": "%1$s Relic of %2$s",
