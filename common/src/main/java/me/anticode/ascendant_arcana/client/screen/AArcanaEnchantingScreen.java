@@ -333,10 +333,10 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         scrollerClicked = false;
         if (recipes != null && recipes.size() > 6) {
-            int i = this.leftPos + 153;
-            int j = this.topPos + 9;
+            int i = this.leftPos + 152;
+            int j = this.topPos + 8;
 
-            if (mouseX >= (double)i && mouseX < (double)(i + 12) && mouseY >= (double)j && mouseY < (double)(j + 121)) {
+            if (mouseX >= (double)i && mouseX < (double)(i + 9) && mouseY >= (double)j && mouseY < (double)(j + 123)) {
                 this.scrollerClicked = true;
             }
         }
@@ -346,7 +346,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
 
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (this.scrollerClicked && recipes != null && !recipes.isEmpty() && recipes.size() > 6) {
-            int j = this.leftPos + 9;
+            int j = this.topPos + 9;
             int k = j + 121;
             this.scrollPosition = ((float)mouseY - (float)j - 7.5F) / ((float)(k - j) - 15.0F);
             this.scrollPosition = Mth.clamp(this.scrollPosition, 0.0F, 1.0F);
