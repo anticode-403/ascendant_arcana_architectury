@@ -1,6 +1,5 @@
 package me.anticode.ascendant_arcana.mixin;
 
-import com.google.common.collect.Lists;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import me.anticode.ascendant_arcana.enchantment.HellWalker;
@@ -82,7 +81,7 @@ public abstract class LivingEntityMixin {
     private Map<AArcanaEnchantments.IndirectHeartDamageTypes, Integer> heartAttackers = new EnumMap<>(AArcanaEnchantments.IndirectHeartDamageTypes.class);
 
     @Unique
-    private final Collection<Tuple<EquipmentSlot, ItemStack>> attributeStacks = Lists.newArrayList();
+    private final Collection<Tuple<EquipmentSlot, ItemStack>> attributeStacks = new ArrayList<>();
 
     @Inject(method = "setLastHurtMob", at = @At("HEAD"))
     private void removeCrossCounterOnAttack(Entity entity, CallbackInfo ci) {

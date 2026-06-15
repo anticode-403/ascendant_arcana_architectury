@@ -1,6 +1,5 @@
 package me.anticode.ascendant_arcana.client.emi;
 
-import com.google.common.collect.Lists;
 import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
@@ -31,6 +30,7 @@ import net.minecraft.world.item.crafting.SmithingRecipe;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Blocks;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @EmiEntrypoint
@@ -76,8 +76,8 @@ public class AscendantArcanaEmi implements EmiPlugin {
             }
         }
         for (Item item : BuiltInRegistries.ITEM) {
-            List<Enchantment> targetedEnchantments = Lists.newArrayList();
-            List<Enchantment> universalEnchantments = Lists.newArrayList();
+            List<Enchantment> targetedEnchantments = new ArrayList<>();
+            List<Enchantment> universalEnchantments = new ArrayList<>();
             for (Enchantment enchantment : BuiltInRegistries.ENCHANTMENT.stream().toList()) {
                 try {
                     if (enchantment.canEnchant(ItemStack.EMPTY)) {

@@ -1,6 +1,5 @@
 package me.anticode.ascendant_arcana.client.emi.recipes;
 
-import com.google.common.collect.Lists;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.recipe.VanillaEmiRecipeCategories;
@@ -16,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -78,7 +78,7 @@ public class EmiGrindstoneScrapRecipe implements EmiRecipe {
         ItemStack itemStack = new ItemStack(tool);
         int enchantments = 1 + Math.max(random.nextInt(5), random.nextInt(3));
 
-        List<Enchantment> list = Lists.newArrayList();
+        List<Enchantment> list = new ArrayList<>();
 
         outer:
         for (int i = 0; i < enchantments; i++) {

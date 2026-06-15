@@ -1,6 +1,5 @@
 package me.anticode.ascendant_arcana.init;
 
-import com.google.common.collect.Lists;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
@@ -8,14 +7,13 @@ import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.item.*;
 import me.anticode.ascendant_arcana.logic.Relics;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.item.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -67,7 +65,7 @@ public class AArcanaItems {
     public static void initialize() {
         ITEMS.register();
 
-        List<Supplier<ItemStack>> relicEntries = Lists.newArrayList();
+        List<Supplier<ItemStack>> relicEntries = new ArrayList<>();
         for (int i = 0; i < Relics.values().length * 5; i++) {
             int relicId = Mth.floor((double) i / 5);
             int strength = i + 1 - (relicId * 5);

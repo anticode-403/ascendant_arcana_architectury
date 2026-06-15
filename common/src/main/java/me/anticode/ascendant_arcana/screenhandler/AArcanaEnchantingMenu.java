@@ -29,9 +29,9 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
-import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +39,7 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
     private final Container inventory;
     private final ContainerLevelAccess context;
     public final int[] enchantmentPower = new int[] { 0 };
-    public List<Enchantment> unlockedTreasures = Lists.newArrayList();
+    public List<Enchantment> unlockedTreasures = new ArrayList<>();
     public Player player;
     public EnchantmentRecipe recipe;
     ItemStack last;

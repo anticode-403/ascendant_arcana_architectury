@@ -17,9 +17,9 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
-import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PopulateRelicLootFunction extends LootItemConditionalFunction{
@@ -35,7 +35,7 @@ public class PopulateRelicLootFunction extends LootItemConditionalFunction{
     @Override
     protected @NotNull ItemStack run(ItemStack stack, LootContext context) {
         RandomSource random = context.getRandom();
-        List<Relics> relics = Lists.newArrayList();
+        List<Relics> relics = new ArrayList<>();
         int str = strength.getInt(context);
         for (int relicType : this.relicTypes) {
             Relics relic = Relics.fromId(relicType);

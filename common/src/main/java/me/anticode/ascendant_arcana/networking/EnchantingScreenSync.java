@@ -1,6 +1,5 @@
 package me.anticode.ascendant_arcana.networking;
 
-import com.google.common.collect.Lists;
 import io.netty.buffer.Unpooled;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -8,6 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public record EnchantingScreenSync(int syncId, List<Enchantment> treasures) {
@@ -26,7 +26,7 @@ public record EnchantingScreenSync(int syncId, List<Enchantment> treasures) {
     public static EnchantingScreenSync read(FriendlyByteBuf buf) {
         int syncId = buf.readInt();
         int i = buf.readInt();
-        List<Enchantment> treasures = Lists.newArrayList();
+        List<Enchantment> treasures = new ArrayList<>();
         for (int j = 0; j < i; ++j) {
             ResourceLocation enchantId = ResourceLocation.tryParse(buf.readUtf());
             Enchantment enchantment = BuiltInRegistries.ENCHANTMENT.get(enchantId);
