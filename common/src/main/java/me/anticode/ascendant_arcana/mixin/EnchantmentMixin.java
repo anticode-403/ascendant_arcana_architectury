@@ -14,6 +14,7 @@ public class EnchantmentMixin {
     private Enchantment.Rarity modifyEnchantmentRarities(Enchantment.Rarity original) {
         Enchantment enchantment = (Enchantment)(Object)this;
         ResourceLocation id = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+        if (id == null) return original;
         if (AscendantArcana.config.overwritten_rarities.containsKey(id.toString())) {
             return switch(AscendantArcana.config.overwritten_rarities.get(id.toString())) {
                 case 2 -> Enchantment.Rarity.UNCOMMON;
