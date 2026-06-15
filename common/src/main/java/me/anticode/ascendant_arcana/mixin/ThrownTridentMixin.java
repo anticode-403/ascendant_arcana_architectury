@@ -5,7 +5,6 @@ import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.logic.Relics;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -251,14 +250,6 @@ public class ThrownTridentMixin implements EnchantedTrident {
                     }
                 } else {
                     ascendant_arcana$stuckEntityId = -2;
-                }
-            }
-        } else {
-            if (ascendant_arcana$stuckEntity != null && ascendant_arcana$stuckEntity.isAlive() && ascendant_arcana$stabTicks == 19 / 20F) {
-                if (Minecraft.getInstance().gameRenderer.getMainCamera().isDetached() || ascendant_arcana$stuckEntity != Minecraft.getInstance().cameraEntity) {
-                    for (int i = 0; i < 6; i++) {
-                        trident.level().addParticle(ParticleTypes.HEART, ascendant_arcana$stuckEntity.getRandomX(0.5), ascendant_arcana$stuckEntity.getY(0.5), ascendant_arcana$stuckEntity.getRandomZ(0.5), 0, 0, 0);
-                    }
                 }
             }
         }
