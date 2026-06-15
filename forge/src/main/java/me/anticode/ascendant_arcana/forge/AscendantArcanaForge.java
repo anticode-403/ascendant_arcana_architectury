@@ -102,8 +102,8 @@ public final class AscendantArcanaForge {
                                 entryBuilder.setQuality(((LeafEntryAccess) entry).ascendantArcana$getQuality());
                                 poolBuilder.add(entryBuilder);
                             }
+                            totalWeight += ((LeafEntryAccess)entry).ascendantArcana$getWeight();
                         }
-                        totalWeight += ((LeafEntryAccess)entry).ascendantArcana$getWeight();
                     }
                     if (addedWeights != 0) {
                         poolBuilder.add(EmptyLootItem.emptyItem().setWeight(totalWeight - addedWeights));
