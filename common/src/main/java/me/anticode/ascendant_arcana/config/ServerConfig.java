@@ -18,6 +18,9 @@ public class ServerConfig implements ConfigData {
     @Comment("XP is by default disabled in Ascendant Arcana, but can be optionally enabled and is fully supported if you do so.")
     public boolean disable_xp = true;
 
+    @Comment("This can sometimes cause issues with mods that modify the HUD.")
+    public boolean hide_xp_bar = true;
+
     @Comment("Levels are linear if enabled. This adjusts the XP required to level up each time.")
     public int xp_per_level = 30;
 
