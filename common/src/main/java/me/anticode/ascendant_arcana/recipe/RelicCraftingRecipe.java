@@ -13,7 +13,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
@@ -21,6 +23,11 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RelicCraftingRecipe extends CustomRecipe {
     final String group;
@@ -45,27 +52,58 @@ public class RelicCraftingRecipe extends CustomRecipe {
     @Override
     public boolean matches(CraftingContainer inventory, Level level) {
         int i = 0;
-        boolean matches = true;
+        Map<Item, Integer> inputs = new HashMap<>();
 
         for (int j = 0; j < inventory.getContainerSize(); ++j) {
             ItemStack itemStack = inventory.getItem(j);
             if (!itemStack.isEmpty()) {
                 ++i;
-                boolean matchAny = false;
                 for (Ingredient ingredient : input) {
                     if (ingredient.test(itemStack)) {
+                        Item item = itemStack.getItem();
                         if (itemStack.is(AArcanaItems.RELIC.get())) {
-                            if (RelicItem.getRelicType(itemStack) == Relics.fromId(relic) && RelicItem.getRelicStrength(itemStack) == strength - 1) matchAny = true;
-                        } else matchAny = true;
+                            if (RelicItem.getRelicType(itemStack) == Relics.fromId(relic) && RelicItem.getRelicStrength(itemStack) == strength - 1) {
+                                if (inputs.containsKey(item)) {
+                                    inputs.put(item, inputs.get(item) + 1);
+                                } else inputs.put(item, 1);
+                            }
+                        } else {
+                            if (inputs.containsKey(item)) {
+                                inputs.put(item, inputs.get(item) + 1);
+                            } else inputs.put(item, 1);
+                        }
+                        break;
                     }
                 }
-                if (!matchAny) {
+            }
+        }
+        if (i == input.size()) {
+            boolean matches = true;
+            Map<Item, Integer> countedIngredients = new HashMap<>();
+            for (Ingredient ingredient : input) {
+                Item item = ingredient.getItems()[0].getItem();
+                if (countedIngredients.containsKey(item)) {
+                    countedIngredients.put(item, countedIngredients.get(item) + 1);
+                } else countedIngredients.put(item, 1);
+            }
+            for (Map.Entry<Item, Integer> entry : countedIngredients.entrySet()) {
+                boolean matchesAny = false;
+                for (Map.Entry<Item, Integer> item : inputs.entrySet()) {
+                    if (entry.getKey() == item.getKey()) {
+                        if (item.getValue() == entry.getValue()) {
+                            matchesAny = true;
+                            break;
+                        }
+                    }
+                }
+                if (!matchesAny) {
                     matches = false;
                     break;
                 }
             }
+            return matches;
         }
-        return i == input.size() && matches;
+        return false;
     }
 
     @Override
