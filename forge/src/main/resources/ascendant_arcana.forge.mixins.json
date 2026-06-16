@@ -9,6 +9,7 @@
     "ForgeRegistryMixin",
     "LootPoolAccessor",
     "LootTableAccessor",
+    "NamespacedWrapperMixin",
     "RegistrarManagerImplVanillaBackedRegistryImplMixin"
   ],
   "injectors": {
