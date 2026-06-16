@@ -4,6 +4,8 @@ import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -21,6 +23,25 @@ import java.util.*;
 
 public class AArcanaEnchantmentHelper {
     public static String ENCHANTMENT_CAPACITY_KEY = "AArcanaEnchantmentCapacity";
+
+    // DO NOT USE THIS UNLESS YOU KNOW WHAT YOU'RE DOING
+    public static Map<Enchantment, Integer> getAllEnchantments(ItemStack item) {
+        ListTag listTag = item.getEnchantmentTags();
+        if (listTag.isEmpty()) return new HashMap<>();
+        Map<Enchantment, Integer> enchantments = new HashMap<>();
+        for (int i = 0; i < listTag.size(); i++) {
+            CompoundTag compoundTag = listTag.getCompound(i);
+            ResourceLocation resourceLocation = EnchantmentHelper.getEnchantmentId(compoundTag);
+            RemovedRegistryEntry removedEntry = RemovedRegistryEntry.getFromId(resourceLocation);
+            if (removedEntry != null) {
+                enchantments.put(removedEntry.enchantment(), compoundTag.getInt("lvl"));
+            } else {
+                Enchantment enchantment = BuiltInRegistries.ENCHANTMENT.get(resourceLocation);
+                enchantments.put(enchantment, compoundTag.getInt("lvl"));
+            }
+        }
+        return enchantments;
+    }
 
     public static int getEnchantmentCost(Enchantment enchantment) {
         if (enchantment.isCurse()) return 1;
@@ -163,13 +184,16 @@ public class AArcanaEnchantmentHelper {
     public static ItemStack convertEnchantmentsToScrap(Map<Enchantment, Integer> appliedEnchants) {
         ItemStack itemStack = new ItemStack(AArcanaItems.ENCHANTED_SCRAP.get());
         for (Map.Entry<Enchantment, Integer> entry : appliedEnchants.entrySet()) {
-            int baseCount = switch (entry.getKey().getRarity()) {
-                case COMMON, UNCOMMON -> 1;
-                case RARE -> 3;
-                case VERY_RARE -> 4;
-            };
-            if (entry.getKey().isCurse()) baseCount = 1;
-            else if (entry.getKey().isTreasureOnly()) baseCount += 1;
+            int baseCount = 3;
+            if (entry.getKey() != null && !entry.getKey().isCurse()) {
+                baseCount = switch (entry.getKey().getRarity()) {
+                    case COMMON, UNCOMMON -> 1;
+                    case RARE -> 3;
+                    case VERY_RARE -> 4;
+                };
+                if (entry.getKey().isTreasureOnly()) baseCount += 1;
+            }
+            if (entry.getKey() != null && entry.getKey().isCurse()) baseCount = 1;
             itemStack.setCount(itemStack.getCount() + (baseCount * entry.getValue()));
         }
 
