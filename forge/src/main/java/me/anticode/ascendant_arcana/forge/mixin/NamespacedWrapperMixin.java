@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Mixin(NamespacedWrapper.class)
 public abstract class NamespacedWrapperMixin<T> {
-    @Inject(method = "getOptional", at = @At("HEAD"), remap = false, cancellable = true)
+    @Inject(method = "getOptional", at = @At("HEAD"), cancellable = true)
     private void replaceGetRaw(ResourceLocation key, CallbackInfoReturnable<Optional<T>> cir) {
         AscendantArcana.initializeConfigIfNull();
         if (AscendantArcana.config.disabled_enchantments.contains(key.toString())) cir.setReturnValue(Optional.empty());
