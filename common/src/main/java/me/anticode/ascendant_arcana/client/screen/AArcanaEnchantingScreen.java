@@ -215,7 +215,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
                 context.pose().last().pose().scale(0.5F, 0.5F, 0.5F);
                 if (anySelected) {
                     MutableComponent enchantmentTitle = Component.translatable(recipe.enchantment.getDescriptionId()).withStyle(ChatFormatting.UNDERLINE);
-                    MutableComponent enchantmentDescription = Component.translatable(recipe.enchantment.getDescriptionId() + ".description");
+                    MutableComponent enchantmentDescription = Component.translatable(recipe.enchantment.getDescriptionId() + ".desc");
                     if (tile.locked) {
                         enchantmentTitle.withStyle(ChatFormatting.OBFUSCATED);
                         enchantmentDescription.withStyle(ChatFormatting.OBFUSCATED);
