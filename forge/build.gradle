@@ -3,7 +3,7 @@ plugins {
 }
 
 loom {
-    accessWidenerPath = project(":common").loom.accessWidenerPath
+    accessWidenerPath = file("src/main/resources/ascendant_arcana_forge.accesswidener")
 
     forge {
         convertAccessWideners = true
