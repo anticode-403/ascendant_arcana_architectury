@@ -15,8 +15,6 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,12 +27,6 @@ public abstract class ForgeRegistryMixin<T> {
     @Shadow
     @NotNull
     public abstract Optional<Holder<T>> getHolder(T value);
-
-    @Inject(method = "getRaw", at = @At("HEAD"), remap = false, cancellable = true)
-    private void replaceGetRaw(ResourceLocation key, CallbackInfoReturnable<T> cir) {
-        AscendantArcana.initializeConfigIfNull();
-        if (AscendantArcana.config.disabled_enchantments.contains(key.toString())) cir.setReturnValue(null);
-    }
 
     @ModifyReturnValue(method = "getKeys", at = @At("RETURN"), remap = false)
     private @NotNull Set<ResourceLocation> filterOutKeys(@NotNull Set<ResourceLocation> original) {
