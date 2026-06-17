@@ -34,7 +34,8 @@ public class PlayerMixin {
         if (mainStack.getItem() instanceof TieredItem) {
             Map<Relics, Integer> relics = RelicHelper.fromNbt(mainStack.getOrCreateTag());
             if (relics.containsKey(Relics.HASTE)) {
-                float hasteMultiplier = 1 - ((float)RelicHelper.getTooltipStrength(Relics.HASTE, relics.get(Relics.HASTE)) * 0.005F);
+                float hasteMultiplier = 1 + ((float)RelicHelper.getTooltipStrength(Relics.HASTE, relics.get(Relics.HASTE)) * 0.005F);
+                if (original * hasteMultiplier > 1) return 1;
                 return original * hasteMultiplier;
             }
         }
