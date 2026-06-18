@@ -4,6 +4,7 @@
   "package": "me.anticode.ascendant_arcana.client.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "AnvilScreenMixin",
     "GuiMixin",
     "ItemPropertiesMixin",
     "LocalPlayerMixin",
