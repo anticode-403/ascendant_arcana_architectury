@@ -2,7 +2,6 @@ package me.anticode.ascendant_arcana.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import com.llamalad7.mixinextras.sugar.Local;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,7 +13,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.Map;
@@ -38,9 +36,9 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
         return Math.min(a, b/2); // Restorine repairs 12.5%
     }
 
-    @ModifyArg(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;set(I)V"))
-    private int anvilDoesNotCostLevels(int value) {
-        return 0;
+    @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;set(I)V"))
+    private void anvilDoesNotCostLevels(DataSlot instance, int i) {
+        // This space intentionally left blank
     }
 
     @ModifyReturnValue(method = "mayPickup", at = @At("RETURN"))
