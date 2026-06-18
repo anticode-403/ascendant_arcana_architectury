@@ -135,14 +135,6 @@ public abstract class ItemStackMixin {
         return modifiers;
     }
 
-    @ModifyReturnValue(method = "getDestroySpeed", at = @At("RETURN"))
-    private float applySwiftnessMiningSpeedBonus(float miningSpeedMultiplier) {
-        Map<Relics, Integer> relics = RelicHelper.fromNbt(getOrCreateTag());
-        if (!relics.containsKey(Relics.HASTE)) return miningSpeedMultiplier;
-        float hasteValue = (float)RelicHelper.getTooltipStrength(Relics.HASTE, relics.get(Relics.HASTE));
-        return miningSpeedMultiplier *  (1 + (hasteValue * 0.01F));
-    }
-
     @Inject(method = "getTooltipLines", at = @At(value = "RETURN"))
     private void addRelicTooltipInfo(Player player, TooltipFlag tooltipFlag, CallbackInfoReturnable<List<Component>> cir) {
         List<Component> tooltip = cir.getReturnValue();

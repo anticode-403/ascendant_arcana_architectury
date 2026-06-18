@@ -1,7 +1,14 @@
 package me.anticode.ascendant_arcana.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
+import me.anticode.ascendant_arcana.logic.RelicHelper;
+import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.logic.RemovedRegistryEntry;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -37,6 +44,11 @@ public class EnchantmentHelperMixin {
             }
         }
         return newMap;
+    }
+    @ModifyReturnValue(method = "getBlockEfficiency", at = @At("RETURN"))
+    private static int modifyBlockEfficiency(int original, @Local(argsOnly = true)LivingEntity livingEntity) {
+        float multiplier = 1 + (RelicHelper.getTooltipStrength(Relics.HASTE, RelicHelper.getValueFromNbt(livingEntity.getMainHandItem().getOrCreateTag(), Relics.HASTE)) * 0.1F);
+        return Mth.floor(original * multiplier);
     }
 
     @Inject(method = "selectEnchantment", at = @At(value = "RETURN", ordinal = 1))
