@@ -37,6 +37,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
     private static final ResourceLocation OVERLAYS = new ResourceLocation(AscendantArcana.MOD_ID, "textures/gui/container/enchanting_table_elements.png");
     List<EnchantmentRecipe> recipes = new ArrayList<>();
     private final List<EnchantmentTile> enchantments = new ArrayList<>();
+    private List<Enchantment> unlockedTreasures = new ArrayList<>();
     private LetsGoEnchantingButton enchantingButton;
     private boolean enchantingButtonEnabled = false;
     private float scrollPosition;
@@ -99,6 +100,11 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
         if (getMenu().enchantmentPower[0] != lastPower) {
             update = true;
             lastPower = getMenu().enchantmentPower[0];
+        }
+
+        if (getMenu().unlockedTreasures.size() != unlockedTreasures.size()) {
+            update = true;
+            unlockedTreasures = new ArrayList<>(unlockedTreasures);
         }
 
         if (!update && updateEnchantments) update = true;
