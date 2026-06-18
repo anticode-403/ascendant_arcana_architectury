@@ -45,6 +45,13 @@ public class EnchantmentHelperMixin {
         }
         return newMap;
     }
+
+    @ModifyReturnValue(method = "getItemEnchantmentLevel", at = @At("RETURN"))
+    private static int disableDisabledEnchantmentFunctionality(int original, @Local(argsOnly = true) Enchantment enchantment) {
+        if (RemovedRegistryEntry.getFromEnchantment(enchantment) != null) return 0;
+        return original;
+    }
+
     @ModifyReturnValue(method = "getBlockEfficiency", at = @At("RETURN"))
     private static int modifyBlockEfficiency(int original, @Local(argsOnly = true)LivingEntity livingEntity) {
         // This is technically a 500% increase, rather than 50% but let's be real the way that this works is stupid anyways.
