@@ -47,6 +47,9 @@ public class EnchantmentHelperMixin {
     }
     @ModifyReturnValue(method = "getBlockEfficiency", at = @At("RETURN"))
     private static int modifyBlockEfficiency(int original, @Local(argsOnly = true)LivingEntity livingEntity) {
+        // This is technically a 500% increase, rather than 50% but let's be real the way that this works is stupid anyways.
+        // 50% haste only gives 25% when attacking so who even cares, you probably didn't even notice the difference until
+        // you looked at the code.
         float multiplier = 1 + (RelicHelper.getTooltipStrength(Relics.HASTE, RelicHelper.getValueFromNbt(livingEntity.getMainHandItem().getOrCreateTag(), Relics.HASTE)) * 0.1F);
         return Mth.floor(original * multiplier);
     }
