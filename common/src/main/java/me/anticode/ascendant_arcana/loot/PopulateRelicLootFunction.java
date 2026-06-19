@@ -42,7 +42,7 @@ public class PopulateRelicLootFunction extends LootItemConditionalFunction{
             if (RelicHelper.canApplyRelic(stack, relic, str)) relics.add(relic);
         }
         stack.getOrCreateTag().putInt(RelicItem.RELIC_STRENGTH_KEY, str);
-        stack.getOrCreateTag().putInt(RelicItem.RELIC_TYPE_KEY, Relics.toId(relics.get(random.nextInt(0, relics.size() - 1))));
+        stack.getOrCreateTag().putInt(RelicItem.RELIC_TYPE_KEY, Relics.toId(relics.get(random.nextIntBetweenInclusive(0, relics.size() - 1))));
         return stack;
     }
 
