@@ -11,12 +11,16 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 
@@ -51,5 +55,17 @@ public class PlayerMixin {
         int strength = Math.max((int)amount / (duration / 20), 1);
         ((LivingEntity)(Object)this).forceAddEffect(new MobEffectInstance(AArcanaMobEffects.ECHOING_DAMAGE.get(), duration + 20, strength), (LivingEntity)(Object)this);
         ci.cancel();
+    }
+
+    @Inject(method = "getProjectile", at = @At("HEAD"), cancellable = true)
+    private void getProjectileType(ItemStack itemStack, CallbackInfoReturnable<ItemStack> cir) {
+        if (itemStack.getItem() instanceof ProjectileWeaponItem weapon) {
+            int infinityLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, itemStack);
+            if (infinityLevel == 0) return;
+
+            ItemStack arrowStack = Items.ARROW.getDefaultInstance();
+            if (weapon.getAllSupportedProjectiles().test(arrowStack) || weapon.getSupportedHeldProjectiles().test(arrowStack))
+                cir.setReturnValue(arrowStack);
+        }
     }
 }
