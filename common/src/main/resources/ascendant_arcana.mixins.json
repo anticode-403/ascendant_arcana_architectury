@@ -18,6 +18,7 @@
     "EnchantingTableBlockMixin",
     "EnchantmentHelperMixin",
     "EnchantmentMixin",
+    "EnchantRandomlyFunctionSerializerMixin",
     "EnchnatedBookItemMixin",
     "EntityMixin",
     "ExperienceOrbMixin",
