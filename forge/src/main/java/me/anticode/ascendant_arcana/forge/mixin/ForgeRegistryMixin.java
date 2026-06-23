@@ -1,7 +1,7 @@
 package me.anticode.ascendant_arcana.forge.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import me.anticode.ascendant_arcana.AscendantArcana;
+import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -30,10 +30,9 @@ public abstract class ForgeRegistryMixin<T> {
 
     @ModifyReturnValue(method = "getKeys", at = @At("RETURN"), remap = false)
     private @NotNull Set<ResourceLocation> filterOutKeys(@NotNull Set<ResourceLocation> original) {
-        AscendantArcana.initializeConfigIfNull();
         if (!key.equals(Registries.ENCHANTMENT))
             return original;
-        return original.stream().filter(resourceLocation -> !AscendantArcana.config.disabled_enchantments.contains(resourceLocation.toString())).collect(Collectors.toUnmodifiableSet());
+        return original.stream().filter(AArcanaEnchantmentHelper::isEnchantmentEnabled).collect(Collectors.toUnmodifiableSet());
     }
 
     @SuppressWarnings("unchecked")
@@ -41,14 +40,14 @@ public abstract class ForgeRegistryMixin<T> {
     private Set<ResourceKey<T>> filterOutResourceKeys(@NotNull Set<ResourceKey<T>> original) {
         if (!key.equals(Registries.ENCHANTMENT))
             return original;
-        return original.stream().filter(key -> !AscendantArcana.config.disabled_enchantments.contains(key.location().toString())).collect(Collectors.toUnmodifiableSet());
+        return original.stream().filter(key -> AArcanaEnchantmentHelper.isEnchantmentEnabled(key.location())).collect(Collectors.toUnmodifiableSet());
     }
 
     @ModifyReturnValue(method = "getValues", at = @At("RETURN"), remap = false)
     private Collection<T> filterOutValues(@NotNull Collection<T> original) {
         if (!key.equals(Registries.ENCHANTMENT))
             return original;
-        return original.stream().filter(value -> !AscendantArcana.config.disabled_enchantments.contains(key.location().toString())).collect(Collectors.toUnmodifiableSet());
+        return original.stream().filter(value -> AArcanaEnchantmentHelper.isEnchantmentEnabled(key.location())).collect(Collectors.toUnmodifiableSet());
     }
 
     @SuppressWarnings("unchecked")
@@ -56,7 +55,7 @@ public abstract class ForgeRegistryMixin<T> {
     private Set<Map.Entry<ResourceKey<T>, T>> filterEntries(@NotNull Set<Map.Entry<ResourceKey<T>, T>> original) {
         if (!key.equals(Registries.ENCHANTMENT))
             return original;
-        return original.stream().filter(value -> !AscendantArcana.config.disabled_enchantments.contains(key.location().toString())).collect(Collectors.toUnmodifiableSet());
+        return original.stream().filter(value -> AArcanaEnchantmentHelper.isEnchantmentEnabled(key.location())).collect(Collectors.toUnmodifiableSet());
     }
 
     @SuppressWarnings({"unchecked"})
@@ -70,7 +69,7 @@ public abstract class ForgeRegistryMixin<T> {
         while (original.hasNext()) {
             T it = original.next();
             Optional<Holder<T>> holder = getHolder(it);
-            if (holder.isPresent() && !AscendantArcana.config.disabled_enchantments.contains(ForgeRegistries.ENCHANTMENTS.getKey(((Holder<Enchantment>)holder.get()).value()).toString())) {
+            if (holder.isPresent() && AArcanaEnchantmentHelper.isEnchantmentEnabled(ForgeRegistries.ENCHANTMENTS.getKey(((Holder<Enchantment>)holder.get()).value()))) {
                 list.add(it);
             }
         }

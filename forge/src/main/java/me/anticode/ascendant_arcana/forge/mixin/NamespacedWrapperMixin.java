@@ -1,8 +1,13 @@
 package me.anticode.ascendant_arcana.forge.mixin;
 
-import me.anticode.ascendant_arcana.AscendantArcana;
+import com.mojang.serialization.Lifecycle;
+import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import me.anticode.ascendant_arcana.logic.RemovedRegistryEntry;
+import net.minecraft.core.Holder;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -17,10 +22,17 @@ import java.util.Optional;
 
 @Mixin(NamespacedWrapper.class)
 public abstract class NamespacedWrapperMixin<T> {
+
+    @Inject(method = "registerMapping(ILnet/minecraft/resources/ResourceKey;Ljava/lang/Object;Lcom/mojang/serialization/Lifecycle;)Lnet/minecraft/core/Holder$Reference;", at = @At("HEAD"))
+    private void disableEnchantments(int i, ResourceKey<T> registryKey, T object, Lifecycle lifecycle, CallbackInfoReturnable<Holder.Reference<T>> cir) {
+        if ((Object) this != BuiltInRegistries.ENCHANTMENT) return;
+        if (AArcanaEnchantmentHelper.isEnchantmentEnabled(registryKey.location())) return;
+        RemovedRegistryEntry.REMOVED_ENTRIES.add(new RemovedRegistryEntry((Enchantment) object, registryKey.location(), i));
+    }
+
     @Inject(method = "getOptional", at = @At("HEAD"), cancellable = true)
     private void replaceGetRaw(ResourceLocation key, CallbackInfoReturnable<Optional<T>> cir) {
-        AscendantArcana.initializeConfigIfNull();
-        if (AscendantArcana.config.disabled_enchantments.contains(key.toString())) cir.setReturnValue(Optional.empty());
+        if (!AArcanaEnchantmentHelper.isEnchantmentEnabled(key)) cir.setReturnValue(Optional.empty());
     }
 
     @Inject(method = "get(Lnet/minecraft/resources/ResourceKey;)Ljava/lang/Object;", at = @At("HEAD"), cancellable = true)
