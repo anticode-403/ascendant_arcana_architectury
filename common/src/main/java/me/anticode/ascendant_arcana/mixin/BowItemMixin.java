@@ -12,6 +12,7 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,6 +34,8 @@ public class BowItemMixin {
             ItemStack stack, Level world, LivingEntity user, int remainingUseTicks,
             CallbackInfo ci, @Local AbstractArrow projectile, @Local float f) {
         ItemHelper.applyPpeRelicsAndEnchantments(projectile, stack);
+        int piercing = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, stack);
+        projectile.setPierceLevel((byte) piercing);
 
         RandomSource random = RandomSource.createNewThreadLocalInstance();
         int inaccuracy = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.INACCURACY_CURSE.get(), stack);

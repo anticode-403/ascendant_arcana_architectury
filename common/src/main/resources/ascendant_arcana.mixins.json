@@ -9,6 +9,7 @@
     "AbstractArrowMixin",
     "AbstractFurnaceBlockEntityAccessor",
     "AnvilMenuMixin",
+    "ArrowPiercingEnchantmentMixin",
     "BlockMixin",
     "BowItemMixin",
     "CreativeModeTabItemDisplayBuilderMixin",
