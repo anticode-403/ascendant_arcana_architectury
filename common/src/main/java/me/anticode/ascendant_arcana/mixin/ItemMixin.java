@@ -28,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ItemMixin {
     @Inject(method = "onUseTick", at = @At("HEAD"))
     private void cleanseShield(Level level, LivingEntity user, ItemStack stack, int remainingUseTicks, CallbackInfo ci) {
+        if (level.isClientSide) return;
         if (!((Object) this instanceof ShieldItem && user instanceof Player player)) return;
         if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.CLEANSE.get(), stack) > 0) {
             int usageTicks = 72000 - remainingUseTicks;
