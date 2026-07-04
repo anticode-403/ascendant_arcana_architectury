@@ -3,9 +3,7 @@ package me.anticode.ascendant_arcana.enchantment;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
-import net.minecraft.world.item.enchantment.MultiShotEnchantment;
+import net.minecraft.world.item.enchantment.*;
 
 public class Rocketry extends Enchantment {
     public Rocketry() {
@@ -24,7 +22,7 @@ public class Rocketry extends Enchantment {
 
     @Override
     protected boolean checkCompatibility(Enchantment other) {
-        return super.checkCompatibility(other) && !(other instanceof MultiShotEnchantment) && !(other instanceof RejuvenatingShot);
+        return super.checkCompatibility(other) && !(other instanceof MultiShotEnchantment) && !(other instanceof RejuvenatingShot) && !(other instanceof ArrowPiercingEnchantment) && !(other instanceof ArrowInfiniteEnchantment);
     }
 
     @Override
