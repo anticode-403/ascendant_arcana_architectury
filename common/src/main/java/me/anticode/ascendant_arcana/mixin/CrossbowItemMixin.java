@@ -2,6 +2,7 @@ package me.anticode.ascendant_arcana.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import me.anticode.ascendant_arcana.api.EnchantedRocket;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
@@ -11,6 +12,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
@@ -46,14 +48,25 @@ public class CrossbowItemMixin {
         RandomSource random = RandomSource.createNewThreadLocalInstance();
         if (projectile.getOwner() instanceof LivingEntity livingOwner) {
             int inaccuracy = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.INACCURACY_CURSE.get(), itemStack);
-            if (inaccuracy == 0) return;
-            float base_yaw = -projectile.getYRot();
-            float base_pitch = -projectile.getXRot();
-            float rand_pitch = random.nextFloat() * inaccuracy * 2f;
-            float rand_yaw = random.nextFloat() * inaccuracy * 2f;
-            float pitch = base_pitch + (random.nextBoolean() ? rand_pitch : -rand_pitch);
-            float yaw = base_yaw + (random.nextBoolean() ? rand_yaw : -rand_yaw);
-            projectile.shootFromRotation(livingOwner, pitch, yaw, 0.0f, speed, divergence);
+            if (inaccuracy > 0) {
+                float base_yaw = -projectile.getYRot();
+                float base_pitch = -projectile.getXRot();
+                float rand_pitch = random.nextFloat() * inaccuracy * 2f;
+                float rand_yaw = random.nextFloat() * inaccuracy * 2f;
+                float pitch = base_pitch + (random.nextBoolean() ? rand_pitch : -rand_pitch);
+                float yaw = base_yaw + (random.nextBoolean() ? rand_yaw : -rand_yaw);
+                projectile.shootFromRotation(livingOwner, pitch, yaw, 0.0f, speed, divergence);
+            }
+
+            int rocketry = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.ROCKETRY.get(), itemStack);
+            if (rocketry > 0) {
+                if (projectile instanceof FireworkRocketEntity rocket) {
+                    EnchantedRocket enchantedRocket = (EnchantedRocket) rocket;
+                    enchantedRocket.ascendant_arcana$setRocketryLevel(rocketry);
+                    double damageMultiplier = 1 + RelicHelper.getTooltipStrength(Relics.DAMAGE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.DAMAGE))*0.01;
+                    enchantedRocket.asecndant_arcana$setDamageMultiplier((float) damageMultiplier);
+                }
+            }
         }
     }
 
