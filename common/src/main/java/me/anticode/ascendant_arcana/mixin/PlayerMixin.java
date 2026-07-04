@@ -6,26 +6,37 @@ import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.logic.Relics;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Abilities;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ProjectileWeaponItem;
-import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
+import java.util.function.Predicate;
 
 @Mixin(Player.class)
 public class PlayerMixin {
+    @Shadow
+    @Final
+    private Inventory inventory;
+
+    @Shadow
+    @Final
+    private Abilities abilities;
+
     @ModifyReturnValue(method = "getXpNeededForNextLevel", at = @At("RETURN"))
     private int xp(int original) {
         return Math.max(0, AscendantArcana.config.xp_per_level);
@@ -61,11 +72,38 @@ public class PlayerMixin {
     private void getProjectileType(ItemStack itemStack, CallbackInfoReturnable<ItemStack> cir) {
         if (itemStack.getItem() instanceof ProjectileWeaponItem weapon) {
             int infinityLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, itemStack);
-            if (infinityLevel == 0) return;
+            if (infinityLevel > 0) {
+                ItemStack arrowStack = Items.ARROW.getDefaultInstance();
+                if (weapon.getAllSupportedProjectiles().test(arrowStack) || weapon.getSupportedHeldProjectiles().test(arrowStack)) {
+                    cir.setReturnValue(arrowStack);
+                    return;
+                }
+            }
+            if (itemStack.getItem() instanceof CrossbowItem) {
+                Predicate<ItemStack> predicate = (item) -> item.is(ItemTags.ARROWS);
+                ItemStack creativeItemStack = new ItemStack(Items.ARROW);
 
-            ItemStack arrowStack = Items.ARROW.getDefaultInstance();
-            if (weapon.getAllSupportedProjectiles().test(arrowStack) || weapon.getSupportedHeldProjectiles().test(arrowStack))
-                cir.setReturnValue(arrowStack);
+                int rocketryLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.ROCKETRY.get(), itemStack);
+                if (rocketryLevel > 0) {
+                    predicate = (item) -> item.is(Items.FIREWORK_ROCKET);
+                    creativeItemStack = new ItemStack(Items.FIREWORK_ROCKET);
+                }
+
+                ItemStack heldStack = ProjectileWeaponItem.getHeldProjectile((LivingEntity) (Object) this, predicate);
+                if (!heldStack.isEmpty()) {
+                    cir.setReturnValue(heldStack);
+                } else {
+                    for(int i = 0; i < inventory.getContainerSize(); ++i) {
+                        ItemStack inventoryItem = inventory.getItem(i);
+                        if (predicate.test(inventoryItem)) {
+                            cir.setReturnValue(inventoryItem);
+                            return;
+                        }
+                    }
+
+                    cir.setReturnValue(abilities.instabuild ? creativeItemStack : ItemStack.EMPTY);
+                }
+            }
         }
     }
 }
