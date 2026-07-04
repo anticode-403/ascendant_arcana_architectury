@@ -54,9 +54,9 @@ public class ItemMixin {
                 for(int i = 1; i < 17; ++i) {
                     double delta = ((double)i) / 17;
                     Vec3 particlePos = startPos.lerp(endPos, delta);
-                    for (Entity entity : level.getEntities(player, new AABB(particlePos.subtract(0.5, 0.5, 0.5), particlePos.add(0.5, 0.5, 0.5)), (entity) -> entity instanceof LivingEntity)) {
+                    for (Entity entity : level.getEntities(player, new AABB(particlePos.subtract(0.75, 0.75, 0.75), particlePos.add(0.75, 0.75, 0.75)), (entity) -> entity instanceof LivingEntity)) {
                         LivingEntity livingEntity = (LivingEntity)entity;
-                        livingEntity.hurt(level.damageSources().sonicBoom(player), 6);
+                        livingEntity.hurt(level.damageSources().sonicBoom(player), 4);
                     }
                     if (level instanceof ServerLevel serverWorld) serverWorld.sendParticles(ParticleTypes.SONIC_BOOM, particlePos.x, particlePos.y, particlePos.z, 1, 0.0F, 0.0F, 0.0F, 0.0F);
                 }
