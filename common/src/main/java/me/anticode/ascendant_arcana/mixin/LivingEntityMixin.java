@@ -1,6 +1,8 @@
 package me.anticode.ascendant_arcana.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import me.anticode.ascendant_arcana.enchantment.HellWalker;
 import me.anticode.ascendant_arcana.enchantment.TickableAttributeEnchantment;
@@ -14,8 +16,10 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -77,6 +81,9 @@ public abstract class LivingEntityMixin {
     @Shadow
     protected ItemStack useItem;
 
+    @Shadow
+    public abstract LivingEntity getLastAttacker();
+
     @Unique
     private Map<AArcanaEnchantments.IndirectHeartDamageTypes, Integer> heartAttackers = new EnumMap<>(AArcanaEnchantments.IndirectHeartDamageTypes.class);
 
@@ -132,6 +139,13 @@ public abstract class LivingEntityMixin {
         if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.HELLWALKER.get(), livingEntity) > 0) {
             HellWalker.freezeLava(livingEntity, livingEntity.level(), pos);
         }
+    }
+
+
+    @WrapOperation(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSource;is(Lnet/minecraft/tags/TagKey;)Z"))
+    private boolean bypassCooldownSameAttacker(DamageSource instance, TagKey<DamageType> tag, Operation<Boolean> original) {
+        if (tag.equals(DamageTypeTags.BYPASSES_COOLDOWN)) return original.call(instance, tag) || (instance.is(DamageTypes.ARROW) && Objects.equals(instance.getEntity(), getLastAttacker()));
+        else return original.call(instance, tag);
     }
 
     @ModifyReturnValue(method = "getDamageAfterMagicAbsorb", at = @At("RETURN"))
