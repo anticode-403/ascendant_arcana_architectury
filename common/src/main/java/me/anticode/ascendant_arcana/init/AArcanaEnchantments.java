@@ -27,6 +27,7 @@ public class AArcanaEnchantments {
     public static RegistrySupplier<Enchantment> REPEATING = register(new Repeating(), "repeating");
     public static RegistrySupplier<Enchantment> RICOCHET = register(new Ricochet(), "ricochet");
     public static RegistrySupplier<Enchantment> ROCKETRY = register(new Rocketry(), "rocketry");
+    public static RegistrySupplier<Enchantment> SALVO = register(new Salvo(), "salvo");
     public static RegistrySupplier<Enchantment> SMELTING = register(new Smelting(), "smelting");
     public static RegistrySupplier<Enchantment> SONIC_BLAST = register(new SonicBlast(), "sonic_blast");
     public static RegistrySupplier<Enchantment> SOUL_BURST = register(new SoulBurst(), "soul_burst");

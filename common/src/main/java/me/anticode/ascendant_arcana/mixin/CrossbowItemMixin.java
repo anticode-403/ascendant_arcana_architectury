@@ -60,14 +60,35 @@ public class CrossbowItemMixin {
         throw new UnsupportedOperationException("Implemented via mixin");
     }
 
+    @Shadow
+    private static void shootProjectile(Level level, LivingEntity livingEntity, InteractionHand interactionHand, ItemStack itemStack, ItemStack itemStack2, float f, boolean bl, float g, float h, float i) {
+        throw new UnsupportedOperationException("Implemented via mixin");
+    }
+
+    @Shadow
+    private static List<ItemStack> getChargedProjectiles(ItemStack itemStack) {
+        throw new UnsupportedOperationException("Implemented via mixin");
+    }
+
+    @Shadow
+    private static float getRandomShotPitch(boolean bl, RandomSource randomSource) {
+        throw new UnsupportedOperationException("Implemented via mixin");
+    }
+
+    @Shadow
+    private static float getShootingPower(ItemStack itemStack) {
+        throw new UnsupportedOperationException("Implemented via mixin");
+    }
+
     @WrapOperation(
             method = "use",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;isCharged(Lnet/minecraft/world/item/ItemStack;)Z")
     )
     private boolean loadMultiple(ItemStack itemStack, Operation<Boolean> original, @Local(argsOnly = true) Player player) {
         int repeatingLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), itemStack);
-        if (repeatingLevel == 0) return original.call(itemStack);
-        int maxProjectiles = repeatingLevel * 2;
+        int salvoLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SALVO.get(), itemStack);
+        if (repeatingLevel + salvoLevel == 0) return original.call(itemStack);
+        int maxProjectiles = salvoLevel != 0 ? 2 + salvoLevel * 2 : repeatingLevel * 2;
         if (getChargedProjectils(itemStack).size() >= maxProjectiles) return original.call(itemStack);
         if (player.isSecondaryUseActive()) return false;
         return original.call(itemStack);
@@ -81,8 +102,16 @@ public class CrossbowItemMixin {
     }
 
     @WrapOperation(method = "performShooting", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z"))
-    private static boolean onlyFireOnceWithoutMultishot(ItemStack instance, Operation<Boolean> original, @Local(argsOnly = true) ItemStack crossbowStack, @Local int i) {
+    private static boolean onlyFireOnceWithoutMultishot(ItemStack instance, Operation<Boolean> original, @Local(argsOnly = true) ItemStack crossbowStack, @Local int i,
+            @Local(argsOnly = true) Level level, @Local(argsOnly = true) LivingEntity livingEntity, @Local(argsOnly = true) InteractionHand interactionHand, @Local List<ItemStack> ammo) {
         if (i > 0 && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, crossbowStack) == 0) {
+            if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SALVO.get(), crossbowStack) > 0) {
+                ItemStack projectileStack = ammo.get(i);
+                boolean bl = livingEntity instanceof Player && ((Player)livingEntity).getAbilities().instabuild;
+                if (!projectileStack.isEmpty()) {
+                    shootProjectile(level, livingEntity, interactionHand, crossbowStack, projectileStack, getRandomShotPitch(livingEntity.getRandom().nextBoolean(), livingEntity.getRandom()), bl, getShootingPower(projectileStack), 1F, 0.0F);
+                }
+            }
             return true;
         }
         else return original.call(instance);
@@ -90,7 +119,7 @@ public class CrossbowItemMixin {
 
     @Inject(method = "releaseUsing", at = @At("HEAD"), cancellable = true)
     private void addAdditionalArrows(ItemStack itemStack, Level level, LivingEntity livingEntity, int i, CallbackInfo ci) {
-        if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), itemStack) == 0) return;
+        if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), itemStack) + EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SALVO.get(), itemStack) == 0) return;
         int j = getChargeDuration(itemStack) - i;
         float f = getPowerForTime(j, itemStack);
         if (f >= 1 && isCharged(itemStack) && tryLoadProjectiles(livingEntity, itemStack)) {
@@ -129,6 +158,7 @@ public class CrossbowItemMixin {
         RandomSource random = RandomSource.createNewThreadLocalInstance();
         if (projectile.getOwner() instanceof LivingEntity livingOwner) {
             int inaccuracy = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.INACCURACY_CURSE.get(), itemStack);
+            if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SALVO.get(), itemStack) > 0) inaccuracy += 4;
             if (inaccuracy > 0) {
                 float base_yaw = -projectile.getYRot();
                 float base_pitch = -projectile.getXRot();
@@ -154,13 +184,15 @@ public class CrossbowItemMixin {
     @Redirect(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;getPowerForTime(ILnet/minecraft/world/item/ItemStack;)F"))
     private float modifyGetPower(int i, ItemStack itemStack) {
         float hasteMultiplier = 1 + (float) RelicHelper.getTooltipStrength(Relics.HASTE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.HASTE)) * 0.005F;
-        return getPowerForTime(Mth.ceil(i * hasteMultiplier), itemStack);
+        float multiLoadMultiplier = isCharged(itemStack) ? 1.5F : 1F;
+        return getPowerForTime(Mth.ceil(i * hasteMultiplier * multiLoadMultiplier), itemStack);
     }
 
     @ModifyReturnValue(method = "getChargeDuration", at = @At(value = "RETURN"))
     private static int modifyChargeDuration(int i, ItemStack itemStack) {
         float hasteMultiplier = 1 - (float) RelicHelper.getTooltipStrength(Relics.HASTE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.HASTE)) * 0.005F;
-        return Mth.ceil(i * hasteMultiplier);
+        float multiLoadMultiplier = isCharged(itemStack) ? 0.5F : 1F;
+        return Mth.ceil(i * hasteMultiplier * multiLoadMultiplier);
     }
 
     @Unique

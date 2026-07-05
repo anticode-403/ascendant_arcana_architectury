@@ -36,6 +36,8 @@ public class ItemHelper {
         double damageMultiplier = 1 + RelicHelper.getTooltipStrength(Relics.DAMAGE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.DAMAGE))*0.01;
         Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(itemStack);
 
+        if (enchantments.getOrDefault(AArcanaEnchantments.SALVO.get(), 0) != 0) damageMultiplier -= 0.25F;
+
         int archersGambitLevel = enchantments.getOrDefault(AArcanaEnchantments.ARCHERS_GAMBIT.get(), 0);
         int evokersWrathLevel = enchantments.getOrDefault(AArcanaEnchantments.EVOKERS_WRATH.get(), 0);
         int rejuvenatingShotLevel = enchantments.getOrDefault(AArcanaEnchantments.REJUVENATING_SHOT.get(), 0);
