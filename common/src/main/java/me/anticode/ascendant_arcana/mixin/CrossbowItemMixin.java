@@ -89,14 +89,14 @@ public class CrossbowItemMixin {
         int salvoLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SALVO.get(), itemStack);
         if (repeatingLevel + salvoLevel == 0) return original.call(itemStack);
         int maxProjectiles = salvoLevel != 0 ? 2 + salvoLevel * 2 : repeatingLevel * 2;
-        if (getChargedProjectils(itemStack).size() >= maxProjectiles) return original.call(itemStack);
+        if (getChargedProjectiles(itemStack).size() >= maxProjectiles) return original.call(itemStack);
         if (player.isSecondaryUseActive()) return false;
         return original.call(itemStack);
     }
 
     @WrapOperation(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;setCharged(Lnet/minecraft/world/item/ItemStack;Z)V"))
     private void setCharged(ItemStack itemStack, boolean bl, Operation<Void> original) {
-        if (getChargedProjectils(itemStack).isEmpty()) {
+        if (getChargedProjectiles(itemStack).isEmpty()) {
             original.call(itemStack, bl);
         }
     }
@@ -193,17 +193,5 @@ public class CrossbowItemMixin {
         float hasteMultiplier = 1 - (float) RelicHelper.getTooltipStrength(Relics.HASTE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.HASTE)) * 0.005F;
         float multiLoadMultiplier = isCharged(itemStack) ? 0.5F : 1F;
         return Mth.ceil(i * hasteMultiplier * multiLoadMultiplier);
-    }
-
-    @Unique
-    private List<ItemStack> getChargedProjectils(ItemStack itemStack) {
-        CompoundTag compoundTag = itemStack.getOrCreateTag();
-        ListTag listTag;
-        if (compoundTag.contains("ChargedProjectiles", 9)) {
-            listTag = compoundTag.getList("ChargedProjectiles", 10);
-        } else {
-            listTag = new ListTag();
-        }
-        return listTag.stream().map((entry) -> ItemStack.of((CompoundTag)entry)).toList();
     }
 }
