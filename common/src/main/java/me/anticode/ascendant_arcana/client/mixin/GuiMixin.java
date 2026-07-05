@@ -1,5 +1,7 @@
 package me.anticode.ascendant_arcana.client.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -12,7 +14,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Gui.class)
@@ -24,10 +25,10 @@ public abstract class GuiMixin {
     @Final
     private Minecraft minecraft;
 
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;hasExperience()Z"))
-    private boolean doesNotHaveXpBar(MultiPlayerGameMode manager) {
+    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;hasExperience()Z"))
+    private boolean doesNotHaveXpBar(MultiPlayerGameMode instance, Operation<Boolean> original) {
         if (AscendantArcana.config.disable_xp && AscendantArcana.config.hide_xp_bar) return false;
-        return manager.hasExperience();
+        return original.call(instance);
     }
 
     @Inject(method = "renderExperienceBar", at = @At("HEAD"), cancellable = true)
@@ -45,33 +46,33 @@ public abstract class GuiMixin {
         if (AscendantArcana.config.disable_xp) ci.cancel();
     }
 
-    @Redirect(method = "renderHearts", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderHeart(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Gui$HeartType;IIIZZ)V"))
-    void moveHealthBarDown(Gui instance, GuiGraphics context, Gui.HeartType type, int x, int y, int v, boolean blinking, boolean halfHeart) {
+    @WrapOperation(method = "renderHearts", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderHeart(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Gui$HeartType;IIIZZ)V"))
+    void moveHealthBarDown(Gui instance, GuiGraphics context, Gui.HeartType type, int x, int y, int v, boolean blinking, boolean halfHeart, Operation<Void> original) {
         if (!AscendantArcana.config.disable_xp || !AscendantArcana.config.hide_xp_bar || (minecraft.player != null && minecraft.player.jumpableVehicle() != null)) {
-            renderHeart(context, type, x, y, v, blinking, halfHeart);
+            original.call(instance, context, type, x, y, v, blinking, halfHeart);
             return;
         }
 
-        renderHeart(context, type, x, y + 7, v, blinking, halfHeart);
+        original.call(instance, context, type, x, y + 7, v, blinking, halfHeart);
     }
 
-    @Redirect(method = "renderPlayerHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"))
-    void moveHungerBarDown(GuiGraphics instance, ResourceLocation texture, int x, int y, int u, int v, int width, int height) {
+    @WrapOperation(method = "renderPlayerHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"))
+    void moveHungerBarDown(GuiGraphics instance, ResourceLocation texture, int x, int y, int u, int v, int width, int height, Operation<Void> original) {
         if (!AscendantArcana.config.disable_xp || !AscendantArcana.config.hide_xp_bar || (minecraft.player != null && minecraft.player.jumpableVehicle() != null)) {
-            instance.blit(texture, x, y, u, v, width, height);
+            original.call(instance, texture, x, y, u, v, width, height);
             return;
         }
 
-        instance.blit(texture, x, y + 7, u, v, width, height);
+        original.call(instance, texture, x, y + 7, u, v, width, height);
     }
 
-    @Redirect(method = "renderVehicleHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"))
-    void moveAirBarDown(GuiGraphics instance, ResourceLocation texture, int x, int y, int u, int v, int width, int height) {
+    @WrapOperation(method = "renderVehicleHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"))
+    void moveAirBarDown(GuiGraphics instance, ResourceLocation texture, int x, int y, int u, int v, int width, int height, Operation<Void> original) {
         if (!AscendantArcana.config.disable_xp || !AscendantArcana.config.hide_xp_bar || (minecraft.player != null && minecraft.player.jumpableVehicle() != null)) {
-            instance.blit(texture, x, y, u, v, width, height);
+            original.call(instance, texture, x, y, u, v, width, height);
             return;
         }
 
-        instance.blit(texture, x, y+7, u, v, width, height);
+        original.call(instance, texture, x, y+7, u, v, width, height);
     }
 }
