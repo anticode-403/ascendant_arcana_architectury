@@ -3,7 +3,6 @@ package me.anticode.ascendant_arcana.enchantment;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.ArrowPiercingEnchantment;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
@@ -24,7 +23,7 @@ public class Ricochet extends Enchantment {
 
     @Override
     protected boolean checkCompatibility(Enchantment other) {
-        return super.checkCompatibility(other) && !(other instanceof ArrowPiercingEnchantment) && !(other instanceof RejuvenatingShot);
+        return super.checkCompatibility(other) && !(other instanceof Miasma) && !(other instanceof RejuvenatingShot);
     }
 
     @Override
