@@ -3,11 +3,16 @@ package me.anticode.ascendant_arcana.client.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import me.anticode.ascendant_arcana.AscendantArcana;
+import me.anticode.ascendant_arcana.api.CrossbowAccess;
+import me.anticode.ascendant_arcana.logic.ItemHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,6 +26,15 @@ public abstract class GuiMixin {
     @Shadow
     @Final
     private Minecraft minecraft;
+
+    @Shadow
+    private int screenWidth;
+
+    @Shadow
+    private int screenHeight;
+
+    @Shadow
+    public abstract Font getFont();
 
     @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;hasExperience()Z"))
     private boolean doesNotHaveXpBar(MultiPlayerGameMode instance, Operation<Boolean> original) {
@@ -71,5 +85,26 @@ public abstract class GuiMixin {
         }
 
         original.call(instance, texture, x, y+7, u, v, width, height);
+    }
+
+    @Inject(method = "renderCrosshair", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V", ordinal = 0, shift = At.Shift.AFTER))
+    void renderCrossbowAmmoIndicator(GuiGraphics guiGraphics, CallbackInfo ci) {
+        ItemStack crossbowItem = ItemStack.EMPTY;
+        assert minecraft.player != null;
+        if (minecraft.player.getMainHandItem().getItem() instanceof CrossbowItem) {
+            crossbowItem = minecraft.player.getMainHandItem();
+        }
+        else if (minecraft.player.getOffhandItem().getItem() instanceof CrossbowItem) {
+            crossbowItem = minecraft.player.getOffhandItem();
+        }
+        if (crossbowItem.isEmpty()) return;
+        int maxProjectiles = ItemHelper.getCrossbowMaxArrows(crossbowItem);
+        int loadedProjectiles = ((CrossbowAccess) crossbowItem.getItem()).ascendant_arcana$getChargedProjectilesCount(crossbowItem);
+        int x = (screenWidth / 2) - (3 * maxProjectiles);
+        int y = (screenHeight / 2) + 16;
+        for (int i = 0; i < maxProjectiles; i++) {
+            boolean projectileLoaded = i < loadedProjectiles;
+            guiGraphics.blit(new ResourceLocation(AscendantArcana.MOD_ID, "textures/gui/hud/crossbow_indicator.png"), x + (i * 6), y, 0, projectileLoaded ? 4 : 0, 0, 4, 4, 16, 16);
+        }
     }
 }

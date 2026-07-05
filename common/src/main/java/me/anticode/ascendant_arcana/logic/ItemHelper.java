@@ -7,9 +7,11 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +32,14 @@ public class ItemHelper {
                         consumer.accept(enchantment, stack, j));
             }
         }
+    }
+
+    public static int getCrossbowMaxArrows(ItemStack crossbowStack) {
+        if (!(crossbowStack.getItem() instanceof CrossbowItem)) return 0;
+        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, crossbowStack) > 0) return 3;
+        int repeatingLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), crossbowStack);
+        int salvoLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SALVO.get(), crossbowStack);
+        return salvoLevel != 0 ? 2 + salvoLevel * 2 : repeatingLevel * 2;
     }
 
     public static void applyPpeRelicsAndEnchantments(AbstractArrow abstractArrow, ItemStack itemStack) {

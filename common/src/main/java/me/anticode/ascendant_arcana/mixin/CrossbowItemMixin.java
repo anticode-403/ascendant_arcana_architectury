@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import me.anticode.ascendant_arcana.api.CrossbowAccess;
 import me.anticode.ascendant_arcana.api.EnchantedRocket;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
@@ -28,7 +29,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -38,7 +38,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(value = CrossbowItem.class, priority = 1500)
-public class CrossbowItemMixin {
+public class CrossbowItemMixin implements CrossbowAccess {
     @Shadow
     private static float getPowerForTime(int i, ItemStack arg) {
         throw new UnsupportedOperationException("Implemented via mixin");
@@ -85,10 +85,8 @@ public class CrossbowItemMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;isCharged(Lnet/minecraft/world/item/ItemStack;)Z")
     )
     private boolean loadMultiple(ItemStack itemStack, Operation<Boolean> original, @Local(argsOnly = true) Player player) {
-        int repeatingLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), itemStack);
-        int salvoLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SALVO.get(), itemStack);
-        if (repeatingLevel + salvoLevel == 0) return original.call(itemStack);
-        int maxProjectiles = salvoLevel != 0 ? 2 + salvoLevel * 2 : repeatingLevel * 2;
+        int maxProjectiles = ItemHelper.getCrossbowMaxArrows(itemStack);
+        if (maxProjectiles == 1 || maxProjectiles == 3) return original.call(itemStack);
         if (getChargedProjectiles(itemStack).size() >= maxProjectiles) return original.call(itemStack);
         if (player.isSecondaryUseActive()) return false;
         return original.call(itemStack);
@@ -193,5 +191,10 @@ public class CrossbowItemMixin {
         float hasteMultiplier = 1 - (float) RelicHelper.getTooltipStrength(Relics.HASTE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.HASTE)) * 0.005F;
         float multiLoadMultiplier = isCharged(itemStack) ? 0.5F : 1F;
         return Mth.ceil(i * hasteMultiplier * multiLoadMultiplier);
+    }
+
+    @Override
+    public int ascendant_arcana$getChargedProjectilesCount(ItemStack itemStack) {
+        return getChargedProjectiles(itemStack).size();
     }
 }
