@@ -10,4 +10,6 @@ public interface EnchantedArrow {
     void ascendant_arcana$setRicochetLevel(int ricochetLevel);
 
     void ascendant_arcana$setHobblingShotLevel(int hobblingShotLevel);
+
+    void ascendant_arcana$setMiasmaLevel(int miasmaLevel);
 }

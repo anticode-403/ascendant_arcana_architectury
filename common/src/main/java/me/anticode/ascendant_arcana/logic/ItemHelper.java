@@ -13,6 +13,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class ItemHelper {
     public static void forEachEnchantment(Consumer consumer, ItemStack stack, boolean allowEmpty)
@@ -33,11 +34,14 @@ public class ItemHelper {
 
     public static void applyPpeRelicsAndEnchantments(AbstractArrow abstractArrow, ItemStack itemStack) {
         double damageMultiplier = 1 + RelicHelper.getTooltipStrength(Relics.DAMAGE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.DAMAGE))*0.01;
-        int archersGambitLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.ARCHERS_GAMBIT.get(), itemStack);
-        int evokersWrathLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.EVOKERS_WRATH.get(), itemStack);
-        int rejuvenatingShotLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REJUVENATING_SHOT.get(), itemStack);
-        int ricochetLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.RICOCHET.get(), itemStack);
-        int hobblingShotLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.HOBBLING_SHOT.get(), itemStack);
+        Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(itemStack);
+
+        int archersGambitLevel = enchantments.getOrDefault(AArcanaEnchantments.ARCHERS_GAMBIT.get(), 0);
+        int evokersWrathLevel = enchantments.getOrDefault(AArcanaEnchantments.EVOKERS_WRATH.get(), 0);
+        int rejuvenatingShotLevel = enchantments.getOrDefault(AArcanaEnchantments.REJUVENATING_SHOT.get(), 0);
+        int ricochetLevel = enchantments.getOrDefault(AArcanaEnchantments.RICOCHET.get(), 0);
+        int hobblingShotLevel = enchantments.getOrDefault(AArcanaEnchantments.HOBBLING_SHOT.get(), 0);
+        int miasmaLevel = enchantments.getOrDefault(AArcanaEnchantments.MIASMA.get(), 0);
 
         abstractArrow.setBaseDamage(abstractArrow.getBaseDamage() * damageMultiplier);
 
@@ -47,6 +51,7 @@ public class ItemHelper {
         enchantedArrow.ascendant_arcana$setRejuvenatingShotLevel(rejuvenatingShotLevel);
         enchantedArrow.ascendant_arcana$setRicochetLevel(ricochetLevel);
         enchantedArrow.ascendant_arcana$setHobblingShotLevel(hobblingShotLevel);
+        enchantedArrow.ascendant_arcana$setMiasmaLevel(miasmaLevel);
     }
 
     public static List<AttributeModifier> multiplyAttributeList(List<AttributeModifier> attributes, double multiplier) {

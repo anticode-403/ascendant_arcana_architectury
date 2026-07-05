@@ -1,8 +1,10 @@
 package me.anticode.ascendant_arcana.mixin;
 
+import com.google.common.collect.Sets;
 import com.llamalad7.mixinextras.sugar.Local;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import me.anticode.ascendant_arcana.api.EnchantedArrow;
+import me.anticode.ascendant_arcana.api.PotionArrow;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import net.minecraft.core.BlockPos;
@@ -18,13 +20,15 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.EvokerFangs;
-import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.*;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,6 +45,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Set;
 
 @Mixin(AbstractArrow.class)
 public abstract class AbstractArrowMixin implements EnchantedArrow {
@@ -90,7 +96,11 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
     @Unique
     private int ascendant_arcana$rejuvenatingShotLevel;
 
-    @Unique private boolean ascendant_arcana$didHitEntity = false;
+    @Unique
+    private boolean ascendant_arcana$didHitEntity = false;
+
+    @Unique
+    private int ascendant_arcana$miasmaLevel = 0;
 
     @Override
     public void ascendant_arcana$setArchersGambitLevel(int value) {
@@ -117,12 +127,18 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         this.ascendant_arcana$hobblingShotLevel = value;
     }
 
+    @Override
+    public void ascendant_arcana$setMiasmaLevel(int value) {
+        this.ascendant_arcana$miasmaLevel = value;
+    }
+
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     private void writeCustomAttributes(CompoundTag nbt, CallbackInfo ci) {
         nbt.putInt("archersGambitLevel", ascendant_arcana$archersGambitLevel);
         nbt.putInt("evokersWrathLevel", ascendant_arcana$evokersWrathLevel);
         nbt.putInt("rejuvenatingShotLevel", ascendant_arcana$rejuvenatingShotLevel);
         nbt.putInt("ricochetLevel", ascendant_arcana$ricochetLevel);
+        nbt.putInt("miasmaLevel", ascendant_arcana$miasmaLevel);
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
@@ -131,6 +147,7 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         this.ascendant_arcana$evokersWrathLevel = nbt.getInt("evokersWrathLevel");
         this.ascendant_arcana$rejuvenatingShotLevel = nbt.getInt("rejuvenatingShotLevel");
         this.ascendant_arcana$ricochetLevel = nbt.getInt("ricochetLevel");
+        this.ascendant_arcana$miasmaLevel = nbt.getInt("miasmaLevel");
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -255,6 +272,10 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
             );
             target.addEffect(newInstance);
         }
+
+        if (ascendant_arcana$miasmaLevel >= 1) {
+            ascendant_arcana$createMiasmaCloud(projectile, entityHitResult.getLocation());
+        }
     }
 
     @Redirect(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/AbstractArrow;discard()V"))
@@ -285,6 +306,10 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
             if (owner != null && owner.getEffect(AArcanaMobEffects.ARCHERS_GAMBIT.get()) != null && (ascendant_arcana$ricochetLevel == 0 || ascendant_arcana$ricochetBounces >= ascendant_arcana$ricochetLevel) && (getPierceLevel() == 0 || (piercingIgnoreEntityIds != null && piercingIgnoreEntityIds.isEmpty()))) {
                 if (!ascendant_arcana$didHitEntity) owner.removeEffect(AArcanaMobEffects.ARCHERS_GAMBIT.get());
             }
+        }
+
+        if (ascendant_arcana$miasmaLevel >= 1) {
+            ascendant_arcana$createMiasmaCloud(projectile, blockHitResult.getLocation());
         }
     }
 
@@ -337,5 +362,37 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
 
         ascendant_arcana$ricochet = false;
         ascendant_arcana$ricochetVector = null;
+    }
+
+    @Unique
+    private void ascendant_arcana$createMiasmaCloud(Projectile projectile, Vec3 location) {
+        Set<MobEffectInstance> effects = Sets.newHashSet();
+        Potion potion = Potions.EMPTY;
+        if (projectile instanceof Arrow arrow) {
+            potion = ((PotionArrow) arrow).ascendant_arcana$getPotion();
+            effects.addAll(((PotionArrow) arrow).ascendant_arcana$getEffects());
+            effects.addAll(potion.getEffects());
+        } else if (projectile instanceof SpectralArrow) {
+            effects.add(new MobEffectInstance(MobEffects.GLOWING, 200, 0));
+        }
+        if (!effects.isEmpty()) {
+            AreaEffectCloud areaEffectCloud = new AreaEffectCloud(projectile.level(), location.x, location.y, location.z);
+            Entity entity = projectile.getOwner();
+            if (entity instanceof LivingEntity) {
+                areaEffectCloud.setOwner((LivingEntity)entity);
+            }
+
+            areaEffectCloud.setRadius(ascendant_arcana$miasmaLevel * 1.5F);
+            areaEffectCloud.setRadiusOnUse(-(1 - (ascendant_arcana$miasmaLevel * 0.25F)));
+            areaEffectCloud.setWaitTime(10);
+            areaEffectCloud.setRadiusPerTick(-areaEffectCloud.getRadius() / ((float)areaEffectCloud.getDuration() / 2F * ascendant_arcana$miasmaLevel));
+            areaEffectCloud.setPotion(potion);
+
+            for(MobEffectInstance mobEffectInstance : effects) {
+                areaEffectCloud.addEffect(new MobEffectInstance(mobEffectInstance));
+            }
+
+            projectile.level().addFreshEntity(areaEffectCloud);
+        }
     }
 }
