@@ -220,6 +220,9 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         if (getPierceLevel() <= 0) {
             projectile.discard();
         }
+        if (ascendant_arcana$miasmaLevel > 0) {
+            ascendant_arcana$createMiasmaCloud(projectile, entityHitResult.getLocation());
+        }
         ci.cancel();
     }
 
