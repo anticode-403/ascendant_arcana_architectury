@@ -24,6 +24,7 @@ public class AArcanaEnchantments {
     public static RegistrySupplier<Enchantment> PINCUSHION = register(new Pincushion(), "pincushion");
     public static RegistrySupplier<Enchantment> PROTECTIVE_ECHO = register(new ProtectiveEcho(), "protective_echo");
     public static RegistrySupplier<Enchantment> REJUVENATING_SHOT = register(new RejuvenatingShot(), "rejuvenating_shot");
+    public static RegistrySupplier<Enchantment> REPEATING = register(new Repeating(), "repeating");
     public static RegistrySupplier<Enchantment> RICOCHET = register(new Ricochet(), "ricochet");
     public static RegistrySupplier<Enchantment> ROCKETRY = register(new Rocketry(), "rocketry");
     public static RegistrySupplier<Enchantment> SMELTING = register(new Smelting(), "smelting");

@@ -1,36 +1,117 @@
 package me.anticode.ascendant_arcana.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import me.anticode.ascendant_arcana.api.EnchantedRocket;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.logic.Relics;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
+
 @Mixin(value = CrossbowItem.class, priority = 1500)
 public class CrossbowItemMixin {
     @Shadow
     private static float getPowerForTime(int i, ItemStack arg) {
         throw new UnsupportedOperationException("Implemented via mixin");
+    }
+
+
+    @Shadow
+    public static int getChargeDuration(ItemStack itemStack) {
+        throw new UnsupportedOperationException("Implemented via mixin");
+    }
+
+    @Shadow
+    public static boolean isCharged(ItemStack itemStack) {
+        throw new UnsupportedOperationException("Implemented via mixin");
+    }
+
+    @Shadow
+    private static boolean tryLoadProjectiles(LivingEntity livingEntity, ItemStack itemStack) {
+        throw new UnsupportedOperationException("Implemented via mixin");
+    }
+
+    @WrapOperation(
+            method = "use",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;isCharged(Lnet/minecraft/world/item/ItemStack;)Z")
+    )
+    private boolean loadMultiple(ItemStack itemStack, Operation<Boolean> original, @Local(argsOnly = true) Player player) {
+        int repeatingLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), itemStack);
+        if (repeatingLevel == 0) return original.call(itemStack);
+        int maxProjectiles = repeatingLevel * 2;
+        if (getChargedProjectils(itemStack).size() >= maxProjectiles) return original.call(itemStack);
+        if (player.isSecondaryUseActive()) return false;
+        return original.call(itemStack);
+    }
+
+    @WrapOperation(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;setCharged(Lnet/minecraft/world/item/ItemStack;Z)V"))
+    private void setCharged(ItemStack itemStack, boolean bl, Operation<Void> original) {
+        if (getChargedProjectils(itemStack).isEmpty()) {
+            original.call(itemStack, bl);
+        }
+    }
+
+    @WrapOperation(method = "performShooting", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z"))
+    private static boolean onlyFireOnceWithoutMultishot(ItemStack instance, Operation<Boolean> original, @Local(argsOnly = true) ItemStack crossbowStack, @Local int i) {
+        if (i > 0 && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, crossbowStack) == 0) {
+            return true;
+        }
+        else return original.call(instance);
+    }
+
+    @Inject(method = "releaseUsing", at = @At("HEAD"), cancellable = true)
+    private void addAdditionalArrows(ItemStack itemStack, Level level, LivingEntity livingEntity, int i, CallbackInfo ci) {
+        if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), itemStack) == 0) return;
+        int j = getChargeDuration(itemStack) - i;
+        float f = getPowerForTime(j, itemStack);
+        if (f >= 1 && isCharged(itemStack) && tryLoadProjectiles(livingEntity, itemStack)) {
+            SoundSource soundSource = livingEntity instanceof Player ? SoundSource.PLAYERS : SoundSource.HOSTILE;
+            level.playSound((Player)null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), SoundEvents.CROSSBOW_LOADING_END, soundSource, 1.0F, 1.0F / (level.getRandom().nextFloat() * 0.5F + 1.0F) + 0.2F);
+            ci.cancel();
+        }
+    }
+
+    @WrapOperation(method = "onCrossbowShot", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;clearChargedProjectiles(Lnet/minecraft/world/item/ItemStack;)V"))
+    private static void modifyClearChargedProjectiles(ItemStack itemStack, Operation<Void> original) {
+        if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), itemStack) > 0) {
+            CompoundTag compoundTag = itemStack.getTag();
+            if (compoundTag != null) {
+                ListTag listTag = compoundTag.getList("ChargedProjectiles", 10);
+                listTag.remove(0);
+                compoundTag.put("ChargedProjectiles", listTag);
+            }
+            return;
+        }
+        original.call(itemStack);
     }
 
     @Inject(method = "getArrow", at = @At(value = "RETURN"))
@@ -80,5 +161,17 @@ public class CrossbowItemMixin {
     private static int modifyChargeDuration(int i, ItemStack itemStack) {
         float hasteMultiplier = 1 - (float) RelicHelper.getTooltipStrength(Relics.HASTE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.HASTE)) * 0.005F;
         return Mth.ceil(i * hasteMultiplier);
+    }
+
+    @Unique
+    private List<ItemStack> getChargedProjectils(ItemStack itemStack) {
+        CompoundTag compoundTag = itemStack.getOrCreateTag();
+        ListTag listTag;
+        if (compoundTag.contains("ChargedProjectiles", 9)) {
+            listTag = compoundTag.getList("ChargedProjectiles", 10);
+        } else {
+            listTag = new ListTag();
+        }
+        return listTag.stream().map((entry) -> ItemStack.of((CompoundTag)entry)).toList();
     }
 }
