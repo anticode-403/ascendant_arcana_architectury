@@ -19,9 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Gui.class)
 public abstract class GuiMixin {
     @Shadow
-    protected abstract void renderHeart(GuiGraphics drawContext, Gui.HeartType heartType, int x, int y, int v, boolean blinking, boolean halfHeart);
-
-    @Shadow
     @Final
     private Minecraft minecraft;
 
