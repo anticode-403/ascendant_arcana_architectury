@@ -26,7 +26,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
@@ -116,12 +115,6 @@ public abstract class LivingEntityMixin {
         double baseValue = livingEntity.getAttributeBaseValue(attribute);
         if (original >= baseValue) return original;
         return baseValue - (baseValue - original)/2;
-    }
-
-    @Inject(method = "createLivingAttributes", at = @At("RETURN"))
-    private static void createLivingAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
-        if (!AArcanaAttributes.DAMAGE_TAKEN.isPresent()) AArcanaAttributes.initialize();
-        cir.getReturnValue().add(AArcanaAttributes.PROTECTION.get()).add(AArcanaAttributes.DAMAGE_TAKEN.get()).add(AArcanaAttributes.DRAW_SPEED.get());
     }
 
     @ModifyReturnValue(method = "getJumpPower", at = @At("RETURN"))

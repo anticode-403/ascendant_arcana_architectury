@@ -19,6 +19,8 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.EnchantTableRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -35,6 +37,7 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -53,6 +56,18 @@ public final class AscendantArcanaForge {
         // For some reason Forge requires attributes to be registered twice
         AArcanaAttributes.initialize();
         AscendantArcana.initialize();
+    }
+
+    @Mod.EventBusSubscriber(modid = AscendantArcana.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class AscendantArcanaModEvents {
+        @SubscribeEvent
+        public static void existingEntityAttributes(EntityAttributeModificationEvent event) {
+            for (EntityType<? extends LivingEntity> entityType : event.getTypes()) {
+                event.add(entityType, AArcanaAttributes.PROTECTION.get());
+                event.add(entityType, AArcanaAttributes.DRAW_SPEED.get());
+                event.add(entityType, AArcanaAttributes.DAMAGE_TAKEN.get());
+            }
+        }
     }
 
     @Mod.EventBusSubscriber(modid = AscendantArcana.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
