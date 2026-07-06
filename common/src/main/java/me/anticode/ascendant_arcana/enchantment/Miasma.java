@@ -20,7 +20,7 @@ public class Miasma extends Enchantment {
 
     @Override
     public boolean isTreasureOnly() {
-        return true;
+        return false;
     }
 
     @Override
