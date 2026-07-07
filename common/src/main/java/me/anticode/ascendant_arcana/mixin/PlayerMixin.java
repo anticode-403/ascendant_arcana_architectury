@@ -39,7 +39,8 @@ public class PlayerMixin {
 
     @ModifyReturnValue(method = "getXpNeededForNextLevel", at = @At("RETURN"))
     private int xp(int original) {
-        return Math.max(0, AscendantArcana.config.xp_per_level);
+        if (AscendantArcana.config.xp_per_level <= 0) return original;
+        return AscendantArcana.config.xp_per_level;
     }
 
     @ModifyReturnValue(method = "getAttackStrengthScale", at = @At("RETURN"))

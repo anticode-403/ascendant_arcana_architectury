@@ -21,7 +21,7 @@ public class ServerConfig implements ConfigData {
     @Comment("This can sometimes cause issues with mods that modify the HUD.")
     public boolean hide_xp_bar = true;
 
-    @Comment("Levels are linear if enabled. This adjusts the XP required to level up each time.")
+    @Comment("Levels are linear if enabled. This adjusts the XP required to level up each time. Setting this to 0 disables it.")
     public int xp_per_level = 30;
 
     @Comment("Some vanilla mobs drop relics on death, like Witches, Wither Skeletons, and bosses. Recommended.")
