@@ -77,7 +77,7 @@ public final class AscendantArcanaForge {
             ResourceLocation identifier = event.getName();
             LootTable lootTable = event.getTable();
             List<LootPool> lootPoolList = new ArrayList<>(((LootTableAccess)lootTable).ascendant_arcana$getLootPools());
-            if (identifier.getPath().contains("chests") && AscendantArcana.config.add_relics_to_chests || AscendantArcana.config.add_restorine_to_chests) {
+            if (identifier.getPath().contains("chests") && (AscendantArcana.config.add_relics_to_chests || AscendantArcana.config.add_restorine_to_chests)) {
                 for (LootPool lootPool : lootPoolList) {
                     LootPool.Builder poolBuilder = LootPool.lootPool();
                     LootPoolEntryContainer[] entries = ((LootPoolAccess)lootPool).getEntries();

@@ -37,7 +37,7 @@ public final class AscendantArcanaFabric implements ModInitializer {
                     builder.modifyPools((poolBuilder) -> poolBuilder.add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new int[]{1}))));
                 }
             }
-            if (identifier.getPath().contains("chests") && AscendantArcana.config.add_relics_to_chests || AscendantArcana.config.add_restorine_to_chests) {
+            if (identifier.getPath().contains("chests") && (AscendantArcana.config.add_relics_to_chests || AscendantArcana.config.add_restorine_to_chests)) {
                 builder.modifyPools((poolBuilder) -> {
                     LootPool pool = poolBuilder.build();
                     for (LootPoolEntryContainer entry : pool.entries) {
