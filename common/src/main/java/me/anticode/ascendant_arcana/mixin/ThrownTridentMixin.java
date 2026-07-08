@@ -11,10 +11,12 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.ThrownTrident;
@@ -156,7 +158,8 @@ public class ThrownTridentMixin implements EnchantedTrident {
                         }
                     }
                     projectile.level().playSound(null, projectile.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, soundCategory, 1, 2);
-                    ascendant_arcana$stuckEntity.heal(4 * ascendant_arcana$relicDamageMultiplier);
+                    if (livingEntity.getMobType() == MobType.UNDEAD) ascendant_arcana$stuckEntity.hurt(projectile.damageSources().trident(projectile, projectile.getOwner()), (float) 4 * ascendant_arcana$relicDamageMultiplier);
+                    else ascendant_arcana$stuckEntity.heal((float) 4 * ascendant_arcana$relicDamageMultiplier);
                 } else if (ascendant_arcana$sunderingLevel >= 1) {
                     if (projectile.level() instanceof ServerLevel serverWorld) {
                         for(int i = 0; i < 5; ++i) {
@@ -233,7 +236,8 @@ public class ThrownTridentMixin implements EnchantedTrident {
                                 }
                             }
                             trident.level().playSound(null, trident.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, ascendant_arcana$stuckEntity.getSoundSource(), 1, 2);
-                            ascendant_arcana$stuckEntity.heal(2 * ascendant_arcana$relicDamageMultiplier);
+                            if (ascendant_arcana$stuckEntity.getMobType() == MobType.UNDEAD) ascendant_arcana$stuckEntity.hurt(trident.damageSources().trident(trident, trident.getOwner()), (float) 2 * ascendant_arcana$relicDamageMultiplier);
+                            else ascendant_arcana$stuckEntity.heal((float) 2 * ascendant_arcana$relicDamageMultiplier);
                             living.heal(1);
                         } else if (ascendant_arcana$sunderingLevel >= 1) {
                             if (trident.level() instanceof ServerLevel serverWorld) {

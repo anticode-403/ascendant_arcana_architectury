@@ -21,10 +21,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.AreaEffectCloud;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.*;
 import net.minecraft.world.item.alchemy.Potion;
@@ -201,6 +198,7 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         int damage = Mth.ceil(Mth.clamp((double)projectile.getDeltaMovement().length() * projectile.getBaseDamage(), (double)0.0F, (double)Integer.MAX_VALUE));;
         if (attacker instanceof LivingEntity livingTarget) {
             if (attacker == entity2) return;
+            if (livingTarget.getMobType() == MobType.UNDEAD) livingTarget.hurt(projectile.damageSources().arrow(projectile, entity2), (float) damage / 2);
             livingTarget.heal((float) damage / 2);
             doPostHurtEffects(livingTarget);
             if (!projectile.level().isClientSide()) {
