@@ -107,7 +107,10 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
             unlockedTreasuresSize = getMenu().unlockedTreasures.size();
         }
 
-        if (!update && updateEnchantments) update = true;
+        if (!update && updateEnchantments) {
+            update = true;
+            updateEnchantments = false;
+        }
 
         int panelX = 161;
         int panelY = 9;
