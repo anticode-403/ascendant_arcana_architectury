@@ -2,6 +2,8 @@ package me.anticode.ascendant_arcana.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,17 +25,17 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
         super(menuType, i, inventory, containerLevelAccess);
     }
 
-    @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Item;isValidRepairItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
-    private boolean applyRestorineRepairs(Item instance, ItemStack stack, ItemStack ingredient) {
+    @WrapOperation(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Item;isValidRepairItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
+    private boolean applyRestorineRepairs(Item instance, ItemStack stack, ItemStack ingredient, Operation<Boolean> original) {
         if (ingredient.is(AArcanaItems.RESTORINE.get())) return true;
-        return instance.isValidRepairItem(stack, ingredient);
+        return original.call(instance, stack, ingredient);
     }
 
-    @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(II)I"))
-    private int restorineRepairsPartially(int a, int b) {
+    @WrapOperation(method = "createResult", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(II)I"))
+    private int restorineRepairsPartially(int a, int b, Operation<Integer> original) {
         ItemStack itemStack = this.inputSlots.getItem(1);
         if (!itemStack.is(AArcanaItems.RESTORINE.get())) return Math.min(a, b*2); // Base material repairs 50% instead of 25%
-        return Math.min(a, b/2); // Restorine repairs 12.5%
+        return original.call(a, b/2); // Restorine repairs 12.5%
     }
 
     @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;set(I)V"))

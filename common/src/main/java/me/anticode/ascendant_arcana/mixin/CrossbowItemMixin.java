@@ -31,7 +31,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -179,11 +178,11 @@ public class CrossbowItemMixin implements CrossbowAccess {
         }
     }
 
-    @Redirect(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;getPowerForTime(ILnet/minecraft/world/item/ItemStack;)F"))
-    private float modifyGetPower(int i, ItemStack itemStack) {
+    @WrapOperation(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;getPowerForTime(ILnet/minecraft/world/item/ItemStack;)F"))
+    private float modifyGetPower(int i, ItemStack itemStack, Operation<Float> original) {
         float hasteMultiplier = 1 + (float) RelicHelper.getTooltipStrength(Relics.HASTE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.HASTE)) * 0.005F;
         float multiLoadMultiplier = isCharged(itemStack) ? 1.5F : 1F;
-        return getPowerForTime(Mth.ceil(i * hasteMultiplier * multiLoadMultiplier), itemStack);
+        return original.call(Mth.ceil(i * hasteMultiplier * multiLoadMultiplier), itemStack);
     }
 
     @ModifyReturnValue(method = "getChargeDuration", at = @At(value = "RETURN"))

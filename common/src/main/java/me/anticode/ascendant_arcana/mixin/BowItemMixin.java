@@ -1,5 +1,7 @@
 package me.anticode.ascendant_arcana.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
@@ -15,20 +17,13 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 
 @Mixin(BowItem.class)
 public class BowItemMixin {
-    @Shadow
-    public static float getPowerForTime(int i) {
-        throw new UnsupportedOperationException("Implemented via mixin");
-    }
-
     @Inject(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/AbstractArrow;shootFromRotation(Lnet/minecraft/world/entity/Entity;FFFFF)V", shift = At.Shift.AFTER))
     private void applyEnchantmentValues(
             ItemStack stack, Level world, LivingEntity user, int remainingUseTicks,
@@ -47,9 +42,9 @@ public class BowItemMixin {
         projectile.shootFromRotation(user, pitch, yaw, 0.0f, f, 1.0f);
     }
 
-    @Redirect(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/BowItem;getPowerForTime(I)F"))
-    private float modifyGetPower(int i, @Local(argsOnly = true) ItemStack itemStack) {
+    @WrapOperation(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/BowItem;getPowerForTime(I)F"))
+    private float modifyGetPower(int i, Operation<Float> original, @Local(argsOnly = true) ItemStack itemStack) {
         float hasteMultiplier = 1 + (float)RelicHelper.getTooltipStrength(Relics.HASTE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.HASTE)) * 0.005F;
-        return getPowerForTime(Mth.ceil(i * hasteMultiplier));
+        return original.call(Mth.ceil(i * hasteMultiplier));
     }
 }

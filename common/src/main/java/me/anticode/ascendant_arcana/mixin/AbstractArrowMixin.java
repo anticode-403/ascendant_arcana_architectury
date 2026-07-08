@@ -1,6 +1,8 @@
 package me.anticode.ascendant_arcana.mixin;
 
 import com.google.common.collect.Sets;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import me.anticode.ascendant_arcana.api.EnchantedArrow;
@@ -40,7 +42,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Set;
@@ -224,15 +225,15 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         ci.cancel();
     }
 
-    @Redirect(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
-    private boolean modifyDamageDealt(Entity instance, DamageSource source, float amount) {
+    @WrapOperation(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
+    private boolean modifyDamageDealt(Entity instance, DamageSource damageSource, float amount, Operation<Boolean> original) {
         if (ascendant_arcana$ricochetLevel >= 1 && ascendant_arcana$ricochetBounces == 0) {
             amount /= 2;
         }
         else if (ascendant_arcana$ricochetLevel >= 1 && ascendant_arcana$ricochetBounces > 0) {
             amount += ascendant_arcana$ricochetBounces * 2;
         }
-        return instance.hurt(source, amount);
+        return original.call(instance, damageSource, amount);
     }
 
     @Inject(method = "onHitEntity", at = @At("TAIL"))
@@ -279,18 +280,18 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         }
     }
 
-    @Redirect(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/AbstractArrow;discard()V"))
-    private void ricochetOnEntityHit(AbstractArrow abstractArrow, @Local(argsOnly = true) EntityHitResult entityHitResult) {
+    @WrapOperation(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/AbstractArrow;discard()V"))
+    private void ricochetOnEntityHit(AbstractArrow instance, Operation<Void> original, @Local(argsOnly = true) EntityHitResult entityHitResult) {
         if (ascendant_arcana$ricochetLevel >= 1 && ascendant_arcana$ricochetBounces < ascendant_arcana$ricochetLevel && getPierceLevel() == 0) {
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
                 // Removing the stuck arrow applied by the hit
                 livingEntity.setArrowCount(livingEntity.getArrowCount() - 1);
             }
-            ascendant_arcana$ricochetVector = abstractArrow.getDeltaMovement().multiply(-0.8D, 1D, -0.8D);
+            ascendant_arcana$ricochetVector = instance.getDeltaMovement().multiply(-0.8D, 1D, -0.8D);
             ascendant_arcana$doRicochet();
         }
         else {
-            abstractArrow.discard();
+            original.call(instance);
         }
     }
 

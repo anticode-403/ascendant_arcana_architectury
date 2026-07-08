@@ -1,5 +1,7 @@
 package me.anticode.ascendant_arcana.client.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
@@ -13,20 +15,16 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin {
     @Shadow @Final
     protected Minecraft minecraft;
 
-    @Shadow
-    protected abstract boolean hasEnoughImpulseToStartSprinting();
-
-    @Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/Input;hasForwardImpulse()Z"))
-    private boolean preventSprintCancelWithStrafe(Input instance) {
+    @WrapOperation(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/Input;hasForwardImpulse()Z"))
+    private boolean preventSprintCancelWithStrafe(Input instance, Operation<Boolean> original) {
         if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.STRAFE.get(), (LocalPlayer)(Object)this) >= 1) return ascendant_arcana$hasMovement(instance);
-        return instance.hasForwardImpulse();
+        return original.call(instance);
     }
 
     @ModifyConstant(method = "aiStep", constant = @Constant(floatValue = 0.2F))
@@ -35,13 +33,13 @@ public abstract class LocalPlayerMixin {
         return value;
     }
 
-    @Redirect(method = "canStartSprinting", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;hasEnoughImpulseToStartSprinting()Z"))
-    private boolean startSprintWithStrafe(LocalPlayer instance) {
+    @WrapOperation(method = "canStartSprinting", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;hasEnoughImpulseToStartSprinting()Z"))
+    private boolean startSprintWithStrafe(LocalPlayer instance, Operation<Boolean> original) {
         if (!instance.isUnderWater() && EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.STRAFE.get(), instance) >= 1) {
             return (Mth.abs(instance.input.forwardImpulse) >= 0.8 || Mth.abs(instance.input.leftImpulse) >= 0.8)
                     && minecraft.options.keySprint.isDown();
         }
-        return hasEnoughImpulseToStartSprinting();
+        return original.call(instance);
     }
 
     @Unique

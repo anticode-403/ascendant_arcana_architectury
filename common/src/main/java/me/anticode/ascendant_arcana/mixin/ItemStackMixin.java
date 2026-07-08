@@ -3,6 +3,8 @@ package me.anticode.ascendant_arcana.mixin;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import me.anticode.ascendant_arcana.init.AArcanaAttributes;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
@@ -153,10 +155,10 @@ public abstract class ItemStackMixin {
         }
     }
 
-    @Redirect(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getAttributeModifiers(Lnet/minecraft/world/entity/EquipmentSlot;)Lcom/google/common/collect/Multimap;"))
-    private Multimap<Attribute, AttributeModifier> removeProtectionAttributeFromTooltip(ItemStack instance, EquipmentSlot slot) {
+    @WrapOperation(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getAttributeModifiers(Lnet/minecraft/world/entity/EquipmentSlot;)Lcom/google/common/collect/Multimap;"))
+    private Multimap<Attribute, AttributeModifier> removeProtectionAttributeFromTooltip(ItemStack instance, EquipmentSlot equipmentSlot, Operation<Multimap<Attribute, AttributeModifier>> original) {
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
-        for (Map.Entry<Attribute, AttributeModifier> entry : instance.getAttributeModifiers(slot).entries().stream().filter((entry) -> entry.getKey() != AArcanaAttributes.PROTECTION.get()).collect(Collectors.toSet())) {
+        for (Map.Entry<Attribute, AttributeModifier> entry : original.call(instance, equipmentSlot).entries().stream().filter((entry) -> entry.getKey() != AArcanaAttributes.PROTECTION.get()).collect(Collectors.toSet())) {
             modifiers.put(entry.getKey(), entry.getValue());
         }
         modifiers.removeAll(AArcanaAttributes.PROTECTION.get());
