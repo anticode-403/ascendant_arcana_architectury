@@ -37,4 +37,14 @@ public class Miasma extends Enchantment {
     protected boolean checkCompatibility(Enchantment other) {
         return super.checkCompatibility(other) && !(other instanceof ArrowInfiniteEnchantment) && !(other instanceof Ricochet);
     }
+
+    @Override
+    public boolean isTradeable() {
+        return false;
+    }
+
+    @Override
+    public boolean isDiscoverable() {
+        return false;
+    }
 }

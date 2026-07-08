@@ -25,4 +25,14 @@ public class SonicBlast extends Enchantment {
     protected boolean checkCompatibility(Enchantment other) {
         return super.checkCompatibility(other) && !(other instanceof Cleanse) && !(other instanceof Deflect);
     }
+
+    @Override
+    public boolean isTradeable() {
+        return false;
+    }
+
+    @Override
+    public boolean isDiscoverable() {
+        return false;
+    }
 }

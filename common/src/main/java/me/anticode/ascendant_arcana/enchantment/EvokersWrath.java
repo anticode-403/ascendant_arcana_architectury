@@ -31,4 +31,9 @@ public class EvokersWrath extends Enchantment {
     public boolean canEnchant(ItemStack stack) {
         return stack.getItem() instanceof BowItem || stack.getItem() instanceof CrossbowItem;
     }
+
+    @Override
+    public boolean isTradeable() {
+        return false;
+    }
 }

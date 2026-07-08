@@ -13,4 +13,14 @@ public class HeartEnchantment extends Enchantment {
     protected boolean checkCompatibility(Enchantment other) {
         return super.checkCompatibility(other) && !(other instanceof HeartEnchantment);
     }
+
+    @Override
+    public boolean isTradeable() {
+        return false;
+    }
+
+    @Override
+    public boolean isDiscoverable() {
+        return false;
+    }
 }
