@@ -180,14 +180,14 @@ public class CrossbowItemMixin implements CrossbowAccess {
 
     @WrapOperation(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;getPowerForTime(ILnet/minecraft/world/item/ItemStack;)F"))
     private float modifyGetPower(int i, ItemStack itemStack, Operation<Float> original) {
-        float hasteMultiplier = 1 + (float) RelicHelper.getTooltipStrength(Relics.HASTE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.HASTE)) * 0.005F;
+        float hasteMultiplier = 1 + (float) RelicHelper.getStrengthFromNbt(Relics.HASTE, itemStack.getOrCreateTag())/2;
         float multiLoadMultiplier = isCharged(itemStack) ? 1.5F : 1F;
         return original.call(Mth.ceil(i * hasteMultiplier * multiLoadMultiplier), itemStack);
     }
 
     @ModifyReturnValue(method = "getChargeDuration", at = @At(value = "RETURN"))
     private static int modifyChargeDuration(int i, ItemStack itemStack) {
-        float hasteMultiplier = 1 - (float) RelicHelper.getTooltipStrength(Relics.HASTE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.HASTE)) * 0.005F;
+        float hasteMultiplier = 1 - (float) RelicHelper.getStrengthFromNbt(Relics.HASTE, itemStack.getOrCreateTag())/2;
         float multiLoadMultiplier = isCharged(itemStack) ? 0.5F : 1F;
         return Mth.ceil(i * hasteMultiplier * multiLoadMultiplier);
     }

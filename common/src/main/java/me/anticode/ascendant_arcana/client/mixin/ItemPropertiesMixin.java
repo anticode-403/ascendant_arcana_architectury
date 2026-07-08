@@ -28,7 +28,7 @@ public class ItemPropertiesMixin {
     @Unique
     private static float ascendant_arcana$applyHasteRelic(float original, ItemStack itemStack, LivingEntity livingEntity) {
         if (original == 0 || original == 1) return original;
-        float hasteMultiplier = (float) RelicHelper.getTooltipStrength(Relics.HASTE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.HASTE)) * 0.005F;
+        float hasteMultiplier = (float) RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getOrCreateTag()) / 2;
         float playerMultiplier = 0F;
         MobEffectInstance effectInstance = livingEntity.getEffect(AArcanaMobEffects.ARCHERS_GAMBIT.get());
         if (effectInstance != null) playerMultiplier = (float)(effectInstance.getAmplifier() + 1) * 0.3F;

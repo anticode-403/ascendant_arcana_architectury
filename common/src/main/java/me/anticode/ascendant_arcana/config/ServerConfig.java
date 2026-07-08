@@ -66,7 +66,10 @@ public class ServerConfig implements ConfigData {
             1
     ));
 
-    @Comment("Items which have their base enchantment capacity overwritten")
+    @Comment("""
+            Items which have their base enchantment capacity overwritten. The default enchantment capacity of an item
+            is determined by the vanilla enchantability stat of the item's material. For example, Diamond is 10 and
+            Netherite is 15. Items with an enchantability of 1 have their capacity increased to 10 by default.""")
     public Map<String, Integer> base_enchantment_capacity_overrides = new HashMap<>(Map.of(
             "minecraft:bow",
             20,
@@ -94,6 +97,73 @@ public class ServerConfig implements ConfigData {
             Map.entry("minecraft:lure", 1),
             Map.entry("minecraft:frost_walker", 2),
             Map.entry("minecraft:thorns", 2)
+    ));
+
+    @Comment("""
+            Damage Relics apply to thrown Tridents, melee weapons, as well as arrows and rockets fired from bows and
+            crossbows.
+            Percentages are written as decimal values. For example, a 10% damage increase is written as 0.10 here.""")
+    public Map<Integer, Double> damage_relic_strengths = new HashMap<>(Map.ofEntries(
+            Map.entry(1, 0.10),
+            Map.entry(2, 0.16),
+            Map.entry(3, 0.22),
+            Map.entry(4, 0.26),
+            Map.entry(5, 0.30)
+    ));
+
+    @Comment("""
+            Durability Relics can apply to any item with a durability value. For all vanilla items, the default
+            values are better than Unbreaking 3.
+            Because durability is stored as an integer in-game, durability relics cannot contain decimal values.""")
+    public Map<Integer, Integer> durability_relic_strengths = new HashMap<>(Map.ofEntries(
+            Map.entry(1, 600),
+            Map.entry(2, 1200),
+            Map.entry(3, 1800),
+            Map.entry(4, 2400),
+            Map.entry(5, 3000)
+    ));
+
+    @Comment("""
+            Protection Relics reduce the damage taken from most sources. Generally, this is any instance of damage
+            that the original Protection enchantment would protect you from. The default values here are slightly
+            weaker than the original benefits of protection by 1% per level, meaning Protection 4 is 16% DR and
+            an Ascendant Protection Relic is 15%.
+            Percentages are written as decimal values. For example, a 3% damage resistance is written as 0.03 here.""")
+    public Map<Integer, Double> protection_relic_strengths = new HashMap<>(Map.ofEntries(
+            Map.entry(1, 0.03),
+            Map.entry(2, 0.06),
+            Map.entry(3, 0.09),
+            Map.entry(4, 0.12),
+            Map.entry(5, 0.15)
+    ));
+
+
+    @Comment("""
+            Haste Relics behave in a way that is technically not accurate. On weapons, Haste relics apply half of
+            their benefit (like other Haste effects in Minecraft). But for mining, Haste relics act as a level
+            of Efficiency. That level is obtained by multiplying the value of the haste relic by 10 and rounding down.
+            For example, a value of 0.10 (a 10% relic) becomes 1 level of Efficiency.
+            This behavior is likely to be changed in the future.
+            Percentages are written as decimal values. For example, a 10% haste increase is written as 0.10 here.""")
+    public Map<Integer, Double> haste_relic_strengths = new HashMap<>(Map.ofEntries(
+            Map.entry(1, 0.10),
+            Map.entry(2, 0.20),
+            Map.entry(3, 0.30),
+            Map.entry(4, 0.40),
+            Map.entry(5, 0.50)
+    ));
+
+
+    @Comment("""
+            Enchantment Capacity Relics are used to expand your item's capability to hold powerful enchantments.
+            These relics are additive.
+            Because Enchantment Capacity is an integer, you cannot add a decimal value here.""")
+    public Map<Integer, Integer> enchantment_capacity_relic_strengths = new HashMap<>(Map.ofEntries(
+            Map.entry(1, 10),
+            Map.entry(2, 15),
+            Map.entry(3, 20),
+            Map.entry(4, 25),
+            Map.entry(5, 30)
     ));
 
     @Override

@@ -14,6 +14,7 @@ import me.anticode.ascendant_arcana.logic.Relics;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -89,7 +90,7 @@ public abstract class ItemStackMixin {
 
     @ModifyReturnValue(method = "getMaxDamage", at = @At("RETURN"))
     private int implementDurabilityRelic(int maxDamage) {
-        return maxDamage + RelicHelper.getTooltipStrength(Relics.DURABILITY, RelicHelper.getValueFromNbt(getOrCreateTag(), Relics.DURABILITY));
+        return Mth.floor(maxDamage * (1 + RelicHelper.getStrengthFromNbt(Relics.DURABILITY, getOrCreateTag())));
     }
 
     @ModifyReturnValue(method = "getAttributeModifiers", at = @At("RETURN"))
@@ -107,9 +108,9 @@ public abstract class ItemStackMixin {
                 case FEET -> UUID.fromString("93ef9100-4f32-45e0-8568-f837918e9b43");
                 default -> null;
             };
-            int protectionValue = RelicHelper.getTooltipStrength(Relics.PROTECTION, RelicHelper.getValueFromNbt(getOrCreateTag(), Relics.PROTECTION));
+            float protectionValue = (float) RelicHelper.getStrengthFromNbt(Relics.DAMAGE, getOrCreateTag());
             if (protectionValue != 0) {
-                AttributeModifier modifier = new AttributeModifier(uuid, "Protection Relic Bonus", protectionValue * 0.01, AttributeModifier.Operation.MULTIPLY_BASE);
+                AttributeModifier modifier = new AttributeModifier(uuid, "Protection Relic Bonus", protectionValue, AttributeModifier.Operation.MULTIPLY_BASE);
                 modifiers.put(AArcanaAttributes.PROTECTION.get(), modifier);
             }
         }
@@ -118,7 +119,7 @@ public abstract class ItemStackMixin {
             Map<Relics, Integer> relics = RelicHelper.fromNbt(getOrCreateTag());
             if (relics.isEmpty()) return modifiers;
             if (relics.containsKey(Relics.DAMAGE)) {
-                double damageValue = RelicHelper.getTooltipStrength(Relics.DAMAGE, relics.get(Relics.DAMAGE))*0.01;
+                double damageValue = RelicHelper.getStrengthFromNbt(Relics.DAMAGE, getOrCreateTag());
                 List<AttributeModifier> oldDamageModifiers = modifiers.get(Attributes.ATTACK_DAMAGE).stream().toList();
                 List<AttributeModifier> newModifiers = ItemHelper.multiplyAttributeList(oldDamageModifiers, damageValue);
                 modifiers.replaceValues(Attributes.ATTACK_DAMAGE, newModifiers);
@@ -129,7 +130,7 @@ public abstract class ItemStackMixin {
             Map<Relics, Integer> relics = RelicHelper.fromNbt(getOrCreateTag());
             if (relics.isEmpty()) return modifiers;
             if (relics.containsKey(Relics.HASTE)) {
-                double hasteValue = RelicHelper.getTooltipStrength(Relics.HASTE, relics.get(Relics.HASTE)) * 0.005;
+                double hasteValue = RelicHelper.getStrengthFromNbt(Relics.HASTE, getOrCreateTag()) / 2;
                 AttributeModifier modifier = new AttributeModifier(UUID.fromString("f2bb3e62-513f-4804-a194-2965d232c7ad"), "Haste Relic Bonus", hasteValue, AttributeModifier.Operation.MULTIPLY_BASE);
                 modifiers.put(AArcanaAttributes.DRAW_SPEED.get(), modifier);
             }

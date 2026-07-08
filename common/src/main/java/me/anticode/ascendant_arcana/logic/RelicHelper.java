@@ -5,6 +5,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.HashMap;
@@ -72,14 +73,29 @@ public class RelicHelper {
         return map.get(key) != null ? map.get(key) : 0;
     }
 
+    public static double getRelicStrength(Relics relicType, int strength) {
+        if (strength == 0) return 0;
+        return switch (relicType) {
+            case DAMAGE -> AscendantArcana.config.damage_relic_strengths.get(strength);
+            case DURABILITY -> AscendantArcana.config.durability_relic_strengths.get(strength);
+            case PROTECTION -> AscendantArcana.config.protection_relic_strengths.get(strength);
+            case HASTE -> AscendantArcana.config.haste_relic_strengths.get(strength);
+            case ENCHANTMENT_CAPACITY -> AscendantArcana.config.enchantment_capacity_relic_strengths.get(strength);
+        };
+    }
+
+    public static double getStrengthFromNbt(Relics relicType, CompoundTag nbt) {
+        return getRelicStrength(relicType, getValueFromNbt(nbt, relicType));
+    }
+
     public static int getTooltipStrength(Relics relicType, int strength) {
         if (strength == 0) return 0;
         return switch (relicType) {
-            case DAMAGE -> strength <= 3 ? 8 + strength * 4 : 10 + strength * 4;
-            case DURABILITY -> strength * 600;
-            case PROTECTION -> strength * 3;
-            case HASTE -> strength * 10;
-            case ENCHANTMENT_CAPACITY -> 5 + strength * 5;
+            case DAMAGE -> Mth.floor(AscendantArcana.config.damage_relic_strengths.get(strength) * 100);
+            case DURABILITY -> AscendantArcana.config.durability_relic_strengths.get(strength);
+            case PROTECTION -> Mth.floor(AscendantArcana.config.protection_relic_strengths.get(strength) * 100);
+            case HASTE -> Mth.floor(AscendantArcana.config.haste_relic_strengths.get(strength) * 100);
+            case ENCHANTMENT_CAPACITY -> AscendantArcana.config.enchantment_capacity_relic_strengths.get(strength);
         };
     }
 

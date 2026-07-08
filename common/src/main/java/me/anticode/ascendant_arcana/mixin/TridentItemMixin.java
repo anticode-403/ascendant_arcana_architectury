@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public abstract class TridentItemMixin {
     @ModifyVariable(method = "releaseUsing", at = @At("HEAD"), argsOnly = true)
     private int modifyUseTime(int i, @Local(argsOnly = true) ItemStack itemStack) {
-        float hasteMultiplier = 1 + (float) RelicHelper.getTooltipStrength(Relics.HASTE, RelicHelper.getValueFromNbt(itemStack.getOrCreateTag(), Relics.HASTE)) * 0.005F;
+        float hasteMultiplier = 1 + (float) RelicHelper.getStrengthFromNbt(Relics.HASTE, itemStack.getOrCreateTag())/2;
         int useDuration = 72000 - i;
         return 72000 - Mth.ceil(useDuration * hasteMultiplier);
     }
