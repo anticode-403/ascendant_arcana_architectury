@@ -90,7 +90,7 @@ public abstract class ItemStackMixin {
 
     @ModifyReturnValue(method = "getMaxDamage", at = @At("RETURN"))
     private int implementDurabilityRelic(int maxDamage) {
-        return Mth.floor(maxDamage * (1 + RelicHelper.getStrengthFromNbt(Relics.DURABILITY, getOrCreateTag())));
+        return Mth.floor(maxDamage + RelicHelper.getStrengthFromNbt(Relics.DURABILITY, getOrCreateTag()));
     }
 
     @ModifyReturnValue(method = "getAttributeModifiers", at = @At("RETURN"))
