@@ -1,3 +1,5 @@
 {
-  "type": "ascendant_arcana:infusion_smithing_recipe"
+  "type": "ascendant_arcana:infusion_smithing_recipe",
+  "template_id": "ascendant_arcana:infusion_smithing_template",
+  "max_tier": 5
 }

@@ -8,6 +8,7 @@ import me.anticode.ascendant_arcana.item.RelicItem;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.logic.Relics;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -21,14 +22,18 @@ import java.util.Map;
 
 public class InfusionRecipe implements SmithingRecipe {
     private final ResourceLocation id;
+    private final ResourceLocation templateId;
+    private final int maxTier;
 
-    InfusionRecipe(ResourceLocation id) {
+    InfusionRecipe(ResourceLocation id, ResourceLocation templateId, int maxTier) {
         this.id = id;
+        this.templateId = templateId;
+        this.maxTier = maxTier;
     }
 
     @Override
     public boolean isTemplateIngredient(ItemStack stack) {
-        return stack.is(AArcanaItems.INFUSION_SMITHING_TEMPLATE.get());
+        return stack.getItem().arch$registryName().equals(templateId);
     }
 
     @Override
@@ -42,7 +47,7 @@ public class InfusionRecipe implements SmithingRecipe {
 
     @Override
     public boolean isAdditionIngredient(ItemStack stack) {
-        return stack.is(AArcanaTags.Items.RELICS);
+        return stack.is(AArcanaTags.Items.RELICS) && RelicItem.getRelicStrength(stack) <= maxTier;
     }
 
     @Override
@@ -103,12 +108,16 @@ public class InfusionRecipe implements SmithingRecipe {
 
     public static class Serializer implements RecipeSerializer<InfusionRecipe> {
         public @NotNull InfusionRecipe fromJson(ResourceLocation id, JsonObject json) {
-            return new InfusionRecipe(id);
+            return new InfusionRecipe(id, ResourceLocation.tryParse(json.get("template_id").getAsString()), json.get("max_tier").getAsInt());
         }
 
         public @NotNull InfusionRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-            return new InfusionRecipe(id);
+            return new InfusionRecipe(id, buf.readResourceLocation(), buf.readInt());
         }
-        public void toNetwork(FriendlyByteBuf buf, InfusionRecipe recipe) {}
+
+        public void toNetwork(FriendlyByteBuf buf, InfusionRecipe recipe) {
+            buf.writeResourceLocation(recipe.templateId);
+            buf.writeInt(recipe.maxTier);
+        }
     }
 }
