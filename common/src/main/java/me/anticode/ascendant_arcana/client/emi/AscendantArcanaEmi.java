@@ -42,7 +42,7 @@ public class AscendantArcanaEmi implements EmiPlugin {
 
     @Override
     public void register(EmiRegistry emiRegistry) {
-        emiRegistry.setDefaultComparison(AArcanaItems.RELIC, Comparison.compareNbt());
+        emiRegistry.setDefaultComparison(AArcanaItems.RELIC.get(), Comparison.compareNbt());
 
         emiRegistry.addCategory(ENCHANTING);
         emiRegistry.addWorkstation(ENCHANTING, COPPER_ENCHANTING_TABLE);
