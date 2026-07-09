@@ -76,11 +76,11 @@ public class RelicHelper {
     public static double getRelicStrength(Relics relicType, int strength) {
         if (strength == 0) return 0;
         return switch (relicType) {
-            case DAMAGE -> AscendantArcana.config.damage_relic_strengths.get(strength);
-            case DURABILITY -> AscendantArcana.config.durability_relic_strengths.get(strength);
-            case PROTECTION -> AscendantArcana.config.protection_relic_strengths.get(strength);
-            case HASTE -> AscendantArcana.config.haste_relic_strengths.get(strength);
-            case ENCHANTMENT_CAPACITY -> AscendantArcana.config.enchantment_capacity_relic_strengths.get(strength);
+            case DAMAGE -> AscendantArcana.config.damage_relic_strengths.get(String.valueOf(strength));
+            case DURABILITY -> AscendantArcana.config.durability_relic_strengths.get(String.valueOf(strength));
+            case PROTECTION -> AscendantArcana.config.protection_relic_strengths.get(String.valueOf(strength));
+            case HASTE -> AscendantArcana.config.haste_relic_strengths.get(String.valueOf(strength));
+            case ENCHANTMENT_CAPACITY -> AscendantArcana.config.enchantment_capacity_relic_strengths.get(String.valueOf(strength));
         };
     }
 
@@ -90,12 +90,10 @@ public class RelicHelper {
 
     public static int getTooltipStrength(Relics relicType, int strength) {
         if (strength == 0) return 0;
+        double base = getRelicStrength(relicType, strength);
         return switch (relicType) {
-            case DAMAGE -> Mth.floor(AscendantArcana.config.damage_relic_strengths.get(strength) * 100);
-            case DURABILITY -> AscendantArcana.config.durability_relic_strengths.get(strength);
-            case PROTECTION -> Mth.floor(AscendantArcana.config.protection_relic_strengths.get(strength) * 100);
-            case HASTE -> Mth.floor(AscendantArcana.config.haste_relic_strengths.get(strength) * 100);
-            case ENCHANTMENT_CAPACITY -> AscendantArcana.config.enchantment_capacity_relic_strengths.get(strength);
+            case DAMAGE, PROTECTION, HASTE -> Mth.floor(base * 100);
+            case DURABILITY, ENCHANTMENT_CAPACITY -> (int) base;
         };
     }
 
