@@ -33,6 +33,7 @@ public class InfusionRecipe implements SmithingRecipe {
 
     @Override
     public boolean isBaseIngredient(ItemStack stack) {
+        if (stack.is(AArcanaTags.Items.INFUSION_BLACKLIST)) return false;
         if (stack.isEnchantable() || stack.isDamageableItem() || stack.getItem() instanceof ArmorItem || stack.getItem() instanceof TieredItem || stack.getItem() instanceof BowItem || stack.getItem() instanceof CrossbowItem || stack.getItem() instanceof TridentItem) {
             return RelicHelper.fromNbt(stack.getOrCreateTag()).size() < RelicHelper.getRelicCapacity(stack);
         }
@@ -53,6 +54,7 @@ public class InfusionRecipe implements SmithingRecipe {
     }
 
     public boolean matches (ItemStack baseStack, ItemStack relicStack) {
+        if (baseStack.is(AArcanaTags.Items.INFUSION_BLACKLIST)) return false;
         Map<Relics, Integer> relicMap = RelicHelper.fromNbt(baseStack.getOrCreateTag());
         Relics relicType = RelicItem.getRelicType(relicStack);
         if (relicMap.size() < RelicHelper.getRelicCapacity(baseStack)) {
