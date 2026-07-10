@@ -60,7 +60,7 @@ public class EnchantmentHelperMixin {
         // This is technically a 500% increase, rather than 50% but let's be real the way that this works is stupid anyways.
         // 50% haste only gives 25% when attacking so who even cares, you probably didn't even notice the difference until
         // you looked at the code.
-        float multiplier = (float) RelicHelper.getStrengthFromNbt(Relics.DAMAGE, livingEntity.getMainHandItem().getOrCreateTag()) * 10;
+        float multiplier = (float) RelicHelper.getStrengthFromNbt(Relics.HASTE, livingEntity.getMainHandItem().getOrCreateTag()) * 10;
         return Mth.floor(multiplier);
     }
 
