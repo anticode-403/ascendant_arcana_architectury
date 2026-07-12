@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
+import me.anticode.ascendant_arcana.init.AArcanaTags;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.*;
@@ -27,7 +28,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
     @WrapOperation(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Item;isValidRepairItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
     private boolean applyRestorineRepairs(Item instance, ItemStack stack, ItemStack ingredient, Operation<Boolean> original) {
-        if (ingredient.is(AArcanaItems.RESTORINE.get())) return true;
+        if (ingredient.is(AArcanaItems.RESTORINE.get()) && !stack.is(AArcanaTags.Items.RESTORINE_BLACKLIST)) return true;
         return original.call(instance, stack, ingredient);
     }
 

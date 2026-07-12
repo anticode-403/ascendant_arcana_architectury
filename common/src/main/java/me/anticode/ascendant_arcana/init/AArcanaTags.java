@@ -12,6 +12,7 @@ public class AArcanaTags {
 
         public static final TagKey<Item> RELICS = createItemTag("relics");
         public static final TagKey<Item> INFUSION_BLACKLIST = createItemTag("infusion_blacklist");
+        public static final TagKey<Item> RESTORINE_BLACKLIST = createItemTag("restorine_blacklist");
         public static final TagKey<Item> HEARTS = createItemTag("heart_items");
 
         private static TagKey<Item> createItemTag(String name) {
