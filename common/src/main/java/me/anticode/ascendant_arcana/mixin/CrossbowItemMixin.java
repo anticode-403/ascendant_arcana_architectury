@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import me.anticode.ascendant_arcana.api.CrossbowAccess;
 import me.anticode.ascendant_arcana.api.EnchantedRocket;
+import me.anticode.ascendant_arcana.entity.BlazeboltEntity;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
@@ -24,9 +25,13 @@ import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -145,6 +150,16 @@ public class CrossbowItemMixin implements CrossbowAccess {
             Level level, LivingEntity livingEntity, ItemStack crossbow, ItemStack itemStack2, CallbackInfoReturnable<AbstractArrow> cir) {
         if (CrossbowItem.isCharged(crossbow)) {
             ItemHelper.applyPpeRelicsAndEnchantments(cir.getReturnValue(), crossbow);
+        }
+    }
+
+    @Inject(method = "shootProjectile", at = @At("HEAD"), cancellable = true)
+    private static void applyAlternateAmmoTypes(Level level, LivingEntity livingEntity, InteractionHand interactionHand, ItemStack itemStack, ItemStack itemStack2, float f, boolean bl, float g, float h, float i, CallbackInfo ci) {
+        if (level.isClientSide) return;
+        if (itemStack2.is(Items.BLAZE_ROD)) {
+            Projectile projectile = new BlazeboltEntity(level, livingEntity);
+            level.addFreshEntity(projectile);
+            ci.cancel();
         }
     }
 

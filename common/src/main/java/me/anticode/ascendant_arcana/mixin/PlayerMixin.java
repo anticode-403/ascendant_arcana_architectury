@@ -90,6 +90,12 @@ public class PlayerMixin {
                     creativeItemStack = new ItemStack(Items.FIREWORK_ROCKET);
                 }
 
+                int blazeboltLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BLAZEBOLT.get(), itemStack);
+                if (blazeboltLevel > 0) {
+                    predicate = (item) -> item.is(Items.BLAZE_ROD);
+                    creativeItemStack = new ItemStack(Items.BLAZE_ROD);
+                }
+
                 ItemStack heldStack = ProjectileWeaponItem.getHeldProjectile((LivingEntity) (Object) this, predicate);
                 if (!heldStack.isEmpty()) {
                     cir.setReturnValue(heldStack);

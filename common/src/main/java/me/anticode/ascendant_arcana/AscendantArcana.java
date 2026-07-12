@@ -52,6 +52,7 @@ public final class AscendantArcana {
         AArcanaMenus.initialize();
         AArcanaLootFunctionTypes.initialize();
         AArcanaFeatures.initialize();
+        AArcanaEntities.initialize();
         TABS.register();
 
         NetworkManager.registerReceiver(NetworkManager.Side.C2S, EnchantingScreenRemoveRecipe.Id, (buf, packetContext) -> {

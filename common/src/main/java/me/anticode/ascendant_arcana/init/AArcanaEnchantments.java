@@ -12,6 +12,7 @@ public class AArcanaEnchantments {
 
     public static RegistrySupplier<Enchantment> AMBUSH = register(new Ambush(), "ambush");
     public static RegistrySupplier<Enchantment> ARCHERS_GAMBIT = register(new ArchersGambit(), "archers_gambit");
+    public static RegistrySupplier<Enchantment> BLAZEBOLT = register(new Blazebolt(), "blazebolt");
     public static RegistrySupplier<Enchantment> CLEANSE = register(new Cleanse(), "cleanse");
     public static RegistrySupplier<Enchantment> CROSS_COUNTER = register(new CrossCounter(), "cross_counter");
     public static RegistrySupplier<Enchantment> DEBILITATING_CHAIN = register(new DebilitatingChain(), "debilitating_chain");

@@ -1,6 +1,9 @@
 package me.anticode.ascendant_arcana.client;
 
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
+import me.anticode.ascendant_arcana.client.render.entity.BlazeboltEntityRenderer;
+import me.anticode.ascendant_arcana.init.AArcanaEntities;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.api.EnchantedTrident;
 import me.anticode.ascendant_arcana.networking.EnchantingScreenSync;
@@ -21,7 +24,6 @@ public class AscendantArcanaClient {
             AArcanaEnchantingMenu menu = (AArcanaEnchantingMenu) player.containerMenu;
             menu.unlockedTreasures = packet.treasures();
         });
-
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, ForgeTridentSync.Id, (buf, context) -> {
             ForgeTridentSync packet = ForgeTridentSync.read(buf);
             ThrownTrident trident;
@@ -34,5 +36,7 @@ public class AscendantArcanaClient {
             EnchantedTrident enchantedTrident = (EnchantedTrident) trident;
             enchantedTrident.ascendant_arcana$setClientStuckEntity(packet.stuckEntityId());
         });
+
+        EntityRendererRegistry.register(AArcanaEntities.BLAZEBOLT_ENTITY, BlazeboltEntityRenderer::new);
     }
 }
