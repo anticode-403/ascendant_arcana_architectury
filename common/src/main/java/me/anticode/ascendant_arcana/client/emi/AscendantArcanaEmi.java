@@ -14,6 +14,7 @@ import me.anticode.ascendant_arcana.client.emi.recipes.*;
 import me.anticode.ascendant_arcana.init.AArcanaBlocks;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.init.AArcanaRecipes;
+import me.anticode.ascendant_arcana.init.AArcanaTags;
 import me.anticode.ascendant_arcana.item.RelicItem;
 import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.recipe.EnchantmentRecipe;
@@ -89,7 +90,7 @@ public class AscendantArcanaEmi implements EmiPlugin {
                 targetedEnchantments.add(enchantment);
             }
             if (emiRegistry.isStackDisabled(EmiStack.of(item))) continue;
-            if (item.getMaxDamage() > 0) {
+            if (item.getMaxDamage() > 0 && !item.getDefaultInstance().is(AArcanaTags.Items.RESTORINE_BLACKLIST)) {
                 emiRegistry.addRecipe(new EmiRestorineRepairRecipe(EmiStack.of(item), new ResourceLocation(AscendantArcana.MOD_ID, "/repair/").withSuffix(BuiltInRegistries.ITEM.getKey(item).getPath())));
             }
 
