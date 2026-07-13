@@ -22,8 +22,8 @@ import java.util.Map;
 
 public class InfusionRecipe implements SmithingRecipe {
     private final ResourceLocation id;
-    private final ResourceLocation templateId;
-    private final int maxTier;
+    public final ResourceLocation templateId;
+    public final int maxTier;
 
     InfusionRecipe(ResourceLocation id, ResourceLocation templateId, int maxTier) {
         this.id = id;

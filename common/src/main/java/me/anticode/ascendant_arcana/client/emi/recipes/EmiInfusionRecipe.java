@@ -32,11 +32,11 @@ public class EmiInfusionRecipe implements EmiRecipe {
         // this is incredibly cursed
         this.recipe = recipe;
         this.id = recipe.getId().withPrefix("/").withSuffix("/" + RelicItem.getRelicType(relic).name().toLowerCase());
-        this.template = EmiStack.of(AArcanaItems.INFUSION_SMITHING_TEMPLATE.get());
+        this.template = EmiStack.of(BuiltInRegistries.ITEM.get(recipe.templateId));
         this.input = EmiIngredient.of(Ingredient.of(BuiltInRegistries.ITEM.stream().filter((item) -> recipe.isBaseIngredient(new ItemStack(item)) && recipe.matches(new ItemStack(item), relic)).map(ItemStack::new)));
         List<EmiStack> relics = new ArrayList<>();
         relics.add(EmiStack.of(relic));
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < recipe.maxTier - 1; i++) {
             ItemStack newRelic = relic.copy();
             RelicItem.writeRelicData(newRelic, RelicItem.getRelicType(newRelic), i + 2);
             relics.add(EmiStack.of(newRelic));
