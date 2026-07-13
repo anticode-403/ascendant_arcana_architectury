@@ -43,7 +43,7 @@ public class ItemHelper {
     }
 
     public static void applyPpeRelicsAndEnchantments(AbstractArrow abstractArrow, ItemStack itemStack) {
-        double damageMultiplier = 1 + RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getOrCreateTag());
+        double damageMultiplier = 1 + RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag());
         Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(itemStack);
 
         if (enchantments.getOrDefault(AArcanaEnchantments.SALVO.get(), 0) != 0) damageMultiplier -= 0.25F;

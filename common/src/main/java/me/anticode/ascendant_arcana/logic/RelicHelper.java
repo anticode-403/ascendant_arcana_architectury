@@ -24,10 +24,11 @@ public class RelicHelper {
         if (!stack.hasTag()) {
             return base_capacity;
         }
-        return base_capacity + stack.getOrCreateTag().getInt(BONUS_RELIC_CAPACITY);
+        return base_capacity + stack.getTag().getInt(BONUS_RELIC_CAPACITY);
     }
 
     public static Map<Relics, Integer> fromNbt(CompoundTag nbt) {
+        if (nbt == null) return new HashMap<>();
         return fromNbtList((ListTag) nbt.get(RELICS_KEY));
     }
 
@@ -55,13 +56,14 @@ public class RelicHelper {
     }
 
     public static boolean canApplyRelic (ItemStack stack, Relics relic, int strength) {
-        Map<Relics, Integer> relics = fromNbt(stack.getOrCreateTag());
+        if (!stack.hasTag() && getRelicCapacity(stack) > 0) return true;
+        Map<Relics, Integer> relics = fromNbt(stack.getTag());
         if (relics.containsKey(relic) && strength > relics.get(relic)) return true;
         else return getRelicCapacity(stack) > relics.keySet().size();
     }
 
     public static ItemStack applyRelic(ItemStack stack, Relics relicType, int strength) {
-        Map<Relics, Integer> relics = fromNbt(stack.getOrCreateTag());
+        Map<Relics, Integer> relics = fromNbt(stack.getTag());
         relics.put(relicType, strength);
         stack.getOrCreateTag().putInt(RELICS_KEY, relics.size());
         return stack;

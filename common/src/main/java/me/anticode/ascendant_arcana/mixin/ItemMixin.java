@@ -69,13 +69,13 @@ public class ItemMixin {
 
     @Inject(method = "getBarWidth", at = @At("HEAD"), cancellable = true)
     private void fixItemBarWithDurabilityRelic(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
-        if (RelicHelper.getValueFromNbt(stack.getOrCreateTag(), Relics.DURABILITY) == 0) return;
+        if (RelicHelper.getValueFromNbt(stack.getTag(), Relics.DURABILITY) == 0) return;
         cir.setReturnValue(Math.round(13.0F - (float)stack.getDamageValue() * 13.0F / (float)stack.getMaxDamage()));
     }
 
     @Inject(method = "getBarColor", at = @At("HEAD"), cancellable = true)
     private void fixItemBarColorWithDurabilityRelic(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
-        if (RelicHelper.getValueFromNbt(stack.getOrCreateTag(), Relics.DURABILITY) == 0) return;
+        if (RelicHelper.getValueFromNbt(stack.getTag(), Relics.DURABILITY) == 0) return;
         float f = Math.max(0.0F, ((float)stack.getMaxDamage() - (float)stack.getDamageValue()) / (float)stack.getMaxDamage());
         cir.setReturnValue(Mth.hsvToRgb(f / 3.0F, 1.0F, 1.0F));
     }

@@ -87,10 +87,10 @@ public class AArcanaEnchantmentHelper {
     }
 
     public static int getEnchantmentCapacity(ItemStack stack) {
-        int bonus_capacity = RelicHelper.getValueFromNbt(stack.getOrCreateTag(), Relics.ENCHANTMENT_CAPACITY);
+        int bonus_capacity = RelicHelper.getValueFromNbt(stack.getTag(), Relics.ENCHANTMENT_CAPACITY);
         if (bonus_capacity != 0) bonus_capacity = 5 + (bonus_capacity * 5);
-        if (stack.getOrCreateTag().contains(ENCHANTMENT_CAPACITY_KEY)) {
-            return stack.getOrCreateTag().getInt(ENCHANTMENT_CAPACITY_KEY) + bonus_capacity;
+        if (stack.hasTag() && stack.getTag().contains(ENCHANTMENT_CAPACITY_KEY)) {
+            return stack.getTag().getInt(ENCHANTMENT_CAPACITY_KEY) + bonus_capacity;
         }
         return getBaseEnchantmentCapacity(stack.getItem()) + bonus_capacity;
     }

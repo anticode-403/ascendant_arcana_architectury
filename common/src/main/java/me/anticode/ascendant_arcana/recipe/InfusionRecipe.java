@@ -40,7 +40,8 @@ public class InfusionRecipe implements SmithingRecipe {
     public boolean isBaseIngredient(ItemStack stack) {
         if (stack.is(AArcanaTags.Items.INFUSION_BLACKLIST)) return false;
         if (stack.isEnchantable() || stack.isDamageableItem() || stack.getItem() instanceof ArmorItem || stack.getItem() instanceof TieredItem || stack.getItem() instanceof BowItem || stack.getItem() instanceof CrossbowItem || stack.getItem() instanceof TridentItem) {
-            return RelicHelper.fromNbt(stack.getOrCreateTag()).size() < RelicHelper.getRelicCapacity(stack);
+            if (!stack.hasTag()) return true;
+            return RelicHelper.fromNbt(stack.getTag()).size() < RelicHelper.getRelicCapacity(stack);
         }
         return false;
     }
@@ -60,7 +61,7 @@ public class InfusionRecipe implements SmithingRecipe {
 
     public boolean matches (ItemStack baseStack, ItemStack relicStack) {
         if (baseStack.is(AArcanaTags.Items.INFUSION_BLACKLIST)) return false;
-        Map<Relics, Integer> relicMap = RelicHelper.fromNbt(baseStack.getOrCreateTag());
+        Map<Relics, Integer> relicMap = RelicHelper.fromNbt(baseStack.getTag());
         Relics relicType = RelicItem.getRelicType(relicStack);
         if (relicMap.size() < RelicHelper.getRelicCapacity(baseStack)) {
             if (relicType == Relics.DURABILITY && baseStack.isDamageableItem()) return true;
@@ -85,7 +86,7 @@ public class InfusionRecipe implements SmithingRecipe {
         ItemStack newStack = baseStack.copy();
         int relicStrength = RelicItem.getRelicStrength(relicStack);
         Relics relicType = RelicItem.getRelicType(relicStack);
-        Map<Relics, Integer> relicsMap = RelicHelper.fromNbt(newStack.getOrCreateTag());
+        Map<Relics, Integer> relicsMap = RelicHelper.fromNbt(newStack.getTag());
         relicsMap.put(relicType, relicStrength);
         newStack.getOrCreateTag().put(RelicHelper.RELICS_KEY, RelicHelper.toNbt(relicsMap));
         return newStack;

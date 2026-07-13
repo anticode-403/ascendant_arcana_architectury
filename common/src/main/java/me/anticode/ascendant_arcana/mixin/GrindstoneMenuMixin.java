@@ -18,7 +18,7 @@ public class GrindstoneMenuMixin {
     @Inject(method = "removeNonCurses", at = @At("HEAD"), cancellable = true)
     private void grind(ItemStack item, int damage, int amount, CallbackInfoReturnable<ItemStack> cir) {
         Map<Enchantment, Integer> enchantments = AArcanaEnchantmentHelper.getAllEnchantments(item);
-        Map<Relics, Integer> relics = RelicHelper.fromNbt(item.getOrCreateTag());
+        Map<Relics, Integer> relics = RelicHelper.fromNbt(item.getTag());
         if (enchantments.isEmpty() && relics.isEmpty()) {
             ItemStack itemStack = item.copyWithCount(amount);
             itemStack.removeTagKey("Damage");

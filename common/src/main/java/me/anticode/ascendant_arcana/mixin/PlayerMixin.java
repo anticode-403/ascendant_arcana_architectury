@@ -47,10 +47,10 @@ public class PlayerMixin {
     private float modifyAttackCooldownProgress(float original) {
         LivingEntity livingEntity = (LivingEntity)(Object)this;
         ItemStack mainStack = livingEntity.getMainHandItem();
-        if (mainStack.getItem() instanceof TieredItem) {
-            Map<Relics, Integer> relics = RelicHelper.fromNbt(mainStack.getOrCreateTag());
+        if (mainStack.getItem() instanceof TieredItem && mainStack.hasTag()) {
+            Map<Relics, Integer> relics = RelicHelper.fromNbt(mainStack.getTag());
             if (relics.containsKey(Relics.HASTE)) {
-                float hasteMultiplier = 1 + (float) RelicHelper.getStrengthFromNbt(Relics.HASTE, mainStack.getOrCreateTag()) / 2;
+                float hasteMultiplier = 1 + (float) RelicHelper.getStrengthFromNbt(Relics.HASTE, mainStack.getTag()) / 2;
                 if (original * hasteMultiplier > 1) return 1;
                 return original * hasteMultiplier;
             }

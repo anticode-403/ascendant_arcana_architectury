@@ -23,13 +23,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -41,13 +41,14 @@ import java.util.stream.Collectors;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
     @Shadow
-    public abstract CompoundTag getOrCreateTag();
-
-    @Shadow
     public abstract Item getItem();
 
     @Shadow
     public abstract boolean hasTag();
+
+    @Shadow
+    @Nullable
+    public abstract CompoundTag getTag();
 
     @Unique
     private static Enchantment replacement = null;
@@ -90,11 +91,12 @@ public abstract class ItemStackMixin {
 
     @ModifyReturnValue(method = "getMaxDamage", at = @At("RETURN"))
     private int implementDurabilityRelic(int maxDamage) {
-        return Mth.floor(maxDamage + RelicHelper.getStrengthFromNbt(Relics.DURABILITY, getOrCreateTag()));
+        return Mth.floor(maxDamage + RelicHelper.getStrengthFromNbt(Relics.DURABILITY, getTag()));
     }
 
     @ModifyReturnValue(method = "getAttributeModifiers", at = @At("RETURN"))
     private Multimap<Attribute, AttributeModifier> implementAttributeRelics(Multimap<Attribute, AttributeModifier> original, @Local(argsOnly = true) EquipmentSlot slot) {
+        if (!hasTag()) return original;
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         for (Map.Entry<Attribute, AttributeModifier> entry : original.entries()) {
             modifiers.put(entry.getKey(), entry.getValue());
@@ -108,7 +110,7 @@ public abstract class ItemStackMixin {
                 case FEET -> UUID.fromString("93ef9100-4f32-45e0-8568-f837918e9b43");
                 default -> null;
             };
-            float protectionValue = (float) RelicHelper.getStrengthFromNbt(Relics.DAMAGE, getOrCreateTag());
+            float protectionValue = (float) RelicHelper.getStrengthFromNbt(Relics.DAMAGE, getTag());
             if (protectionValue != 0) {
                 AttributeModifier modifier = new AttributeModifier(uuid, "Protection Relic Bonus", protectionValue, AttributeModifier.Operation.MULTIPLY_BASE);
                 modifiers.put(AArcanaAttributes.PROTECTION.get(), modifier);
@@ -116,10 +118,10 @@ public abstract class ItemStackMixin {
         }
         else if (getItem().getMaxDamage() > 1) {
             if (slot != EquipmentSlot.MAINHAND) return modifiers;
-            Map<Relics, Integer> relics = RelicHelper.fromNbt(getOrCreateTag());
+            Map<Relics, Integer> relics = RelicHelper.fromNbt(getTag());
             if (relics.isEmpty()) return modifiers;
             if (relics.containsKey(Relics.DAMAGE)) {
-                double damageValue = RelicHelper.getStrengthFromNbt(Relics.DAMAGE, getOrCreateTag());
+                double damageValue = RelicHelper.getStrengthFromNbt(Relics.DAMAGE, getTag());
                 List<AttributeModifier> oldDamageModifiers = modifiers.get(Attributes.ATTACK_DAMAGE).stream().toList();
                 List<AttributeModifier> newModifiers = ItemHelper.multiplyAttributeList(oldDamageModifiers, damageValue);
                 modifiers.replaceValues(Attributes.ATTACK_DAMAGE, newModifiers);
@@ -127,10 +129,10 @@ public abstract class ItemStackMixin {
         }
         else if (getItem() instanceof CrossbowItem || getItem() instanceof BowItem || getItem() instanceof TridentItem) {
             if (slot != EquipmentSlot.MAINHAND && slot != EquipmentSlot.OFFHAND) return modifiers;
-            Map<Relics, Integer> relics = RelicHelper.fromNbt(getOrCreateTag());
+            Map<Relics, Integer> relics = RelicHelper.fromNbt(getTag());
             if (relics.isEmpty()) return modifiers;
             if (relics.containsKey(Relics.HASTE)) {
-                double hasteValue = RelicHelper.getStrengthFromNbt(Relics.HASTE, getOrCreateTag()) / 2;
+                double hasteValue = RelicHelper.getStrengthFromNbt(Relics.HASTE, getTag()) / 2;
                 AttributeModifier modifier = new AttributeModifier(UUID.fromString("f2bb3e62-513f-4804-a194-2965d232c7ad"), "Haste Relic Bonus", hasteValue, AttributeModifier.Operation.MULTIPLY_BASE);
                 modifiers.put(AArcanaAttributes.DRAW_SPEED.get(), modifier);
             }
@@ -142,7 +144,7 @@ public abstract class ItemStackMixin {
     private void addRelicTooltipInfo(Player player, TooltipFlag tooltipFlag, CallbackInfoReturnable<List<Component>> cir) {
         List<Component> tooltip = cir.getReturnValue();
         if (!hasTag()) return;
-        Map<Relics, Integer> relics = RelicHelper.fromNbt(getOrCreateTag());
+        Map<Relics, Integer> relics = RelicHelper.fromNbt(getTag());
         if (relics.isEmpty()) return;
         int i = 1;
         tooltip.add(i++, Component.empty());

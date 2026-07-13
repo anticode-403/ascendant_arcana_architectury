@@ -115,7 +115,7 @@ public class ThrownTridentMixin implements EnchantedTrident {
         ascendant_arcana$setAmbushLevel(ambushLevel);
         ascendant_arcana$setLifetideLevel(lifetideLevel);
         ascendant_arcana$setSunderingLevel(sunderingLevel);
-        this.ascendant_arcana$relicDamageMultiplier = 1 + (float) RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getOrCreateTag());
+        this.ascendant_arcana$relicDamageMultiplier = 1 + (float) RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag());
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
