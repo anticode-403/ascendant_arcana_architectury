@@ -45,17 +45,17 @@ public abstract class GuiMixin {
     }
 
     @ModifyVariable(method = "renderExperienceBar", at = @At("STORE"), ordinal = 2)
-    public int removeExperienceProgress(int amount) {
+    private int removeExperienceProgress(int amount) {
         return AscendantArcana.config.disable_xp ? 0 : amount;
     }
 
     @Inject(method = "renderExperienceBar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Ljava/lang/String;IIIZ)I", ordinal = 0), cancellable = true)
-    public void removeExperienceLevel(GuiGraphics guiGraphics, int i, CallbackInfo ci) {
+    private void removeExperienceLevel(GuiGraphics guiGraphics, int i, CallbackInfo ci) {
         if (AscendantArcana.config.disable_xp) ci.cancel();
     }
 
     @WrapOperation(method = "renderHearts", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderHeart(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Gui$HeartType;IIIZZ)V"))
-    void moveHealthBarDown(Gui instance, GuiGraphics context, Gui.HeartType type, int x, int y, int v, boolean blinking, boolean halfHeart, Operation<Void> original) {
+    private void moveHealthBarDown(Gui instance, GuiGraphics context, Gui.HeartType type, int x, int y, int v, boolean blinking, boolean halfHeart, Operation<Void> original) {
         if (!AscendantArcana.config.disable_xp || !AscendantArcana.config.hide_xp_bar || (minecraft.player != null && minecraft.player.jumpableVehicle() != null)) {
             original.call(instance, context, type, x, y, v, blinking, halfHeart);
             return;
@@ -65,13 +65,7 @@ public abstract class GuiMixin {
     }
 
     @ModifyArg(method = "renderPlayerHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"), index = 2)
-    int moveHungerBarDown(int i) {
-        if (!AscendantArcana.config.disable_xp || !AscendantArcana.config.hide_xp_bar || (minecraft.player != null && minecraft.player.jumpableVehicle() != null)) return i;
-        return i + 6;
-    }
-
-    @ModifyArg(method = "renderVehicleHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"), index = 2)
-    int moveAirBarDown(int i) {
+    private int moveHungerBarDown(int i) {
         if (!AscendantArcana.config.disable_xp || !AscendantArcana.config.hide_xp_bar || (minecraft.player != null && minecraft.player.jumpableVehicle() != null)) return i;
         return i + 6;
     }
