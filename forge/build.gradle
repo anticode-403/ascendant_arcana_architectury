@@ -10,9 +10,7 @@ loom {
 
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
-        mixinConfig "ascendant_arcana.mixins.json"
-        mixinConfig "ascendant_arcana.client.mixins.json"
-        mixinConfig "ascendant_arcana.forge.mixins.json"
+        mixinConfig "ascendant_arcana.mixins.json", "ascendant_arcana.client.mixins.json", "ascendant_arcana.forge.mixins.json"
     }
 }
 
