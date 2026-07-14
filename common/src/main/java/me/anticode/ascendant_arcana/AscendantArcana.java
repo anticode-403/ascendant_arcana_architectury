@@ -26,9 +26,12 @@ import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class AscendantArcana {
     public static final String MOD_ID = "ascendant_arcana";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static ServerConfig config;
 
     private static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(MOD_ID, Registries.CREATIVE_MODE_TAB);

@@ -2,11 +2,14 @@ package me.anticode.ascendant_arcana.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import dev.architectury.networking.NetworkManager;
+import dev.architectury.platform.Platform;
 import me.anticode.ascendant_arcana.api.EnchantedTrident;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.networking.ForgeTridentSync;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -15,10 +18,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobType;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +36,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ThrownTrident.class)
-public class ThrownTridentMixin implements EnchantedTrident {
+public abstract class ThrownTridentMixin implements EnchantedTrident {
     @Shadow
     @Final
     private static EntityDataAccessor<Byte> ID_LOYALTY;
@@ -108,6 +108,11 @@ public class ThrownTridentMixin implements EnchantedTrident {
         return ((ThrownTrident)(Object)this).getEntityData().get(ID_LOYALTY);
     }
 
+    @Override
+    public void ascendant_arcana$setClientStuckEntity(int value) {
+        this.ascendant_arcana$stuckEntityId = value;
+    }
+
     @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V", at = @At("RETURN"))
     private void addEnchantmentsToTrident(Level level, LivingEntity livingEntity, ItemStack itemStack, CallbackInfo ci) {
         int ambushLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.AMBUSH.get(), itemStack);
@@ -149,24 +154,27 @@ public class ThrownTridentMixin implements EnchantedTrident {
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity && ascendant_arcana$stuckEntity == null && !ascendant_arcana$wasStuck) {
                 ascendant_arcana$stuckEntity = livingEntity;
                 ascendant_arcana$stuckEntityId = livingEntity.getId();
+                if (Platform.isForge() && projectile.level() instanceof ServerLevel serverLevel) {
+                    NetworkManager.sendToPlayers(serverLevel.players(), ForgeTridentSync.Id, new ForgeTridentSync(projectile.getId(), ascendant_arcana$stuckEntityId).write());
+                }
                 SoundSource soundCategory = SoundSource.PLAYERS;
                 if (projectile.getOwner() != null) soundCategory = projectile.getOwner().getSoundSource();
                 projectile.level().playSound(null, projectile.blockPosition(), SoundEvents.TRIDENT_HIT, soundCategory);
                 if (ascendant_arcana$lifetideLevel >= 1) {
-                    if (projectile.level() instanceof ServerLevel serverWorld) {
+                    if (projectile.level() instanceof ServerLevel serverLevel) {
                         for(int i = 0; i < 5; ++i) {
                             double offset = livingEntity.getRandom().nextGaussian() * 0.02;
-                            serverWorld.sendParticles(ParticleTypes.HEART, livingEntity.getX(2 * livingEntity.getRandom().nextDouble() - 1), livingEntity.getRandomY(), livingEntity.getZ(2 * livingEntity.getRandom().nextDouble() - 1), 5, offset, offset, offset, 1);
+                            serverLevel.sendParticles(ParticleTypes.HEART, livingEntity.getX(2 * livingEntity.getRandom().nextDouble() - 1), livingEntity.getRandomY(), livingEntity.getZ(2 * livingEntity.getRandom().nextDouble() - 1), 5, offset, offset, offset, 1);
                         }
                     }
                     projectile.level().playSound(null, projectile.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, soundCategory, 1, 2);
                     if (livingEntity.getMobType() == MobType.UNDEAD) ascendant_arcana$stuckEntity.hurt(projectile.damageSources().trident(projectile, projectile.getOwner()), (float) 4 * ascendant_arcana$relicDamageMultiplier);
                     else ascendant_arcana$stuckEntity.heal((float) 4 * ascendant_arcana$relicDamageMultiplier);
                 } else if (ascendant_arcana$sunderingLevel >= 1) {
-                    if (projectile.level() instanceof ServerLevel serverWorld) {
+                    if (projectile.level() instanceof ServerLevel serverLevel) {
                         for(int i = 0; i < 5; ++i) {
                             double offset = livingEntity.getRandom().nextGaussian() * 0.02;
-                            serverWorld.sendParticles(ParticleTypes.DAMAGE_INDICATOR, livingEntity.getX(2 * livingEntity.getRandom().nextDouble() - 1), livingEntity.getRandomY(), livingEntity.getZ(2 * livingEntity.getRandom().nextDouble() - 1), 5, offset, offset, offset, 1);
+                            serverLevel.sendParticles(ParticleTypes.DAMAGE_INDICATOR, livingEntity.getX(2 * livingEntity.getRandom().nextDouble() - 1), livingEntity.getRandomY(), livingEntity.getZ(2 * livingEntity.getRandom().nextDouble() - 1), 5, offset, offset, offset, 1);
                         }
                     }
                     projectile.level().playSound(null, projectile.blockPosition(), SoundEvents.ITEM_BREAK, soundCategory, 1, 0.5F);
@@ -203,7 +211,8 @@ public class ThrownTridentMixin implements EnchantedTrident {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void stuckTridentEnchants(CallbackInfo ci) {
-        if (ascendant_arcana$lifetideLevel <= 0 && ascendant_arcana$sunderingLevel <= 0) return;
+        if (Platform.isFabric() && (ascendant_arcana$lifetideLevel <= 0 && ascendant_arcana$sunderingLevel <= 0)) return;
+        else if (Platform.isForge() && (ascendant_arcana$stuckEntityId == -1)) return;
         ThrownTrident trident = (ThrownTrident)(Object)this;
         if (ascendant_arcana$stuckEntityId == -2) {
             ascendant_arcana$stuckEntity = null;

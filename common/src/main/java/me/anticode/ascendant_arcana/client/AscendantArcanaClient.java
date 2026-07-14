@@ -1,11 +1,15 @@
 package me.anticode.ascendant_arcana.client;
 
 import dev.architectury.networking.NetworkManager;
+import me.anticode.ascendant_arcana.AscendantArcana;
+import me.anticode.ascendant_arcana.api.EnchantedTrident;
 import me.anticode.ascendant_arcana.networking.EnchantingScreenSync;
+import me.anticode.ascendant_arcana.networking.ForgeTridentSync;
 import me.anticode.ascendant_arcana.screenhandler.AArcanaEnchantingMenu;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ThrownTrident;
 
 @Environment(EnvType.CLIENT)
 public class AscendantArcanaClient {
@@ -16,6 +20,19 @@ public class AscendantArcanaClient {
             if (player.containerMenu.containerId != packet.syncId()) return;
             AArcanaEnchantingMenu menu = (AArcanaEnchantingMenu) player.containerMenu;
             menu.unlockedTreasures = packet.treasures();
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ForgeTridentSync.Id, (buf, context) -> {
+            ForgeTridentSync packet = ForgeTridentSync.read(buf);
+            ThrownTrident trident;
+            try {
+                trident = (ThrownTrident) context.getPlayer().level().getEntity(packet.tridentEntityId());
+            } catch (ClassCastException e) {
+                AscendantArcana.LOGGER.warn("Thrown Trident ID not recognized!");
+                return;
+            }
+            EnchantedTrident enchantedTrident = (EnchantedTrident) trident;
+            enchantedTrident.ascendant_arcana$setClientStuckEntity(packet.stuckEntityId());
         });
     }
 }

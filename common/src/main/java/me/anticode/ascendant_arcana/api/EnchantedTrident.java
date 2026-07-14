@@ -1,7 +1,5 @@
 package me.anticode.ascendant_arcana.api;
 
-import net.minecraft.world.entity.LivingEntity;
-
 public interface EnchantedTrident {
     void ascendant_arcana$setAmbushLevel(int ambushLevel);
 
@@ -18,4 +16,6 @@ public interface EnchantedTrident {
     float ascendant_arcana$getStabTicks();
 
     int ascendant_arcana$getLoyaltyLevel();
+
+    void ascendant_arcana$setClientStuckEntity(int stuck);
 }
