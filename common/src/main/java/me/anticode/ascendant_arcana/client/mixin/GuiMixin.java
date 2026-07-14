@@ -6,7 +6,6 @@ import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.api.CrossbowAccess;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -18,6 +17,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -32,9 +32,6 @@ public abstract class GuiMixin {
 
     @Shadow
     private int screenHeight;
-
-    @Shadow
-    public abstract Font getFont();
 
     @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;hasExperience()Z"))
     private boolean doesNotHaveXpBar(MultiPlayerGameMode instance, Operation<Boolean> original) {
@@ -64,27 +61,19 @@ public abstract class GuiMixin {
             return;
         }
 
-        original.call(instance, context, type, x, y + 7, v, blinking, halfHeart);
+        original.call(instance, context, type, x, y + 6, v, blinking, halfHeart);
     }
 
-    @WrapOperation(method = "renderPlayerHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"))
-    void moveHungerBarDown(GuiGraphics instance, ResourceLocation texture, int x, int y, int u, int v, int width, int height, Operation<Void> original) {
-        if (!AscendantArcana.config.disable_xp || !AscendantArcana.config.hide_xp_bar || (minecraft.player != null && minecraft.player.jumpableVehicle() != null)) {
-            original.call(instance, texture, x, y, u, v, width, height);
-            return;
-        }
-
-        original.call(instance, texture, x, y + 7, u, v, width, height);
+    @ModifyArg(method = "renderPlayerHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"), index = 2)
+    int moveHungerBarDown(int i) {
+        if (!AscendantArcana.config.disable_xp || !AscendantArcana.config.hide_xp_bar || (minecraft.player != null && minecraft.player.jumpableVehicle() != null)) return i;
+        return i + 6;
     }
 
-    @WrapOperation(method = "renderVehicleHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"))
-    void moveAirBarDown(GuiGraphics instance, ResourceLocation texture, int x, int y, int u, int v, int width, int height, Operation<Void> original) {
-        if (!AscendantArcana.config.disable_xp || !AscendantArcana.config.hide_xp_bar || (minecraft.player != null && minecraft.player.jumpableVehicle() != null)) {
-            original.call(instance, texture, x, y, u, v, width, height);
-            return;
-        }
-
-        original.call(instance, texture, x, y+7, u, v, width, height);
+    @ModifyArg(method = "renderVehicleHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"), index = 2)
+    int moveAirBarDown(int i) {
+        if (!AscendantArcana.config.disable_xp || !AscendantArcana.config.hide_xp_bar || (minecraft.player != null && minecraft.player.jumpableVehicle() != null)) return i;
+        return i + 6;
     }
 
     @Inject(method = "renderCrosshair", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V", ordinal = 0, shift = At.Shift.AFTER))
