@@ -65,6 +65,8 @@ public class ThrownTridentMixin implements EnchantedTrident {
     @Unique
     private float ascendant_arcana$stabTicks = 0;
 
+    @Unique private boolean ascendant_arcana$wasStuck = false;
+
     @Unique
     private float ascendant_arcana$relicDamageMultiplier = 1;
 
@@ -144,7 +146,7 @@ public class ThrownTridentMixin implements EnchantedTrident {
     private void onEntityHitHead(EntityHitResult entityHitResult, CallbackInfo ci) {
         AbstractArrow projectile = (AbstractArrow)((Object)this);
         if (ascendant_arcana$lifetideLevel >= 1 || ascendant_arcana$sunderingLevel >= 1) {
-            if (entityHitResult.getEntity() instanceof LivingEntity livingEntity && ascendant_arcana$stuckEntity == null) {
+            if (entityHitResult.getEntity() instanceof LivingEntity livingEntity && ascendant_arcana$stuckEntity == null && !ascendant_arcana$wasStuck) {
                 ascendant_arcana$stuckEntity = livingEntity;
                 ascendant_arcana$stuckEntityId = livingEntity.getId();
                 SoundSource soundCategory = SoundSource.PLAYERS;
@@ -211,6 +213,7 @@ public class ThrownTridentMixin implements EnchantedTrident {
         } else {
             if (ascendant_arcana$stuckEntity != null && ascendant_arcana$stuckEntity.isAlive()) {
                 trident.setDeltaMovement(Vec3.ZERO);
+                ascendant_arcana$wasStuck = true;
                 if (++ascendant_arcana$ticksStuck > 120) {
                     ascendant_arcana$stuckEntityId = -2;
                 }
