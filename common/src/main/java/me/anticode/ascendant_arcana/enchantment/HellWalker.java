@@ -13,6 +13,8 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.LavaFluid;
 import net.minecraft.world.phys.shapes.CollisionContext;
 
@@ -40,19 +42,20 @@ public class HellWalker extends Enchantment {
 
     public static void freezeLava(LivingEntity entity, Level level, BlockPos blockPos) {
         if (entity.onGround()) {
-            BlockState blockState = AArcanaBlocks.CRYSTALIZED_LAVAL_BLOCK.get().defaultBlockState();
+            BlockState crystalizedLavaState = AArcanaBlocks.CRYSTALIZED_LAVAL_BLOCK.get().defaultBlockState();
             int i = Math.min(16, 4);
             BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
 
-            for (BlockPos blockPos2 : BlockPos.betweenClosed(blockPos.offset(-i, -1, -i), blockPos.offset(i, -1, i))) {
-                if (blockPos2.closerToCenterThan(entity.position(), i)) {
-                    mutable.set(blockPos2.getX(), blockPos2.getY() + 1, blockPos2.getZ());
-                    BlockState blockState2 = level.getBlockState(mutable);
-                    if (blockState2.isAir()) {
-                        BlockState blockState3 = level.getBlockState(blockPos2);
-                        if (blockState3.getBlock() == Blocks.LAVA && blockState3.getValue(LavaFluid.LEVEL) == 0 && blockState.canSurvive(level, blockPos2) && level.isUnobstructed(blockState, blockPos2, CollisionContext.empty())) {
-                            level.setBlockAndUpdate(blockPos2, blockState);
-                            level.scheduleTick(blockPos2, AArcanaBlocks.CRYSTALIZED_LAVAL_BLOCK.get(), Mth.nextInt(entity.getRandom(), 60, 120));
+            for (BlockPos lavaPos : BlockPos.betweenClosed(blockPos.offset(-i, -1, -i), blockPos.offset(i, -1, i))) {
+                if (lavaPos.closerToCenterThan(entity.position(), i)) {
+                    mutable.set(lavaPos.getX(), lavaPos.getY() + 1, lavaPos.getZ());
+                    BlockState aboveLavaState = level.getBlockState(mutable);
+                    if (aboveLavaState.isAir()) {
+                        BlockState lavaState = level.getBlockState(lavaPos);
+
+                        if (lavaState.getBlock() == Blocks.LAVA && level.getFluidState(lavaPos).getAmount() == 8 && crystalizedLavaState.canSurvive(level, lavaPos) && level.isUnobstructed(crystalizedLavaState, lavaPos, CollisionContext.empty())) {
+                            level.setBlockAndUpdate(lavaPos, crystalizedLavaState);
+                            level.scheduleTick(lavaPos, AArcanaBlocks.CRYSTALIZED_LAVAL_BLOCK.get(), Mth.nextInt(entity.getRandom(), 60, 120));
                         }
                     }
                 }
