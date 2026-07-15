@@ -94,7 +94,7 @@ public class BlazeboltEntity extends AbstractArrow {
                 });
                 if (hitResult.getType() == HitResult.Type.BLOCK) {
                     BlockPos blockPos = hitResult.getBlockPos().relative(hitResult.getDirection());
-                    if (!level().isWaterAt(hitResult.getBlockPos()) && level().isEmptyBlock(blockPos)) {
+                    if (BaseFireBlock.canBePlacedAt(level(), blockPos, hitResult.getDirection()) && level().isEmptyBlock(blockPos)) {
                         level().setBlock(blockPos, BaseFireBlock.getState(this.level(), blockPos), 11);
                     }
                     break;
