@@ -1,0 +1,6 @@
+{
+  "blazebolt_shot": {
+    "subtitle": "sound.ascendant_arcana.blazebolt_shot",
+    "sounds": ["ascendant_arcana:blazebolt_0", "ascendant_arcana:blazebolt_1"]
+  }
+}
