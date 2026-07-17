@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class BlazeboltEntity extends AbstractArrow {
-    public final int maxLife = 8;
+    public final int maxLife = 10;
     public final int maxLength = 256;
     public int life;
     public Vec3 directionVec;
