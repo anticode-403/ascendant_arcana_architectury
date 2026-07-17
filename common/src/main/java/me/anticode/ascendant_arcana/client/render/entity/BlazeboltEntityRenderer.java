@@ -40,29 +40,29 @@ public class BlazeboltEntityRenderer extends ArrowRenderer<BlazeboltEntity> {
         matrices.scale(scale, 1, scale);
         PoseStack.Pose entry = matrices.last();
         for (int j = 0; j < entity.maxLength; j++) {
-            drawBox(entry, vertices, 0.5F, u, v, 1);
+            drawBox(entry, vertices, 0.5F, u, v);
             matrices.translate(0, 1, 0);
         }
         matrices.popPose();
     }
 
-    private static void drawBox(PoseStack.Pose entry, VertexConsumer vertices, float width, float u, float v, float opacity) {
-        drawQuad(entry, vertices, -width, width, width*2, u, v, opacity, true);
-        drawQuad(entry, vertices, -width, -width, width*2, u, v, opacity, false);
-        drawQuad(entry, vertices, -width, -width, width*2, u, v, opacity, true);
-        drawQuad(entry, vertices, width, -width, width*2, u, v, opacity, false);
+    private static void drawBox(PoseStack.Pose entry, VertexConsumer vertices, float width, float u, float v) {
+        drawQuad(entry, vertices, -width, width, width*2, u, v, true);
+        drawQuad(entry, vertices, -width, -width, width*2, u, v, false);
+        drawQuad(entry, vertices, -width, -width, width*2, u, v, true);
+        drawQuad(entry, vertices, width, -width, width*2, u, v, false);
     }
 
-    private static void drawQuad(PoseStack.Pose entry, VertexConsumer vertices, float x, float z, float width, float u, float v, float opacity, boolean renderDown) {
-        drawVertex(entry, vertices, x, 1, z, 1, u, opacity);
-        drawVertex(entry, vertices, x, 0, z, 1, v, opacity);
+    private static void drawQuad(PoseStack.Pose entry, VertexConsumer vertices, float x, float z, float width, float u, float v, boolean renderDown) {
+        drawVertex(entry, vertices, x, 1, z, 1, u);
+        drawVertex(entry, vertices, x, 0, z, 1, v);
         if (renderDown) x += width;
         else z += width;
-        drawVertex(entry, vertices, x, 0, z, 0, v, opacity);
-        drawVertex(entry, vertices, x, 1, z, 0, u, opacity);
+        drawVertex(entry, vertices, x, 0, z, 0, v);
+        drawVertex(entry, vertices, x, 1, z, 0, u);
     }
 
-    private static void drawVertex(PoseStack.Pose entry, VertexConsumer vertices, float x, float y, float z, float u, float v, float opacity) {
-        vertices.vertex(entry.pose(), x, y, z).color(255, 255, 255, opacity).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(entry.normal(), 0, 1, 0).endVertex();
+    private static void drawVertex(PoseStack.Pose entry, VertexConsumer vertices, float x, float y, float z, float u, float v) {
+        vertices.vertex(entry.pose(), x, y, z).color(255, 255, 255, 255).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(entry.normal(), 0, 1, 0).endVertex();
     }
 }
