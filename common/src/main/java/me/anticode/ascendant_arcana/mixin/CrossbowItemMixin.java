@@ -155,7 +155,13 @@ public class CrossbowItemMixin implements CrossbowAccess {
     private static void applyAlternateAmmoTypes(Level level, LivingEntity livingEntity, InteractionHand interactionHand, ItemStack itemStack, ItemStack itemStack2, float f, boolean bl, float g, float h, float i, CallbackInfo ci) {
         if (level.isClientSide) return;
         if (itemStack2.is(Items.BLAZE_ROD)) {
-            Projectile projectile = new BlazeboltEntity(level, livingEntity);
+            float damageMultiplier = (float) (1 + RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag()));
+            if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), itemStack) > 0) {
+                damageMultiplier -= 0.25F;
+            } else if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SALVO.get(), itemStack) > 0) {
+                damageMultiplier -= 0.5F;
+            }
+            Projectile projectile = new BlazeboltEntity(level, livingEntity, damageMultiplier);
             level.addFreshEntity(projectile);
             level.playSound((Player)null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), AArcanaSoundEvents.BLAZEBOLT_SHOT.get(), SoundSource.PLAYERS, 1.0F, f);
             ci.cancel();
