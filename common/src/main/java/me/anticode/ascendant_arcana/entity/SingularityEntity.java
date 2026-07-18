@@ -67,24 +67,36 @@ public class SingularityEntity extends Entity implements TraceableEntity {
         } else if (entityData.get(life) == 19) {
             level().playSound(null, getX(), getY(), getZ(), AArcanaSoundEvents.SINGULARITY.get(), SoundSource.PLAYERS, 1F, 3F);
         } else if (entityData.get(life) == 15) {
-            level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(5F), EntitySelector.NO_SPECTATORS.and(EntitySelector.LIVING_ENTITY_STILL_ALIVE)).forEach(entity -> {
-                LivingEntity livingEntity = (LivingEntity) entity;
-                Vec3 offset = livingEntity.position().vectorTo(position());
-                double knockbackStrength = Math.max(position().distanceTo(livingEntity.position()) / 5F, 0);
-                Vec3 knockbackVector = offset.normalize();
-                livingEntity.knockback(knockbackStrength, -knockbackVector.x, -knockbackVector.z);
-                livingEntity.hurtMarked = true;
-            });
+            if (!level().isClientSide()){
+                level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(5F), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(this::notOwnerAlly)).forEach(entity -> {
+                    LivingEntity livingEntity = (LivingEntity) entity;
+                    Vec3 offset = livingEntity.position().vectorTo(position());
+                    double knockbackStrength = Math.max(position().distanceTo(livingEntity.position()) / 5F, 0);
+                    Vec3 knockbackVector = offset.normalize();
+                    livingEntity.knockback(knockbackStrength, -knockbackVector.x, -knockbackVector.z);
+                    livingEntity.hurtMarked = true;
+                });
+            }
         } else if (entityData.get(life) == 0) {
             discard();
         }
         if (entityData.get(life) % 5 == 0) {
-            level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(0.05F),  EntitySelector.NO_SPECTATORS.and(EntitySelector.LIVING_ENTITY_STILL_ALIVE)).forEach(entity -> {
-                LivingEntity livingEntity = (LivingEntity) entity;
-                livingEntity.hurt(damageSources().indirectMagic(this, getOwner()), 1F);
-            });
+            if (!level().isClientSide()) {
+                level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(0.05F), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(this::notOwnerAlly)).forEach(entity -> {
+                    LivingEntity livingEntity = (LivingEntity) entity;
+                    livingEntity.hurt(damageSources().indirectMagic(this, getOwner()), 1F);
+                });
+            }
         }
         entityData.set(life, entityData.get(life) - 1);
+    }
+
+    private boolean notOwnerAlly(Entity entity) {
+        if (getOwner() == null) return true;
+        if (entity == getOwner()) return false;
+        else if (entity instanceof TraceableEntity traceableEntity && traceableEntity.getOwner() == getOwner()) return false;
+        else if (getOwner().getTeam() != null && !getOwner().getTeam().isAllowFriendlyFire() && getOwner().getTeam() == entity.getTeam()) return false;
+        else return true;
     }
 
     @Override
@@ -94,11 +106,16 @@ public class SingularityEntity extends Entity implements TraceableEntity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compoundTag) {
-
+        if (compoundTag.hasUUID("Owner")) {
+            this.ownerUUID = compoundTag.getUUID("Owner");
+            this.cachedOwner = null;
+        }
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compoundTag) {
-
+        if (this.ownerUUID != null) {
+            compoundTag.putUUID("Owner", this.ownerUUID);
+        }
     }
 }
