@@ -6,5 +6,9 @@
   "singularity": {
     "subtitle": "sound.ascendant_arcana.singularity",
     "sounds": ["ascendant_arcana:singularity_0", "ascendant_arcana:singularity_1", "ascendant_arcana:singularity_2", "ascendant_arcana:singularity_3", "ascendant_arcana:singularity_4"]
+  },
+  "singularity_summon": {
+    "subtitle": "sound.ascendant_arcana.singularity_summon",
+    "sounds": ["ascendant_arcana:singularity_summon_0", "ascendant_arcana:singularity_summon_1", "ascendant_arcana:singularity_summon_2"]
   }
 }

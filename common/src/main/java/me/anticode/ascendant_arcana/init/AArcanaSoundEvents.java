@@ -12,6 +12,7 @@ public class AArcanaSoundEvents {
 
     public static final RegistrySupplier<SoundEvent> BLAZEBOLT_SHOT = register("blazebolt_shot");
     public static final RegistrySupplier<SoundEvent> SINGULARITY = register("singularity");
+    public static final RegistrySupplier<SoundEvent> SINGULARITY_SUMMON = register("singularity_summon");
 
     public static RegistrySupplier<SoundEvent> register(String id) {
         return SOUND_EVENTS.register(id, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.tryBuild(AscendantArcana.MOD_ID, id)));

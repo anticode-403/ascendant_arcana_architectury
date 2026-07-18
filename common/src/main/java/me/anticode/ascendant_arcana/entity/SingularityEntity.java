@@ -62,7 +62,9 @@ public class SingularityEntity extends Entity implements TraceableEntity {
 
     @Override
     public void tick() {
-        if (entityData.get(life) == 19) {
+        if (entityData.get(life) == maxLife) {
+            level().playSound(null, getX(), getY(), getZ(), AArcanaSoundEvents.SINGULARITY_SUMMON.get(), SoundSource.PLAYERS, 1.0F, 3.0F);
+        } else if (entityData.get(life) == 19) {
             level().playSound(null, getX(), getY(), getZ(), AArcanaSoundEvents.SINGULARITY.get(), SoundSource.PLAYERS, 1F, 3F);
         } else if (entityData.get(life) == 15) {
             level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(5F), EntitySelector.NO_SPECTATORS.and(EntitySelector.LIVING_ENTITY_STILL_ALIVE)).forEach(entity -> {
