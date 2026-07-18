@@ -6,7 +6,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import me.anticode.ascendant_arcana.api.EnchantedArrow;
+import me.anticode.ascendant_arcana.api.EnchantedTrident;
 import me.anticode.ascendant_arcana.api.PotionArrow;
+import me.anticode.ascendant_arcana.entity.SingularityEntity;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import net.minecraft.core.BlockPos;
@@ -300,18 +302,28 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         Projectile projectile = (Projectile)((Object)this);
         LivingEntity owner = (LivingEntity)projectile.getOwner();
         Level level = projectile.level();
-        if (ascendant_arcana$evokersWrathLevel >= 1) {
-            ascendant_arcana$summonEvokersWrathFangs(owner, projectile, blockHitResult.getLocation(), level);
-        }
-
-        if (ascendant_arcana$archersGambitLevel >= 1) {
-            if (owner != null && owner.getEffect(AArcanaMobEffects.ARCHERS_GAMBIT.get()) != null && (ascendant_arcana$ricochetLevel == 0 || ascendant_arcana$ricochetBounces >= ascendant_arcana$ricochetLevel) && (getPierceLevel() == 0 || (piercingIgnoreEntityIds != null && piercingIgnoreEntityIds.isEmpty()))) {
-                if (!ascendant_arcana$didHitEntity) owner.removeEffect(AArcanaMobEffects.ARCHERS_GAMBIT.get());
+        if (projectile instanceof ThrownTrident trident) {
+            EnchantedTrident enchantedTrident = (EnchantedTrident)trident;
+            if (enchantedTrident.ascendant_arcana$getSingularityLevel() >= 1) {
+                SingularityEntity singularity = new SingularityEntity(projectile.level(), (LivingEntity) projectile.getOwner());
+                Vec3 averagePosition = projectile.position().add(blockHitResult.getLocation()).multiply(0.5, 0.5, 0.5);
+                singularity.setPos(averagePosition);
+                projectile.level().addFreshEntity(singularity);
             }
-        }
+        } else {
+            if (ascendant_arcana$evokersWrathLevel >= 1) {
+                ascendant_arcana$summonEvokersWrathFangs(owner, projectile, blockHitResult.getLocation(), level);
+            }
 
-        if (ascendant_arcana$miasmaLevel >= 1) {
-            ascendant_arcana$createMiasmaCloud(projectile, blockHitResult.getLocation());
+            if (ascendant_arcana$archersGambitLevel >= 1) {
+                if (owner != null && owner.getEffect(AArcanaMobEffects.ARCHERS_GAMBIT.get()) != null && (ascendant_arcana$ricochetLevel == 0 || ascendant_arcana$ricochetBounces >= ascendant_arcana$ricochetLevel) && (getPierceLevel() == 0 || (piercingIgnoreEntityIds != null && piercingIgnoreEntityIds.isEmpty()))) {
+                    if (!ascendant_arcana$didHitEntity) owner.removeEffect(AArcanaMobEffects.ARCHERS_GAMBIT.get());
+                }
+            }
+
+            if (ascendant_arcana$miasmaLevel >= 1) {
+                ascendant_arcana$createMiasmaCloud(projectile, blockHitResult.getLocation());
+            }
         }
     }
 

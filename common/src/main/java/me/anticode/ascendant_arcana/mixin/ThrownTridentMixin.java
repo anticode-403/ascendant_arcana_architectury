@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
 import me.anticode.ascendant_arcana.api.EnchantedTrident;
+import me.anticode.ascendant_arcana.entity.SingularityEntity;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
@@ -40,6 +41,9 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
     @Shadow
     @Final
     private static EntityDataAccessor<Byte> ID_LOYALTY;
+
+    @Unique
+    private int ascendant_arcana$singularityLevel;
 
     @Unique
     private int ascendant_arcana$ambushLevel;
@@ -104,6 +108,16 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
     }
 
     @Override
+    public int ascendant_arcana$getSingularityLevel() {
+        return this.ascendant_arcana$singularityLevel;
+    }
+
+    @Override
+    public void ascendant_arcana$setSingularityLevel(int value) {
+        this.ascendant_arcana$singularityLevel = value;
+    }
+
+    @Override
     public int ascendant_arcana$getLoyaltyLevel() {
         return ((ThrownTrident)(Object)this).getEntityData().get(ID_LOYALTY);
     }
@@ -118,15 +132,18 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
         int ambushLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.AMBUSH.get(), itemStack);
         int lifetideLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.LIFETIDE.get(), itemStack);
         int sunderingLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SUNDERING.get(), itemStack);
+        int singularityLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SINGULARITY.get(), itemStack);
 
         ascendant_arcana$setAmbushLevel(ambushLevel);
         ascendant_arcana$setLifetideLevel(lifetideLevel);
         ascendant_arcana$setSunderingLevel(sunderingLevel);
+        ascendant_arcana$setSingularityLevel(singularityLevel);
         this.ascendant_arcana$relicDamageMultiplier = 1 + (float) RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag());
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     private void writeCustomAttributes(CompoundTag nbt, CallbackInfo ci) {
+        nbt.putInt("singularityLevel", ascendant_arcana$singularityLevel);
         nbt.putInt("ambushLevel", ascendant_arcana$ambushLevel);
         nbt.putInt("lifetideLevel", ascendant_arcana$lifetideLevel);
         nbt.putInt("stuckEntityId", ascendant_arcana$stuckEntityId);
@@ -138,6 +155,7 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
 
     @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
     private void readCustomDataFromNbt(CompoundTag nbt, CallbackInfo ci) {
+        this.ascendant_arcana$singularityLevel = nbt.getInt("singularityLevel");
         this.ascendant_arcana$ambushLevel = nbt.getInt("ambushLevel");
         this.ascendant_arcana$lifetideLevel = nbt.getInt("lifetideLevel");
         this.ascendant_arcana$stuckEntityId = nbt.getInt("stuckEntityId");
@@ -201,6 +219,12 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
             if (owner instanceof PathfinderMob pathAware) {
                 pathAware.getNavigation().stop();
             }
+        }
+        if (ascendant_arcana$singularityLevel >= 1) {
+            SingularityEntity singularity = new SingularityEntity(projectile.level(), (LivingEntity) projectile.getOwner());
+            Vec3 averagePosition = projectile.position().add(entityHitResult.getLocation()).multiply(0.5, 0.5, 0.5);
+            singularity.setPos(averagePosition);
+            projectile.level().addFreshEntity(singularity);
         }
     }
 

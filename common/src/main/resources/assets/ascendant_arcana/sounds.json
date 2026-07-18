@@ -2,5 +2,9 @@
   "blazebolt_shot": {
     "subtitle": "sound.ascendant_arcana.blazebolt_shot",
     "sounds": ["ascendant_arcana:blazebolt_0", "ascendant_arcana:blazebolt_1", "ascendant_arcana:blazebolt_2", "ascendant_arcana:blazebolt_3"]
+  },
+  "singularity": {
+    "subtitle": "sound.ascendant_arcana.singularity",
+    "sounds": ["ascendant_arcana:singularity_0", "ascendant_arcana:singularity_1", "ascendant_arcana:singularity_2", "ascendant_arcana:singularity_3", "ascendant_arcana:singularity_4"]
   }
 }
