@@ -39,9 +39,9 @@ public class SingularityEntityRenderer extends EntityRenderer<SingularityEntity>
         float ringScale = easeInOutQuad(Mth.lerp(g, Math.min(time - 1, 10F)/10F, Math.min(time, 10F)/10F)) * 10F;
         if (time >= 15 && time <= 20) ringScale = easeInOutQuad(Mth.map(Mth.lerp(g, time - 1, time), 15, 20, 9, 0) / 10F) * 10F + 1;
         if (time > 20) ringScale = 1;
-        if (time > 26) {
+        if (time > 24) {
             float fac = (time - 26 + g) / 3F;
-            ringScale = 1 - Mth.clampedLerp(fac, 0F, 1F);
+            ringScale = Math.max(1 - fac, 0);
             scale = ringScale;
         }
         poseStack.scale(ringScale, 1, ringScale);
