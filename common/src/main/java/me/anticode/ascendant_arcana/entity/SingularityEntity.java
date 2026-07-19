@@ -1,6 +1,7 @@
 package me.anticode.ascendant_arcana.entity;
 
 import me.anticode.ascendant_arcana.init.AArcanaEntities;
+import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -8,6 +9,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -84,6 +86,7 @@ public class SingularityEntity extends Entity implements TraceableEntity {
             if (!level().isClientSide()) {
                 level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(0.05F), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(this::notOwnerAlly)).forEach(entity -> {
                     LivingEntity livingEntity = (LivingEntity) entity;
+                    livingEntity.addEffect(new MobEffectInstance(AArcanaMobEffects.HOBBLED.get(), 40, 2, false, false, true));
                     livingEntity.hurt(damageSources().indirectMagic(this, getOwner()), 1F);
                 });
             }
