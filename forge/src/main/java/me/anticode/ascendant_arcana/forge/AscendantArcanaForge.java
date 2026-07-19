@@ -5,13 +5,13 @@ import dev.architectury.platform.forge.EventBuses;
 import me.anticode.ascendant_arcana.api.ItemEntryAccess;
 import me.anticode.ascendant_arcana.api.LeafEntryAccess;
 import me.anticode.ascendant_arcana.client.AscendantArcanaClient;
+import me.anticode.ascendant_arcana.client.model.entity.SingularityModel;
+import me.anticode.ascendant_arcana.client.render.entity.BlazeboltEntityRenderer;
+import me.anticode.ascendant_arcana.client.render.entity.SingularityEntityRenderer;
 import me.anticode.ascendant_arcana.client.screen.AArcanaEnchantingScreen;
 import me.anticode.ascendant_arcana.forge.api.LootPoolAccess;
 import me.anticode.ascendant_arcana.forge.api.LootTableAccess;
-import me.anticode.ascendant_arcana.init.AArcanaAttributes;
-import me.anticode.ascendant_arcana.init.AArcanaBlocks;
-import me.anticode.ascendant_arcana.init.AArcanaItems;
-import me.anticode.ascendant_arcana.init.AArcanaMenus;
+import me.anticode.ascendant_arcana.init.*;
 import me.anticode.ascendant_arcana.item.RelicItem;
 import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.loot.PopulateRelicLootFunction;
@@ -148,6 +148,13 @@ public final class AscendantArcanaForge {
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(AArcanaBlocks.COPPER_ENCHANTING_TABLE_BLOCK_ENTITY.get(), EnchantTableRenderer::new);
+            event.registerEntityRenderer(AArcanaEntities.BLAZEBOLT_ENTITY.get(), BlazeboltEntityRenderer::new);
+            event.registerEntityRenderer(AArcanaEntities.SINGULARITY_ENTITY.get(), SingularityEntityRenderer::new);
+        }
+
+        @SubscribeEvent
+        public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            event.registerLayerDefinition(SingularityModel.LAYER_LOCATION, SingularityModel::createBodyLayer);
         }
     }
 }
