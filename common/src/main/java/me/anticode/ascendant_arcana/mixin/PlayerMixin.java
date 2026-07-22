@@ -96,6 +96,12 @@ public class PlayerMixin {
                     creativeItemStack = new ItemStack(Items.BLAZE_ROD);
                 }
 
+                int shattershotLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SHATTERSHOT.get(), itemStack);
+                if (shattershotLevel > 0) {
+                    predicate = (item) -> item.is(Items.AMETHYST_SHARD);
+                    creativeItemStack = new ItemStack(Items.AMETHYST_SHARD);
+                }
+
                 ItemStack heldStack = ProjectileWeaponItem.getHeldProjectile((LivingEntity) (Object) this, predicate);
                 if (!heldStack.isEmpty()) {
                     cir.setReturnValue(heldStack);

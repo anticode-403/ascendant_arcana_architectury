@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class AArcanaDamage {
     public static final ResourceKey<DamageType> BLAZEBOLT = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.tryBuild(AscendantArcana.MOD_ID, "blazebolt"));
+    public static final ResourceKey<DamageType> SHATTERSHOT = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.tryBuild(AscendantArcana.MOD_ID, "shattershot"));
 
     public static DamageSource source(Level level, ResourceKey<DamageType> key, @Nullable Entity source, @Nullable Entity attacker) {
         return new DamageSource(level.registryAccess().registry(Registries.DAMAGE_TYPE).get().getHolder(key).get(), source, attacker);

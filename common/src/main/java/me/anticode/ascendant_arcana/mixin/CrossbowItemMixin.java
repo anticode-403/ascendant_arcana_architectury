@@ -7,7 +7,9 @@ import com.llamalad7.mixinextras.sugar.Local;
 import me.anticode.ascendant_arcana.api.CrossbowAccess;
 import me.anticode.ascendant_arcana.api.EnchantedRocket;
 import me.anticode.ascendant_arcana.entity.BlazeboltEntity;
+import me.anticode.ascendant_arcana.init.AArcanaDamage;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
+import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
@@ -19,6 +21,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -30,6 +34,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -164,6 +170,17 @@ public class CrossbowItemMixin implements CrossbowAccess {
             Projectile projectile = new BlazeboltEntity(level, livingEntity, damageMultiplier);
             level.addFreshEntity(projectile);
             level.playSound((Player)null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), AArcanaSoundEvents.BLAZEBOLT_SHOT.get(), SoundSource.PLAYERS, 1.0F, f);
+            ci.cancel();
+        } else if (itemStack2.is(Items.AMETHYST_SHARD)) {
+            float damageMultiplier = (float) (1 + RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag()));
+            level.getEntities(livingEntity, AABB.unitCubeFromLowerCorner(livingEntity.getEyePosition().add(livingEntity.getLookAngle().scale(2))).inflate(2), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and((entity -> entity != livingEntity))).forEach(entity -> {
+                LivingEntity targetEntity = (LivingEntity) entity;
+                targetEntity.hurt(AArcanaDamage.source(level, AArcanaDamage.SHATTERSHOT), 3 * damageMultiplier);
+                Vec3 offset = livingEntity.getLookAngle().scale(2);
+                targetEntity.setDeltaMovement(offset);
+                targetEntity.hurtMarked = true;
+                targetEntity.addEffect(new MobEffectInstance(AArcanaMobEffects.SUNDERED.get(), 120, 0, false, false, true));
+            });
             ci.cancel();
         }
     }
