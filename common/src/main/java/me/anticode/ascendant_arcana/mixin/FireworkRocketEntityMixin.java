@@ -54,9 +54,10 @@ public class FireworkRocketEntityMixin implements EnchantedRocket {
         if (rocketry_level > 0) {
             Vec3 offset = rocket.position().vectorTo(livingEntity.position());
             double knockbackStrength = Math.max(1 - (offset.length() / 5.0F), 0);
-            Vec3 knockbackVector = ((livingEntity.onGround()) ? offset.with(Direction.Axis.Y, 0) : offset).normalize().add(0, 0.2F, 0).scale(knockbackStrength * 2D);
+            Vec3 knockbackVector = ((livingEntity.onGround() || livingEntity != rocket.getOwner()) ? offset.with(Direction.Axis.Y, 0) : offset).normalize().add(0, 0.2F, 0).scale(knockbackStrength * 2D);
             Vec3 targetVector = ((livingEntity.onGround()) ? livingEntity.getDeltaMovement().with(Direction.Axis.Y, 0.0) : livingEntity.getDeltaMovement()).add(knockbackVector);
-            livingEntity.setDeltaMovement(targetVector);
+            if (livingEntity == rocket.getOwner()) livingEntity.setDeltaMovement(targetVector);
+            else livingEntity.knockback(knockbackStrength, -knockbackVector.x, -knockbackVector.z);
             livingEntity.hurtMarked = true;
         }
         return result;
