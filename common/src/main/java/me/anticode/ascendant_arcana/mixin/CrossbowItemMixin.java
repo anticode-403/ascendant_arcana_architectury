@@ -14,8 +14,10 @@ import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.logic.Relics;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -196,8 +198,8 @@ public class CrossbowItemMixin implements CrossbowAccess {
             level.getEntities(livingEntity, AABB.unitCubeFromLowerCorner(livingEntity.getEyePosition().add(livingEntity.getLookAngle().scale(2))).inflate(2), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and((entity -> entity != livingEntity))).forEach(entity -> {
                 LivingEntity targetEntity = (LivingEntity) entity;
                 targetEntity.hurt(AArcanaDamage.source(level, AArcanaDamage.SHATTERSHOT), 3 * damageMultiplier);
-                Vec3 offset = livingEntity.getLookAngle().scale(2);
-                targetEntity.setDeltaMovement(offset);
+                Vec3 offset = livingEntity.getLookAngle().with(Direction.Axis.Y, 0).normalize();
+                targetEntity.knockback(2, -offset.x, -offset.z);
                 targetEntity.hurtMarked = true;
                 targetEntity.addEffect(new MobEffectInstance(AArcanaMobEffects.SUNDERED.get(), 120, 0, false, false, true));
             });
