@@ -180,8 +180,8 @@ public class CrossbowItemMixin implements CrossbowAccess {
             if (inaccuracy > 0) {
                 float rand_pitch = random.nextFloat() * inaccuracy * 2f;
                 float rand_yaw = random.nextFloat() * inaccuracy * 2f;
-                pitch = pitch + (random.nextBoolean() ? rand_pitch : -rand_pitch);
-                yaw = yaw + (random.nextBoolean() ? rand_yaw : -rand_yaw);
+                pitch += (random.nextBoolean() ? rand_pitch : -rand_pitch);
+                yaw += (random.nextBoolean() ? rand_yaw : -rand_yaw);
             }
             Projectile projectile = new BlazeboltEntity(level, livingEntity, damageMultiplier, pitch, yaw);
             level.addFreshEntity(projectile);
