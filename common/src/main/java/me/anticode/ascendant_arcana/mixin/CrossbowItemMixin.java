@@ -166,14 +166,18 @@ public class CrossbowItemMixin implements CrossbowAccess {
             float pitch = livingEntity.getXRot();
             float yaw = livingEntity.getYRot();
             int inaccuracy = 0;
+            int maxLength = 16 * (2 ^ EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BLAZEBOLT.get(), itemStack));
+            int damage = 4 + (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BLAZEBOLT.get(), itemStack) * 2);
             float damageMultiplier = (float) (1 + RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag()));
             if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), itemStack) > 0) {
                 damageMultiplier -= 0.25F;
             } else if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SALVO.get(), itemStack) > 0) {
                 damageMultiplier -= 0.5F;
                 inaccuracy += 4;
+                maxLength /= 4;
             } else if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, itemStack) > 0) {
                 yaw += i;
+                maxLength /= 4;
             }
             inaccuracy += EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.INACCURACY_CURSE.get(), itemStack);
             RandomSource random = livingEntity.getRandom();
@@ -183,7 +187,7 @@ public class CrossbowItemMixin implements CrossbowAccess {
                 pitch += (random.nextBoolean() ? rand_pitch : -rand_pitch);
                 yaw += (random.nextBoolean() ? rand_yaw : -rand_yaw);
             }
-            Projectile projectile = new BlazeboltEntity(level, livingEntity, damageMultiplier, pitch, yaw);
+            Projectile projectile = new BlazeboltEntity(level, livingEntity, maxLength, damage * damageMultiplier, pitch, yaw);
             level.addFreshEntity(projectile);
             level.playSound((Player)null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), AArcanaSoundEvents.BLAZEBOLT_SHOT.get(), SoundSource.PLAYERS, 1.0F, f);
             ci.cancel();

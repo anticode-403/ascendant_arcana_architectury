@@ -27,12 +27,12 @@ import java.util.Set;
 
 public class BlazeboltEntity extends AbstractArrow {
     public final int maxLife = 10;
-    public final int maxLength = 256;
     public int life;
     public Vec3 directionVec;
     public static EntityDataAccessor<Float> x = SynchedEntityData.defineId(BlazeboltEntity.class, EntityDataSerializers.FLOAT);
     public static EntityDataAccessor<Float> y = SynchedEntityData.defineId(BlazeboltEntity.class, EntityDataSerializers.FLOAT);
     public static EntityDataAccessor<Integer> length = SynchedEntityData.defineId(BlazeboltEntity.class, EntityDataSerializers.INT);
+    public static EntityDataAccessor<Integer> maxLength = SynchedEntityData.defineId(BlazeboltEntity.class, EntityDataSerializers.INT);
 
     private final Set<Entity> hitEntities = new HashSet<>(), killedEntities = new HashSet<>();
 
@@ -42,15 +42,16 @@ public class BlazeboltEntity extends AbstractArrow {
         noCulling = true;
     }
 
-    public BlazeboltEntity(Level level, LivingEntity owner, float damageMultiplier, float pitch, float yaw) {
+    public BlazeboltEntity(Level level, LivingEntity owner, int length, float damage, float pitch, float yaw) {
         super(AArcanaEntities.BLAZEBOLT_ENTITY.get(), owner, level);
         life = maxLife;
         noCulling = true;
         setPos(owner.getX(), owner.getEyeY() - 0.3, owner.getZ());
-        setBaseDamage(10 * damageMultiplier);
+        setBaseDamage(damage);
         entityData.set(x, pitch);
         entityData.set(y, yaw);
         directionVec = Vec3.directionFromRotation(entityData.get(x), entityData.get(y));
+        entityData.set(maxLength, length);
     }
 
     @Override
@@ -59,6 +60,7 @@ public class BlazeboltEntity extends AbstractArrow {
         entityData.define(x, 0F);
         entityData.define(y, 0F);
         entityData.define(length, 0);
+        entityData.define(maxLength, 256);
     }
 
     @Override
@@ -82,7 +84,7 @@ public class BlazeboltEntity extends AbstractArrow {
         }
         if (life == maxLife) {
             Vec3 start = position(), end = start.add(directionVec);
-            while (step < maxLength) {
+            while (step < entityData.get(maxLength)) {
                 step++;
                 BlockHitResult hitResult = level().clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.WATER, this));
                 Entity owner = getOwner();
