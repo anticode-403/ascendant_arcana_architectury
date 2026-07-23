@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import dev.architectury.networking.NetworkManager;
 import me.anticode.ascendant_arcana.api.CrossbowAccess;
 import me.anticode.ascendant_arcana.api.EnchantedRocket;
 import me.anticode.ascendant_arcana.entity.BlazeboltEntity;
@@ -14,7 +15,11 @@ import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.networking.AddParticlesPacket;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
@@ -26,6 +31,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
@@ -36,6 +42,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
@@ -203,6 +210,10 @@ public class CrossbowItemMixin implements CrossbowAccess {
                 targetEntity.hurtMarked = true;
                 targetEntity.addEffect(new MobEffectInstance(AArcanaMobEffects.SUNDERED.get(), 120, 0, false, false, true));
             });
+            if (level instanceof ServerLevel serverLevel) {
+                NetworkManager.sendToPlayers(serverLevel.players(), AddParticlesPacket.Id, new AddParticlesPacket(BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.BLOCK).toString(), new BlockParticleOption(ParticleTypes.BLOCK, Blocks.AMETHYST_CLUSTER.defaultBlockState()), 20, livingEntity.getEyePosition().with(Direction.Axis.Y, livingEntity.getEyeY() - 0.3), livingEntity.getLookAngle(), 0, 0.1F, 1).write());
+                NetworkManager.sendToPlayers(serverLevel.players(), AddParticlesPacket.Id, new AddParticlesPacket(BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.ENCHANTED_HIT).toString(), ParticleTypes.ENCHANTED_HIT, 15, livingEntity.getEyePosition().with(Direction.Axis.Y, livingEntity.getEyeY() - 0.3), livingEntity.getLookAngle(), 0.0F, 0.3F, 3).write());
+            }
             ci.cancel();
         }
     }

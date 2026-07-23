@@ -9,11 +9,14 @@ import me.anticode.ascendant_arcana.client.render.entity.SingularityEntityRender
 import me.anticode.ascendant_arcana.init.AArcanaEntities;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.api.EnchantedTrident;
+import me.anticode.ascendant_arcana.networking.AddParticlesPacket;
 import me.anticode.ascendant_arcana.networking.EnchantingScreenSync;
 import me.anticode.ascendant_arcana.networking.ForgeTridentSync;
 import me.anticode.ascendant_arcana.screenhandler.AArcanaEnchantingMenu;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 
@@ -38,6 +41,19 @@ public class AscendantArcanaClient {
             }
             EnchantedTrident enchantedTrident = (EnchantedTrident) trident;
             enchantedTrident.ascendant_arcana$setClientStuckEntity(packet.stuckEntityId());
+        });
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, AddParticlesPacket.Id, (buf, context) -> {
+            AddParticlesPacket packet = AddParticlesPacket.read(buf);
+            RandomSource random = context.getPlayer().getRandom();
+            for (int i = 0; i < packet.count(); i++) {
+                double x = packet.pos().x + Mth.randomBetween(random, -packet.posVariance(), packet.posVariance());
+                double y = packet.pos().y + Mth.randomBetween(random, -packet.posVariance(), packet.posVariance());
+                double z = packet.pos().z + Mth.randomBetween(random, -packet.posVariance(), packet.posVariance());
+                double velX = (packet.vel().x + Mth.randomBetween(random, -packet.velVariance(), packet.velVariance())) * packet.speed();
+                double velY = (packet.vel().y + Mth.randomBetween(random, -packet.velVariance(), packet.velVariance())) * packet.speed();
+                double velZ = (packet.vel().z + Mth.randomBetween(random, -packet.velVariance(), packet.velVariance())) * packet.speed();
+                context.getPlayer().level().addParticle(packet.particleOptions(), x, y, z, velX, velY, velZ);
+            }
         });
 
         EntityRendererRegistry.register(AArcanaEntities.BLAZEBOLT_ENTITY, BlazeboltEntityRenderer::new);
