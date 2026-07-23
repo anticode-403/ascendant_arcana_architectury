@@ -305,7 +305,7 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         if (projectile instanceof ThrownTrident trident) {
             EnchantedTrident enchantedTrident = (EnchantedTrident)trident;
             if (enchantedTrident.ascendant_arcana$getSingularityLevel() >= 1) {
-                SingularityEntity singularity = new SingularityEntity(projectile.level(), (LivingEntity) projectile.getOwner());
+                SingularityEntity singularity = new SingularityEntity(projectile.level(), (LivingEntity) projectile.getOwner(), enchantedTrident.ascendant_arcana$getSingularityLevel());
                 Vec3 averagePosition = projectile.position().add(blockHitResult.getLocation()).multiply(0.5, 0.5, 0.5);
                 singularity.setPos(averagePosition);
                 projectile.level().addFreshEntity(singularity);

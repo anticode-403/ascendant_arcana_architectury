@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
@@ -33,15 +34,22 @@ public class SingularityEntityRenderer extends EntityRenderer<SingularityEntity>
     @Override
     public void render(SingularityEntity entity, float f, float g, PoseStack poseStack, MultiBufferSource multiBufferSource, int i) {
         poseStack.pushPose();
-        int time = SingularityEntity.maxLife - entity.getEntityData().get(SingularityEntity.life);
+        SynchedEntityData entityData = entity.getEntityData();
+        int life = entityData.get(SingularityEntity.life);
+        int time = entityData.get(SingularityEntity.maxLife) - life;
+        int cyclicalTime = 30 - entity.getCyclicalLife();
         float scale = Mth.lerp(g, Math.min((time - 1)/3F, 1F), Math.min(time / 3F, 1F));
         // This is incredibly cursed.
         float ringScale = easeInOutQuad(Mth.lerp(g, Math.min(time - 1, 10F)/10F, Math.min(time, 10F)/10F)) * 10F;
-        if (time >= 15 && time <= 20) ringScale = easeInOutQuad(Mth.map(Mth.lerp(g, time - 1, time), 15, 20, 9, 0) / 10F) * 10F + 1;
-        if (time > 20) ringScale = 1;
-        if (time > 24) {
-            float fac = (time - 26 + g) / 3F;
-            ringScale = Math.max(1 - fac, 0);
+        if (cyclicalTime >= 15 && cyclicalTime <= 20) ringScale = easeInOutQuad(Mth.map(Mth.lerp(g, cyclicalTime - 1, cyclicalTime), 15, 20, 9, 0) / 10F) * 10F + 1;
+        if (cyclicalTime > 20 && life > 30) {
+            ringScale = easeInOutQuad(Mth.lerp(g, Math.min(cyclicalTime - 20, 10F)/10F, Math.min(cyclicalTime - 19, 10F)/10F)) * 10F;
+        } else if (cyclicalTime > 20) {
+            ringScale = 1;
+        }
+        if (life <= 5) {
+            float fac = (life - g) / 5F;
+            ringScale = Math.max(fac, 0);
             scale = ringScale;
         }
         poseStack.scale(ringScale, 1, ringScale);

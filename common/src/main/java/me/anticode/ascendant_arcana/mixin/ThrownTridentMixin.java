@@ -221,7 +221,7 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
             }
         }
         if (ascendant_arcana$singularityLevel >= 1) {
-            SingularityEntity singularity = new SingularityEntity(projectile.level(), (LivingEntity) projectile.getOwner());
+            SingularityEntity singularity = new SingularityEntity(projectile.level(), (LivingEntity) projectile.getOwner(), ascendant_arcana$singularityLevel);
             Vec3 averagePosition = projectile.position().add(entityHitResult.getLocation()).multiply(0.5, 0.5, 0.5);
             singularity.setPos(averagePosition);
             projectile.level().addFreshEntity(singularity);

@@ -23,19 +23,20 @@ public class SingularityEntity extends Entity implements TraceableEntity {
     private UUID ownerUUID;
     @Nullable
     private Entity cachedOwner;
-    public final static int maxLife = 30;
+    public final static EntityDataAccessor<Integer> maxLife = SynchedEntityData.defineId(SingularityEntity.class, EntityDataSerializers.INT);
     public final static EntityDataAccessor<Integer> life = SynchedEntityData.defineId(SingularityEntity.class, EntityDataSerializers.INT);
 
     public SingularityEntity(EntityType<? extends SingularityEntity> entityType, Level level) {
         super(entityType, level);
-        entityData.set(life, maxLife);
+        entityData.set(life, entityData.get(maxLife));
         this.noPhysics = true;
         this.noCulling = true;
     }
 
-    public SingularityEntity(Level level, LivingEntity livingEntity) {
+    public SingularityEntity(Level level, LivingEntity livingEntity, int singularityLevel) {
         super(AArcanaEntities.SINGULARITY_ENTITY.get(), level);
-        entityData.set(life, maxLife);
+        entityData.set(maxLife, 30 * singularityLevel);
+        entityData.set(life, entityData.get(maxLife));
         this.noPhysics = true;
         this.noCulling = true;
         setOwner(livingEntity);
@@ -64,11 +65,11 @@ public class SingularityEntity extends Entity implements TraceableEntity {
 
     @Override
     public void tick() {
-        if (entityData.get(life) == maxLife) {
+        if (entityData.get(life).equals(entityData.get(maxLife))) {
             level().playSound(null, getX(), getY(), getZ(), AArcanaSoundEvents.SINGULARITY_SUMMON.get(), SoundSource.PLAYERS, 1.0F, 3.0F);
-        } else if (entityData.get(life) == 19) {
+        } else if (getCyclicalLife() == 19) {
             level().playSound(null, getX(), getY(), getZ(), AArcanaSoundEvents.SINGULARITY.get(), SoundSource.PLAYERS, 1F, 3F);
-        } else if (entityData.get(life) == 15) {
+        } else if (getCyclicalLife() == 15) {
             if (!level().isClientSide()){
                 level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(5F), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(this::notOwnerAlly)).forEach(entity -> {
                     LivingEntity livingEntity = (LivingEntity) entity;
@@ -104,7 +105,8 @@ public class SingularityEntity extends Entity implements TraceableEntity {
 
     @Override
     protected void defineSynchedData() {
-        entityData.define(life, maxLife);
+        entityData.define(maxLife, 30);
+        entityData.define(life, 30);
     }
 
     @Override
@@ -120,5 +122,9 @@ public class SingularityEntity extends Entity implements TraceableEntity {
         if (this.ownerUUID != null) {
             compoundTag.putUUID("Owner", this.ownerUUID);
         }
+    }
+
+    public int getCyclicalLife() {
+        return entityData.get(life) % 30;
     }
 }
