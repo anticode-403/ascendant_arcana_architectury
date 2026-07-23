@@ -32,6 +32,7 @@ public class BlazeboltEntity extends AbstractArrow {
     public Vec3 directionVec;
     public static EntityDataAccessor<Float> x = SynchedEntityData.defineId(BlazeboltEntity.class, EntityDataSerializers.FLOAT);
     public static EntityDataAccessor<Float> y = SynchedEntityData.defineId(BlazeboltEntity.class, EntityDataSerializers.FLOAT);
+    public static EntityDataAccessor<Integer> length = SynchedEntityData.defineId(BlazeboltEntity.class, EntityDataSerializers.INT);
 
     private final Set<Entity> hitEntities = new HashSet<>(), killedEntities = new HashSet<>();
 
@@ -46,10 +47,10 @@ public class BlazeboltEntity extends AbstractArrow {
         life = maxLife;
         noCulling = true;
         setPos(owner.getX(), owner.getEyeY() - 0.3, owner.getZ());
-        directionVec = getOwner().getLookAngle();
         setBaseDamage(10 * damageMultiplier);
         entityData.set(x, getOwner().getXRot());
         entityData.set(y, getOwner().getYRot());
+        directionVec = Vec3.directionFromRotation(entityData.get(x), entityData.get(y));
     }
 
     @Override
@@ -57,6 +58,7 @@ public class BlazeboltEntity extends AbstractArrow {
         super.defineSynchedData();
         entityData.define(x, 0F);
         entityData.define(y, 0F);
+        entityData.define(length, 0);
     }
 
     @Override
@@ -70,18 +72,18 @@ public class BlazeboltEntity extends AbstractArrow {
             setCritArrow(false);
         }
         setDeltaMovement(Vec3.ZERO);
-        int length = 0;
+        int step = 0;
         if (getOwner() == null) {
             discard();
             return;
         }
         if (directionVec == null && life == maxLife) {
-            directionVec = getOwner().getLookAngle();
+            directionVec = Vec3.directionFromRotation(entityData.get(x), entityData.get(y));
         }
         if (life == maxLife) {
             Vec3 start = position(), end = start.add(directionVec);
-            while (length < maxLength) {
-                length++;
+            while (step < maxLength) {
+                step++;
                 BlockHitResult hitResult = level().clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.WATER, this));
                 Entity owner = getOwner();
                 level().getEntities(owner, AABB.unitCubeFromLowerCorner(hitResult.getLocation()).inflate(0.5), EntitySelector.NO_SPECTATORS.and(entity -> canEntityBeHit(owner, entity))).forEach(entity -> {
@@ -103,6 +105,7 @@ public class BlazeboltEntity extends AbstractArrow {
                 start = end;
                 end = start.add(directionVec);
             }
+            entityData.set(length, step);
             if (!level().isClientSide) {
                 level().gameEvent(GameEvent.PROJECTILE_LAND, end, GameEvent.Context.of(this));
             }

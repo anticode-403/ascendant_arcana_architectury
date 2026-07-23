@@ -34,12 +34,12 @@ public class BlazeboltEntityRenderer extends ArrowRenderer<BlazeboltEntity> {
         float u = v + 4 * -0.5F / scale;
         VertexConsumer vertices = vertexConsumers.getBuffer(RenderType.dragonExplosionAlpha(TEXTURE));
         matrices.pushPose();
-        matrices.mulPose(Axis.YP.rotationDegrees(-entity.getEntityData().get(entity.y) + 90));
-        matrices.mulPose(Axis.ZP.rotationDegrees((float)entity.getEntityData().get(entity.x) + 90));
+        matrices.mulPose(Axis.YP.rotationDegrees(-entity.getEntityData().get(BlazeboltEntity.y) + 90));
+        matrices.mulPose(Axis.ZP.rotationDegrees((float)entity.getEntityData().get(BlazeboltEntity.x) + 90));
         matrices.mulPose(Axis.YP.rotationDegrees((Minecraft.getInstance().getFrameTime() - entity.life) * 30));
         matrices.scale(scale, 1, scale);
         PoseStack.Pose entry = matrices.last();
-        for (int j = 0; j < entity.maxLength; j++) {
+        for (int j = 0; j < entity.getEntityData().get(BlazeboltEntity.length); j++) {
             drawBox(entry, vertices, 0.5F, u, v);
             matrices.translate(0, 1, 0);
         }
