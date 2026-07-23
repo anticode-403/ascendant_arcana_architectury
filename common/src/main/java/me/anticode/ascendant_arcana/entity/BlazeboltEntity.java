@@ -42,14 +42,14 @@ public class BlazeboltEntity extends AbstractArrow {
         noCulling = true;
     }
 
-    public BlazeboltEntity(Level level, LivingEntity owner, float damageMultiplier) {
+    public BlazeboltEntity(Level level, LivingEntity owner, float damageMultiplier, float pitch, float yaw) {
         super(AArcanaEntities.BLAZEBOLT_ENTITY.get(), owner, level);
         life = maxLife;
         noCulling = true;
         setPos(owner.getX(), owner.getEyeY() - 0.3, owner.getZ());
         setBaseDamage(10 * damageMultiplier);
-        entityData.set(x, getOwner().getXRot());
-        entityData.set(y, getOwner().getYRot());
+        entityData.set(x, pitch);
+        entityData.set(y, yaw);
         directionVec = Vec3.directionFromRotation(entityData.get(x), entityData.get(y));
     }
 

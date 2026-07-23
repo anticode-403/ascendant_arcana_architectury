@@ -36,6 +36,8 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -161,13 +163,27 @@ public class CrossbowItemMixin implements CrossbowAccess {
     private static void applyAlternateAmmoTypes(Level level, LivingEntity livingEntity, InteractionHand interactionHand, ItemStack itemStack, ItemStack itemStack2, float f, boolean bl, float g, float h, float i, CallbackInfo ci) {
         if (level.isClientSide) return;
         if (itemStack2.is(Items.BLAZE_ROD)) {
+            float pitch = livingEntity.getXRot();
+            float yaw = livingEntity.getYRot();
+            int inaccuracy = 0;
             float damageMultiplier = (float) (1 + RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag()));
             if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), itemStack) > 0) {
                 damageMultiplier -= 0.25F;
             } else if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SALVO.get(), itemStack) > 0) {
                 damageMultiplier -= 0.5F;
+                inaccuracy += 4;
+            } else if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, itemStack) > 0) {
+                yaw += i;
             }
-            Projectile projectile = new BlazeboltEntity(level, livingEntity, damageMultiplier);
+            inaccuracy += EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.INACCURACY_CURSE.get(), itemStack);
+            RandomSource random = livingEntity.getRandom();
+            if (inaccuracy > 0) {
+                float rand_pitch = random.nextFloat() * inaccuracy * 2f;
+                float rand_yaw = random.nextFloat() * inaccuracy * 2f;
+                pitch = pitch + (random.nextBoolean() ? rand_pitch : -rand_pitch);
+                yaw = yaw + (random.nextBoolean() ? rand_yaw : -rand_yaw);
+            }
+            Projectile projectile = new BlazeboltEntity(level, livingEntity, damageMultiplier, pitch, yaw);
             level.addFreshEntity(projectile);
             level.playSound((Player)null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), AArcanaSoundEvents.BLAZEBOLT_SHOT.get(), SoundSource.PLAYERS, 1.0F, f);
             ci.cancel();
