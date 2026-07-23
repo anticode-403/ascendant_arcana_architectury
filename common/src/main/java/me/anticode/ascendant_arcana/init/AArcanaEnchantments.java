@@ -15,6 +15,7 @@ public class AArcanaEnchantments {
     public static RegistrySupplier<Enchantment> BLAZEBOLT = register(new Blazebolt(), "blazebolt");
     public static RegistrySupplier<Enchantment> CLEANSE = register(new Cleanse(), "cleanse");
     public static RegistrySupplier<Enchantment> CROSS_COUNTER = register(new CrossCounter(), "cross_counter");
+    public static RegistrySupplier<Enchantment> CUSHIONING = register(new Cushioning(), "cushioning");
     public static RegistrySupplier<Enchantment> DEBILITATING_CHAIN = register(new DebilitatingChain(), "debilitating_chain");
     public static RegistrySupplier<Enchantment> DEFLECT = register(new Deflect(), "deflect");
     public static RegistrySupplier<Enchantment> EVOKERS_WRATH = register(new EvokersWrath(), "evokers_wrath");

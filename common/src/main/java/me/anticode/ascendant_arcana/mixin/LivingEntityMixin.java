@@ -204,6 +204,11 @@ public abstract class LivingEntityMixin {
         double damage_taken = getAttributes().getValue(AArcanaAttributes.DAMAGE_TAKEN.get());
         damage *= (float) damage_taken;
 
+        if (source.is(DamageTypes.FLY_INTO_WALL)) {
+            int cushioning = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.CUSHIONING.get(), ((LivingEntity)(Object)this));
+            damage *= 1 - (0.2F * cushioning);
+        }
+
         if (source.is(DamageTypeTags.IS_FIRE)) {
             if (heartAttackers.containsKey(AArcanaEnchantments.IndirectHeartDamageTypes.NETHER)) {
                 damage *= 2;
