@@ -154,7 +154,7 @@ public class PlayerMixin implements AArcanaPlayer {
                 }
             } else {
                 AABB shieldbashBox = player.getBoundingBox().move(shieldBashDirection.scale(player.getBoundingBox().getXsize())).inflate(0.75);
-                int stepLength = shieldBashTicks == 3 ? 2 : 1;
+                int stepLength = shieldBashTicks >= 3 ? 2 : 1;
                 a: for (int i = 0; i < stepLength; i++) {
                     for (Entity entity : player.level().getEntities(player, shieldbashBox.move(shieldBashDirection.scale(i)))) {
                         if (entity == player) continue;
@@ -188,10 +188,16 @@ public class PlayerMixin implements AArcanaPlayer {
 
     @Override
     public void ascendant_arcana$setShieldBashStatus(boolean status) {
+        if (shieldBashing == status) return;
         Player player = (Player)(Object)this;
         shieldBashing = status;
         if (shieldBashing) {
-            shieldBashTicks = 3;
+            if (!(player.getUseItem().getItem() instanceof ShieldItem)) {
+                shieldBashing = false;
+                return;
+            }
+            int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SHIELD_BASH.get(), player.getUseItem());
+            shieldBashTicks = 1 + shieldBashLevel * 2;
             shieldBashDirection = player.getLookAngle().with(Direction.Axis.Y, 0).normalize();
             if (!player.level().isClientSide()) {
                 player.getUseItem().hurtAndBreak(3, player, (livingEntity) -> livingEntity.broadcastBreakEvent(player.getUsedItemHand()));
@@ -216,5 +222,10 @@ public class PlayerMixin implements AArcanaPlayer {
     @Override
     public int ascendant_arcana$getShieldBashTicks() {
         return shieldBashTicks;
+    }
+
+    @Override
+    public Vec3 ascendant_arcana$getShieldBashDirection() {
+        return shieldBashDirection;
     }
 }
