@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Abilities;
@@ -152,20 +153,26 @@ public class PlayerMixin implements AArcanaPlayer {
                     NetworkManager.sendToServer(ServerboundShieldBashPacket.Id, new ServerboundShieldBashPacket(false).write());
                 }
             } else {
-                player.move(MoverType.PLAYER, shieldBashDirection.scale(shieldBashTicks));
-                player.level().getEntities(player, player.getBoundingBox().move(shieldBashDirection).inflate(0.5)).forEach((entity) -> {
-                    if (entity == player) return;
-                    if (player.level() instanceof ServerLevel serverLevel) {
-                        NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), false).write());
-                        ascendant_arcana$setShieldBashStatus(false);
-                    } else {
-                        NetworkManager.sendToServer(ServerboundShieldBashPacket.Id, new ServerboundShieldBashPacket(false).write());
+                AABB shieldbashBox = player.getBoundingBox().move(shieldBashDirection.scale(player.getBoundingBox().getXsize())).inflate(0.5);
+                int stepLength = shieldBashTicks == 3 ? 2 : 1;
+                a: for (int i = 0; i < stepLength; i++) {
+                    for (Entity entity : player.level().getEntities(player, shieldbashBox.move(shieldBashDirection.scale(shieldbashBox.getXsize() * i)))) {
+                        if (entity == player) continue;
+                        if (entity instanceof LivingEntity livingEntity) {
+                            livingEntity.hurt(player.damageSources().playerAttack(player), 4);
+                            livingEntity.knockback(2, -shieldBashDirection.x, -shieldBashDirection.z);
+                        }
+                        if (player.level() instanceof ServerLevel serverLevel) {
+                            NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), false).write());
+                            ascendant_arcana$setShieldBashStatus(false);
+                        } else {
+                            NetworkManager.sendToServer(ServerboundShieldBashPacket.Id, new ServerboundShieldBashPacket(false).write());
+                        }
+                        break a;
                     }
-                    if (entity instanceof LivingEntity livingEntity) {
-                        livingEntity.hurt(player.damageSources().playerAttack(player), 4);
-                        livingEntity.knockback(2, -shieldBashDirection.x, -shieldBashDirection.z);
-                    }
-                });
+                }
+                player.move(MoverType.SELF, shieldBashDirection.scale(stepLength));
+                player.hasImpulse = true;
                 shieldBashTicks--;
                 if (shieldBashTicks == 0) {
                     if (player.level() instanceof ServerLevel serverLevel) {
@@ -192,6 +199,9 @@ public class PlayerMixin implements AArcanaPlayer {
         } else {
             player.getCooldowns().addCooldown(Items.SHIELD, 20);
             player.stopUsingItem();
+            if (shieldBashTicks != 0) {
+                player.move(MoverType.SELF, shieldBashDirection);
+            }
             shieldBashTicks = 0;
             shieldBashDirection = Vec3.ZERO;
             player.setDeltaMovement(player.getDeltaMovement().multiply(0, 1, 0));
