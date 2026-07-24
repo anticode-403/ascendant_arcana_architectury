@@ -2,6 +2,7 @@ package me.anticode.ascendant_arcana.client.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import me.anticode.ascendant_arcana.api.AArcanaPlayer;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
@@ -29,6 +30,7 @@ public abstract class LocalPlayerMixin {
 
     @ModifyConstant(method = "aiStep", constant = @Constant(floatValue = 0.2F))
     private float modifyUseMovementPenalty(float value) {
+        if (((AArcanaPlayer)(Object)this).ascendant_arcana$getShieldBashStatus()) return 1F;
         if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.STRAFE.get(), (LocalPlayer)(Object)this) >= 1) return 0.6F;
         return value;
     }

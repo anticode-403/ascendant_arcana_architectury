@@ -1,24 +1,34 @@
 package me.anticode.ascendant_arcana.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import dev.architectury.networking.NetworkManager;
 import me.anticode.ascendant_arcana.AscendantArcana;
+import me.anticode.ascendant_arcana.api.AArcanaPlayer;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.networking.ClientboundShieldBashPacket;
+import me.anticode.ascendant_arcana.networking.ServerboundShieldBashPacket;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -28,7 +38,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 @Mixin(Player.class)
-public class PlayerMixin {
+public class PlayerMixin implements AArcanaPlayer {
     @Shadow
     @Final
     private Inventory inventory;
@@ -36,6 +46,15 @@ public class PlayerMixin {
     @Shadow
     @Final
     private Abilities abilities;
+
+    @Unique
+    private int shieldBashTicks = 0;
+
+    @Unique
+    private boolean shieldBashing = false;
+
+    @Unique
+    private Vec3 shieldBashDirection = Vec3.ZERO;
 
     @ModifyReturnValue(method = "getXpNeededForNextLevel", at = @At("RETURN"))
     private int xp(int original) {
@@ -118,5 +137,71 @@ public class PlayerMixin {
                 }
             }
         }
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;tick()V"))
+    private void shieldBash(CallbackInfo ci) {
+        Player player = (Player)(Object)this;
+        if (shieldBashing) {
+            int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SHIELD_BASH.get(), player.getUseItem());
+            if (shieldBashLevel < 0) {
+                if (player.level() instanceof ServerLevel serverLevel) {
+                    NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), false).write());
+                    ascendant_arcana$setShieldBashStatus(false);
+                } else {
+                    NetworkManager.sendToServer(ServerboundShieldBashPacket.Id, new ServerboundShieldBashPacket(false).write());
+                }
+            } else {
+                player.move(MoverType.PLAYER, shieldBashDirection.scale(shieldBashTicks));
+                player.level().getEntities(player, player.getBoundingBox().move(shieldBashDirection).inflate(0.5)).forEach((entity) -> {
+                    if (entity == player) return;
+                    if (player.level() instanceof ServerLevel serverLevel) {
+                        NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), false).write());
+                        ascendant_arcana$setShieldBashStatus(false);
+                    } else {
+                        NetworkManager.sendToServer(ServerboundShieldBashPacket.Id, new ServerboundShieldBashPacket(false).write());
+                    }
+                    if (entity instanceof LivingEntity livingEntity) {
+                        livingEntity.hurt(player.damageSources().playerAttack(player), 4);
+                        livingEntity.knockback(2, -shieldBashDirection.x, -shieldBashDirection.z);
+                    }
+                });
+                shieldBashTicks--;
+                if (shieldBashTicks == 0) {
+                    if (player.level() instanceof ServerLevel serverLevel) {
+                        NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), false).write());
+                        ascendant_arcana$setShieldBashStatus(false);
+                    } else {
+                        NetworkManager.sendToServer(ServerboundShieldBashPacket.Id, new ServerboundShieldBashPacket(false).write());
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void ascendant_arcana$setShieldBashStatus(boolean status) {
+        Player player = (Player)(Object)this;
+        shieldBashing = status;
+        if (shieldBashing) {
+            shieldBashTicks = 3;
+            shieldBashDirection = player.getLookAngle().with(Direction.Axis.Y, 0).normalize();
+        } else {
+            player.getCooldowns().addCooldown(Items.SHIELD, 20);
+            player.stopUsingItem();
+            shieldBashTicks = 0;
+            shieldBashDirection = Vec3.ZERO;
+            player.setDeltaMovement(player.getDeltaMovement().multiply(0, 1, 0));
+        }
+    }
+
+    @Override
+    public boolean ascendant_arcana$getShieldBashStatus() {
+        return shieldBashing;
+    }
+
+    @Override
+    public int ascendant_arcana$getShieldBashTicks() {
+        return shieldBashTicks;
     }
 }

@@ -8,6 +8,7 @@
     "GuiMixin",
     "ItemPropertiesMixin",
     "LocalPlayerMixin",
+    "MinecraftMixin",
     "ThrownTridentRendererMixin"
   ],
   "injectors": {

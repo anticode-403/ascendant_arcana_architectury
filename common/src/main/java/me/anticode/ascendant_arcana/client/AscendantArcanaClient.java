@@ -3,6 +3,7 @@ package me.anticode.ascendant_arcana.client;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
+import me.anticode.ascendant_arcana.api.AArcanaPlayer;
 import me.anticode.ascendant_arcana.client.model.entity.SingularityModel;
 import me.anticode.ascendant_arcana.client.render.entity.BlazeboltEntityRenderer;
 import me.anticode.ascendant_arcana.client.render.entity.SingularityEntityRenderer;
@@ -10,6 +11,7 @@ import me.anticode.ascendant_arcana.init.AArcanaEntities;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.api.EnchantedTrident;
 import me.anticode.ascendant_arcana.networking.AddParticlesPacket;
+import me.anticode.ascendant_arcana.networking.ClientboundShieldBashPacket;
 import me.anticode.ascendant_arcana.networking.EnchantingScreenSync;
 import me.anticode.ascendant_arcana.networking.ForgeTridentSync;
 import me.anticode.ascendant_arcana.screenhandler.AArcanaEnchantingMenu;
@@ -54,6 +56,13 @@ public class AscendantArcanaClient {
                 double velZ = (packet.vel().z + Mth.randomBetween(random, -packet.velVariance(), packet.velVariance())) * packet.speed();
                 context.getPlayer().level().addParticle(packet.particleOptions(), x, y, z, velX, velY, velZ);
             }
+        });
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClientboundShieldBashPacket.Id, (buf, context) -> {
+            ClientboundShieldBashPacket packet = ClientboundShieldBashPacket.read(buf);
+            Player player = context.getPlayer().level().getPlayerByUUID(packet.playerId());
+            if (player == null) return;
+            AArcanaPlayer aPlayer = (AArcanaPlayer) player;
+            aPlayer.ascendant_arcana$setShieldBashStatus(packet.status());
         });
 
         EntityRendererRegistry.register(AArcanaEntities.BLAZEBOLT_ENTITY, BlazeboltEntityRenderer::new);
