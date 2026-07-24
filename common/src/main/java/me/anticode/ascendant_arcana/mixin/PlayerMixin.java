@@ -186,6 +186,9 @@ public class PlayerMixin implements AArcanaPlayer {
         if (shieldBashing) {
             shieldBashTicks = 3;
             shieldBashDirection = player.getLookAngle().with(Direction.Axis.Y, 0).normalize();
+            if (!player.level().isClientSide()) {
+                player.getUseItem().hurtAndBreak(3, player, (livingEntity) -> livingEntity.broadcastBreakEvent(player.getUsedItemHand()));
+            }
         } else {
             player.getCooldowns().addCooldown(Items.SHIELD, 20);
             player.stopUsingItem();
