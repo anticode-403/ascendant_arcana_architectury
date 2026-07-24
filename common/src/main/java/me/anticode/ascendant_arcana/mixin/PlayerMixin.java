@@ -153,10 +153,10 @@ public class PlayerMixin implements AArcanaPlayer {
                     NetworkManager.sendToServer(ServerboundShieldBashPacket.Id, new ServerboundShieldBashPacket(false).write());
                 }
             } else {
-                AABB shieldbashBox = player.getBoundingBox().move(shieldBashDirection.scale(player.getBoundingBox().getXsize())).inflate(0.5);
+                AABB shieldbashBox = player.getBoundingBox().move(shieldBashDirection.scale(player.getBoundingBox().getXsize())).inflate(0.75);
                 int stepLength = shieldBashTicks == 3 ? 2 : 1;
                 a: for (int i = 0; i < stepLength; i++) {
-                    for (Entity entity : player.level().getEntities(player, shieldbashBox.move(shieldBashDirection.scale(shieldbashBox.getXsize() * i)))) {
+                    for (Entity entity : player.level().getEntities(player, shieldbashBox.move(shieldBashDirection.scale(i)))) {
                         if (entity == player) continue;
                         if (entity instanceof LivingEntity livingEntity) {
                             livingEntity.hurt(player.damageSources().playerAttack(player), 4);
