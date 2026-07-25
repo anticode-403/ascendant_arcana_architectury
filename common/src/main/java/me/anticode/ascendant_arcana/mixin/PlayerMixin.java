@@ -155,7 +155,8 @@ public class PlayerMixin implements AArcanaPlayer {
             } else {
                 AABB shieldbashBox = player.getBoundingBox().move(shieldBashDirection.scale(player.getBoundingBox().getXsize())).inflate(0.75);
                 int stepLength = shieldBashTicks >= 3 ? 2 : 1;
-                a: for (int i = 0; i < stepLength; i++) {
+                for (int i = 0; i < stepLength; i++) {
+                    boolean doBreak = false;
                     for (Entity entity : player.level().getEntities(player, shieldbashBox.move(shieldBashDirection.scale(i)))) {
                         if (entity == player) continue;
                         if (entity instanceof LivingEntity livingEntity) {
@@ -168,8 +169,12 @@ public class PlayerMixin implements AArcanaPlayer {
                         } else {
                             NetworkManager.sendToServer(ServerboundShieldBashPacket.Id, new ServerboundShieldBashPacket(false).write());
                         }
-                        break a;
+                        doBreak = true;
+                        if (!player.level().isClientSide()) {
+                            player.getUseItem().hurtAndBreak(2, player, (livingEntity) -> livingEntity.broadcastBreakEvent(player.getUsedItemHand()));
+                        }
                     }
+                    if (doBreak) break;
                 }
                 player.move(MoverType.SELF, shieldBashDirection.scale(stepLength));
                 player.hasImpulse = true;
