@@ -6,12 +6,14 @@ import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.api.AArcanaPlayer;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
+import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.networking.ClientboundShieldBashPacket;
 import me.anticode.ascendant_arcana.networking.ServerboundShieldBashPacket;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -174,7 +176,12 @@ public class PlayerMixin implements AArcanaPlayer {
                             player.getUseItem().hurtAndBreak(2, player, (livingEntity) -> livingEntity.broadcastBreakEvent(player.getUsedItemHand()));
                         }
                     }
-                    if (doBreak) break;
+                    if (doBreak) {
+                        if (!player.level().isClientSide()) {
+                            player.level().playSound(null, player.position().x, player.position().y, player.position().z, AArcanaSoundEvents.SHIELD_BASH_HIT.get(), SoundSource.PLAYERS, 1f, 0f);
+                        }
+                        break;
+                    }
                 }
                 player.move(MoverType.SELF, shieldBashDirection.scale(stepLength));
                 player.hasImpulse = true;
@@ -205,6 +212,7 @@ public class PlayerMixin implements AArcanaPlayer {
             shieldBashTicks = 1 + (shieldBashLevel < 3 ? shieldBashLevel * 2 : 5);
             shieldBashDirection = player.getLookAngle().with(Direction.Axis.Y, 0).normalize();
             if (!player.level().isClientSide()) {
+                player.level().playSound(null, player.position().x, player.position().y, player.position().z, AArcanaSoundEvents.SHIELD_BASH_START.get(), SoundSource.PLAYERS, 1f, 0f);
                 player.getUseItem().hurtAndBreak(3, player, (livingEntity) -> livingEntity.broadcastBreakEvent(player.getUsedItemHand()));
             }
         } else {
