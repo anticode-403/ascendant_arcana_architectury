@@ -161,7 +161,7 @@ public class PlayerMixin implements AArcanaPlayer {
                         if (entity == player) continue;
                         if (entity instanceof LivingEntity livingEntity) {
                             livingEntity.hurt(player.damageSources().playerAttack(player), 4);
-                            livingEntity.knockback(2, -shieldBashDirection.x, -shieldBashDirection.z);
+                            livingEntity.knockback(0.8 * shieldBashLevel, -shieldBashDirection.x, -shieldBashDirection.z);
                         }
                         if (player.level() instanceof ServerLevel serverLevel) {
                             NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), false).write());
@@ -202,7 +202,7 @@ public class PlayerMixin implements AArcanaPlayer {
                 return;
             }
             int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SHIELD_BASH.get(), player.getUseItem());
-            shieldBashTicks = 1 + shieldBashLevel * 2;
+            shieldBashTicks = 1 + (shieldBashLevel < 3 ? shieldBashLevel * 2 : 5);
             shieldBashDirection = player.getLookAngle().with(Direction.Axis.Y, 0).normalize();
             if (!player.level().isClientSide()) {
                 player.getUseItem().hurtAndBreak(3, player, (livingEntity) -> livingEntity.broadcastBreakEvent(player.getUsedItemHand()));
