@@ -138,7 +138,7 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
             stackCopy = moveStack.copy();
             if (index <= 3) {
                 if (!this.moveItemStackTo(moveStack, 4, 40, true)) return ItemStack.EMPTY;
-            } else if (moveStack.isEnchantable() || moveStack.isEnchanted()) {
+            } else if (moveStack.isEnchantable() || moveStack.isEnchanted() || moveStack.is(Items.BOOK)) {
                 if (!this.moveItemStackTo(moveStack, 0, 1, false)) return ItemStack.EMPTY;
             } else if (moveStack.is(AArcanaItems.ENCHANTED_SCRAP.get())) {
                 if (!this.moveItemStackTo(moveStack, 1, 2, false)) return ItemStack.EMPTY;
@@ -170,7 +170,7 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
     public boolean clickMenuButton(Player player, int id) {
         ItemStack itemStack = inventory.getItem(0);
         if (recipe == null) return false;
-        if (!recipe.enchantment.canEnchant(itemStack)) return false;
+        if (!recipe.enchantment.canEnchant(itemStack) && !itemStack.is(Items.BOOK)) return false;
         ItemStack scrapStack = inventory.getItem(1);
         ItemStack primaryStack = inventory.getItem(2);
         ItemStack secondaryStack = inventory.getItem(3);
@@ -252,7 +252,7 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return stack.isEnchantable() || stack.isEnchanted();
+            return stack.isEnchantable() || stack.isEnchanted() || stack.is(Items.BOOK);
         }
 
         @Override

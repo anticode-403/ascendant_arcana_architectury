@@ -23,6 +23,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.joml.Matrix4f;
@@ -84,7 +85,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
             assert minecraft != null;
             assert minecraft.level != null;
             for (EnchantmentRecipe recipe : minecraft.level.getRecipeManager().getAllRecipesFor(AArcanaRecipes.ENCHANTMENT_RECIPE_TYPE.get())) {
-                if (recipe.enchantment.canEnchant(itemStack)) {
+                if (recipe.enchantment.canEnchant(itemStack) || itemStack.is(Items.BOOK)) {
                     recipes.add(recipe);
                 }
             }
