@@ -178,7 +178,7 @@ public class PlayerMixin implements AArcanaPlayer {
                     }
                     if (doBreak) {
                         if (!player.level().isClientSide()) {
-                            player.level().playSound(null, player.position().x, player.position().y, player.position().z, AArcanaSoundEvents.SHIELD_BASH_HIT.get(), SoundSource.PLAYERS, 1f, 0f);
+                            player.level().playSound(null, player.position().x, player.position().y, player.position().z, AArcanaSoundEvents.SHIELD_BASH_HIT.get(), SoundSource.PLAYERS, 1f, 1f);
                         }
                         break;
                     }
@@ -212,7 +212,7 @@ public class PlayerMixin implements AArcanaPlayer {
             shieldBashTicks = 1 + (shieldBashLevel < 3 ? shieldBashLevel * 2 : 5);
             shieldBashDirection = player.getLookAngle().with(Direction.Axis.Y, 0).normalize();
             if (!player.level().isClientSide()) {
-                player.level().playSound(null, player.position().x, player.position().y, player.position().z, AArcanaSoundEvents.SHIELD_BASH_START.get(), SoundSource.PLAYERS, 1f, 0f);
+                player.level().playSound(null, player.position().x, player.position().y, player.position().z, AArcanaSoundEvents.SHIELD_BASH_START.get(), SoundSource.PLAYERS, 1f, 1f);
                 player.getUseItem().hurtAndBreak(3, player, (livingEntity) -> livingEntity.broadcastBreakEvent(player.getUsedItemHand()));
             }
         } else {
