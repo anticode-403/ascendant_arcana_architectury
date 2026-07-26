@@ -31,7 +31,7 @@ public class MinecraftMixin {
     private void injectShieldBashAction(CallbackInfo ci) {
         assert player != null;
         if (!player.isUsingItem() || player.getUseItemRemainingTicks() > Items.SHIELD.getUseDuration(Items.SHIELD.getDefaultInstance()) - ShieldItem.EFFECTIVE_BLOCK_DELAY) return;
-        int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SHIELD_BASH.get(), player.getUseItem());
+        int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BASHING.get(), player.getUseItem());
         if (shieldBashLevel > 0) {
             while (options.keyAttack.consumeClick()) {
                 NetworkManager.sendToServer(ServerboundShieldBashPacket.Id, new ServerboundShieldBashPacket(true).write());

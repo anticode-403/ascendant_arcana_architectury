@@ -146,7 +146,7 @@ public class PlayerMixin implements AArcanaPlayer {
     private void shieldBash(CallbackInfo ci) {
         Player player = (Player)(Object)this;
         if (shieldBashing) {
-            int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SHIELD_BASH.get(), player.getUseItem());
+            int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BASHING.get(), player.getUseItem());
             if (shieldBashLevel < 0) {
                 if (player.level() instanceof ServerLevel serverLevel) {
                     NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), false).write());
@@ -208,7 +208,7 @@ public class PlayerMixin implements AArcanaPlayer {
                 shieldBashing = false;
                 return;
             }
-            int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SHIELD_BASH.get(), player.getUseItem());
+            int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BASHING.get(), player.getUseItem());
             shieldBashTicks = 1 + (shieldBashLevel < 3 ? shieldBashLevel * 2 : 5);
             shieldBashDirection = player.getLookAngle().with(Direction.Axis.Y, 0).normalize();
             if (!player.level().isClientSide()) {
