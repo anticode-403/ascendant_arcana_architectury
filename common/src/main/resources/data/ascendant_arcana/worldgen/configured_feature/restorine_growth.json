@@ -1,22 +1,149 @@
 {
   "type": "ascendant_arcana:restorine_growth",
   "config": {
-    "search_range": 10,
-    "width": {
+    "height": {
       "type": "minecraft:uniform",
       "value": {
-        "min_inclusive": 2,
-        "max_inclusive": 3
+        "min_inclusive": 6,
+        "max_inclusive": 12
       }
     },
-    "ratio": {
+    "height_offset": {
+      "type": "minecraft:uniform",
+      "value": {
+        "min_inclusive": -4,
+        "max_inclusive": 4
+      }
+    },
+    "spread_offset": {
       "type": "minecraft:uniform",
       "value": {
         "min_inclusive": 1,
-        "max_exclusive": 2
+        "max_inclusive": 3
       }
     },
-    "stalagmite_percentage": 0.5,
-    "restorine_percentage": 0.2
+    "count": {
+      "type": "minecraft:uniform",
+      "value": {
+        "min_inclusive": 8,
+        "max_inclusive": 16
+      }
+    },
+    "base_block": {
+      "type": "minecraft:dual_noise_provider",
+      "noise": {
+        "amplitudes": [
+          1.0
+        ],
+        "firstOctave": -3
+      },
+      "scale": 0.5,
+      "seed": 2345,
+      "slow_noise": {
+        "amplitudes": [
+          1.0
+        ],
+        "firstOctave": -10
+      },
+      "slow_scale": 1.0,
+      "states": [
+        {
+          "Name": "minecraft:stone"
+        },
+        {
+          "Name": "minecraft:stone"
+        },
+        {
+          "Name": "ascendant_arcana:restorine_block"
+        }
+      ],
+      "variety": [
+        1,
+        3
+      ]
+    },
+    "depth_block": {
+      "state": {
+        "Name": "minecraft:stone"
+      },
+      "type": "minecraft:simple_state_provider"
+    },
+    "fill_block": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "minecraft:air"
+      }
+    },
+    "alternate_chance": 0.2,
+    "inner_placement_chance": 0.7,
+    "alternate_base_block": {
+      "type": "minecraft:dual_noise_provider",
+      "noise": {
+        "amplitudes": [
+          1.0
+        ],
+        "firstOctave": -3
+      },
+      "scale": 0.5,
+      "seed": 2345,
+      "slow_noise": {
+        "amplitudes": [
+          1.0
+        ],
+        "firstOctave": -10
+      },
+      "slow_scale": 1.0,
+      "states": [
+        {
+          "Name": "minecraft:stone"
+        },
+        {
+          "Name": "ascendant_arcana:budding_restorine"
+        },
+        {
+          "Name": "ascendant_arcana:budding_restorine"
+        }
+      ],
+      "variety": [
+        1,
+        3
+      ]
+    },
+    "inner_target": {
+      "type": "minecraft:matching_blocks",
+      "blocks": [
+        "ascendant_arcana:budding_restorine"
+      ]
+    },
+    "inner_placements": [
+      {
+        "Name": "ascendant_arcana:massive_restorine_cluster",
+        "Properties": {
+          "facing": "up",
+          "waterlogged": "false"
+        }
+      },
+      {
+        "Name": "ascendant_arcana:medium_restorine_bud",
+        "Properties": {
+          "facing": "up",
+          "waterlogged": "false"
+        }
+      },
+      {
+        "Name": "ascendant_arcana:large_restorine_bud",
+        "Properties": {
+          "facing": "up",
+          "waterlogged": "false"
+        }
+      },
+      {
+        "Name": "ascendant_arcana:restorine_cluster",
+        "Properties": {
+          "facing": "up",
+          "waterlogged": "false"
+        }
+      }
+    ]
   }
 }

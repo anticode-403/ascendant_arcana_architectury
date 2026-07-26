@@ -2,14 +2,8 @@
   "feature": "ascendant_arcana:restorine_growth",
   "placement": [
     {
-      "type": "minecraft:count",
-      "count": {
-        "type": "minecraft:uniform",
-        "value": {
-          "max_inclusive": 20,
-          "min_inclusive": 5
-        }
-      }
+      "type": "minecraft:rarity_filter",
+      "chance": 10
     },
     {
       "type": "minecraft:in_square"
@@ -17,14 +11,17 @@
     {
       "type": "minecraft:height_range",
       "height": {
-        "type": "minecraft:trapezoid",
+        "type": "minecraft:uniform",
         "max_inclusive": {
-          "absolute": 326
+          "absolute": 64
         },
         "min_inclusive": {
-          "absolute": -64
+          "absolute": 0
         }
       }
+    },
+    {
+      "type": "minecraft:biome"
     }
   ]
 }
