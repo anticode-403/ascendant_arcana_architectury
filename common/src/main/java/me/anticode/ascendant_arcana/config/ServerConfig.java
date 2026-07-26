@@ -51,6 +51,17 @@ public class ServerConfig implements ConfigData {
     @Comment("Enchanted Books can only have one enchantment on them. Otherwise, they use the regular capacity system.")
     public boolean single_enchantment_books = true;
 
+    @Comment("Enchanted Books placed in Chiseled Bookshelves near an Enchanting Table will remove the scrap cost for that enchantment.")
+    public boolean books_remove_scrap_cost = false;
+
+    @Comment("""
+            The amount of tiers having an Enchanted Book in a Chiseled Bookshelf bypasses.
+            
+            For example, if this is set to 1 and you have a Miasma book in a nearby bookshelf you could now
+            enchant Miasma at Rare tier instead of Very Rare. If this is set to 4, books would completely
+            remove the power tier requirement at the enchanting table. Setting this to 0 disables this feature.""")
+    public int books_tier_bypass = 1;
+
     @Comment("""
             Ascendant Arcana disables many vanilla enchantments because they stress the capacity system too much with
             'required' enchantments. Enchantments are generally meant to be more interesting and meaningfully impactful

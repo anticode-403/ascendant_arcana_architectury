@@ -43,6 +43,23 @@ public class AArcanaEnchantmentHelper {
         return enchantments;
     }
 
+    public static int getTier(Enchantment enchantment) {
+        return switch (enchantment.getRarity()) {
+            case COMMON -> 1;
+            case UNCOMMON -> 2;
+            case RARE -> 3;
+            case VERY_RARE -> 4;
+        };
+    }
+
+    public static int getTier(int power) {
+        if (power >= AscendantArcana.config.very_rare_enchanting_power) return 4;
+        else if (power >= AscendantArcana.config.rare_enchanting_power) return 3;
+        else if (power >= AscendantArcana.config.uncommon_enchanting_power) return 2;
+        else if (power >= AscendantArcana.config.minimum_enchanting_power) return 1;
+        else return 0;
+    }
+
     public static int getEnchantmentCost(Enchantment enchantment) {
         if (enchantment.isCurse()) return 1;
         return switch (enchantment.getRarity()) {
