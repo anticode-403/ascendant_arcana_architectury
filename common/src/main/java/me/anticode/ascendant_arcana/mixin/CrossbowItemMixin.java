@@ -248,7 +248,7 @@ public class CrossbowItemMixin implements CrossbowAccess {
 
     @ModifyReturnValue(method = "containsChargedProjectile", at = @At("RETURN"))
     private static boolean onlyCheckLastProjectile(boolean original, @Local(argsOnly = true) ItemStack itemStack, @Local(argsOnly = true) Item item) {
-        return getChargedProjectiles(itemStack).get(0).is(item);
+        return isCharged(itemStack) && getChargedProjectiles(itemStack).get(0).is(item);
     }
 
     @WrapOperation(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;getPowerForTime(ILnet/minecraft/world/item/ItemStack;)F"))
