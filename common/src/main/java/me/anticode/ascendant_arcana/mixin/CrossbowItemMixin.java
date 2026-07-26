@@ -196,7 +196,7 @@ public class CrossbowItemMixin implements CrossbowAccess {
             }
             Projectile projectile = new BlazeboltEntity(level, livingEntity, maxLength, damage * damageMultiplier, pitch, yaw);
             level.addFreshEntity(projectile);
-            level.playSound((Player)null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), AArcanaSoundEvents.BLAZEBOLT_SHOT.get(), SoundSource.PLAYERS, 1.0F, f);
+            level.playSound((Player)null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), AArcanaSoundEvents.BLAZEBOLT_SHOT.get(), livingEntity.getSoundSource(), 1.0F, f);
             ci.cancel();
         } else if (itemStack2.is(Items.AMETHYST_SHARD)) {
             float damageMultiplier = (float) (1 + RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag()));
