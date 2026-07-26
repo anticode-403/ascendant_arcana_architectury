@@ -24,6 +24,12 @@ public class AArcanaBlocks {
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(AscendantArcana.MOD_ID, Registries.BLOCK);
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(AscendantArcana.MOD_ID, Registries.BLOCK_ENTITY_TYPE);
 
+    public static final RegistrySupplier<Block> RESTORINE_BLOCK = register(
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.AMETHYST_BLOCK)),
+            "restorine_block",
+            true
+    );
+
     public static final RegistrySupplier<BuddingRestorineBlock> BUDDING_RESTORINE = register(
             () -> new BuddingRestorineBlock(BlockBehaviour.Properties.copy(Blocks.BUDDING_AMETHYST).requiresCorrectToolForDrops().explosionResistance(3f).strength(4.5f)),
             "budding_restorine",
