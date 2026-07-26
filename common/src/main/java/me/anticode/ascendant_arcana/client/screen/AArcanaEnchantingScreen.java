@@ -85,7 +85,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
             assert minecraft != null;
             assert minecraft.level != null;
             for (EnchantmentRecipe recipe : minecraft.level.getRecipeManager().getAllRecipesFor(AArcanaRecipes.ENCHANTMENT_RECIPE_TYPE.get())) {
-                if (recipe.enchantment.canEnchant(itemStack) || itemStack.is(Items.BOOK)) {
+                if (recipe.enchantment.canEnchant(itemStack) || itemStack.is(Items.BOOK) || itemStack.is(Items.ENCHANTED_BOOK)) {
                     recipes.add(recipe);
                 }
             }

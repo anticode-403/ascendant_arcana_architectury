@@ -170,7 +170,7 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
     public boolean clickMenuButton(Player player, int id) {
         ItemStack itemStack = inventory.getItem(0);
         if (recipe == null) return false;
-        if (!recipe.enchantment.canEnchant(itemStack) && !itemStack.is(Items.BOOK)) return false;
+        if (!recipe.enchantment.canEnchant(itemStack) && !(itemStack.is(Items.BOOK) || itemStack.is(Items.ENCHANTED_BOOK))) return false;
         ItemStack scrapStack = inventory.getItem(1);
         ItemStack primaryStack = inventory.getItem(2);
         ItemStack secondaryStack = inventory.getItem(3);
