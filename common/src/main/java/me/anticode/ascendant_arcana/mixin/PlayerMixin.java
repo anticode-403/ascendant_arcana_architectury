@@ -216,7 +216,7 @@ public class PlayerMixin implements AArcanaPlayer {
                 player.getUseItem().hurtAndBreak(3, player, (livingEntity) -> livingEntity.broadcastBreakEvent(player.getUsedItemHand()));
             }
         } else {
-            player.getCooldowns().addCooldown(Items.SHIELD, 20);
+            player.getCooldowns().addCooldown(Items.SHIELD, 400);
             player.stopUsingItem();
             if (shieldBashTicks != 0) {
                 player.move(MoverType.SELF, shieldBashDirection);
