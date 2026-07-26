@@ -112,15 +112,24 @@ public class ServerConfig implements ConfigData {
     ));
 
     @Comment("""
+            If this is true, infusing a durability relic applies the below bonus additively (i.e. the item's base
+            durability + the relic durability).
+            If this is false, infusing a durability relic applies the below bonus multiplicatively (i.e. the item's
+            base durability * the relic durability).""")
+    public boolean durability_additive = true;
+
+    @Comment("""
             Durability Relics can apply to any item with a durability value. For all vanilla items, the default
             values are better than Unbreaking 3.
-            Because durability is stored as an integer in-game, durability relics cannot contain decimal values.""")
-    public Map<String, Integer> durability_relic_strengths = new HashMap<>(Map.ofEntries(
-            Map.entry("1", 600),
-            Map.entry("2", 1200),
-            Map.entry("3", 1800),
-            Map.entry("4", 2400),
-            Map.entry("5", 3000)
+            If durability_additive is true, these values must be integers.
+            If durability_additive is false, these values are calculated as so: base * (1 + relic_strength)
+            For example, a relic strength of 0.5 is a multiplier of 1.5.""")
+    public Map<String, Double> durability_relic_strengths = new HashMap<>(Map.ofEntries(
+            Map.entry("1", 600D),
+            Map.entry("2", 1200D),
+            Map.entry("3", 1800D),
+            Map.entry("4", 2400D),
+            Map.entry("5", 3000D)
     ));
 
     @Comment("""

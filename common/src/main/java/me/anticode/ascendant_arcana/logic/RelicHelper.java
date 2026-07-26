@@ -95,7 +95,8 @@ public class RelicHelper {
         double base = getRelicStrength(relicType, strength);
         return switch (relicType) {
             case DAMAGE, PROTECTION, HASTE -> Mth.floor(base * 100);
-            case DURABILITY, ENCHANTMENT_CAPACITY -> (int) base;
+            case ENCHANTMENT_CAPACITY -> (int) base;
+            case DURABILITY -> AscendantArcana.config.durability_additive ? (int) base : Mth.floor(base * 100);
         };
     }
 

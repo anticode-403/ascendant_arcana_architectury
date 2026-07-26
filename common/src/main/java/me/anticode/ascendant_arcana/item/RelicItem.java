@@ -1,5 +1,6 @@
 package me.anticode.ascendant_arcana.item;
 
+import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.logic.Relics;
 import net.minecraft.ChatFormatting;
@@ -51,7 +52,7 @@ public class RelicItem extends Item {
         Relics relicType = getRelicType(stack);
         int visualStrength = RelicHelper.getTooltipStrength(relicType, getRelicStrength(stack));
         Component relicName = RelicHelper.getRelicTypeText(relicType);
-        String hasPercent = (relicType == Relics.HASTE || relicType == Relics.PROTECTION || relicType == Relics.DAMAGE) ? "%" : "";
+        String hasPercent = (relicType == Relics.HASTE || relicType == Relics.PROTECTION || relicType == Relics.DAMAGE || (relicType == Relics.DURABILITY && !AscendantArcana.config.durability_additive)) ? "%" : "";
         Component line = Component.translatable("item.relics.tooltip", visualStrength, relicName, hasPercent).withStyle(ChatFormatting.BLUE);
         String appliedToTooltip = "item.relics.tooltip.applied_any";
         if (relicType == Relics.PROTECTION) {
