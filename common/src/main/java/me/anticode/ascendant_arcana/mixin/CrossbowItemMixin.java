@@ -209,8 +209,9 @@ public class CrossbowItemMixin implements CrossbowAccess {
                 targetEntity.addEffect(new MobEffectInstance(AArcanaMobEffects.SUNDERED.get(), 120, 0, false, false, true));
             });
             if (level instanceof ServerLevel serverLevel) {
+                serverLevel.playSound(null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), AArcanaSoundEvents.SHATTERSHOT.get(), livingEntity.getSoundSource(), 1.0F, f);
                 NetworkManager.sendToPlayers(serverLevel.players(), AddParticlesPacket.Id, new AddParticlesPacket(BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.BLOCK).toString(), new BlockParticleOption(ParticleTypes.BLOCK, Blocks.AMETHYST_CLUSTER.defaultBlockState()), 20, livingEntity.getEyePosition().with(Direction.Axis.Y, livingEntity.getEyeY() - 0.3), livingEntity.getLookAngle(), 0, 0.1F, 1).write());
-                NetworkManager.sendToPlayers(serverLevel.players(), AddParticlesPacket.Id, new AddParticlesPacket(BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.ENCHANTED_HIT).toString(), ParticleTypes.ENCHANTED_HIT, 15, livingEntity.getEyePosition().with(Direction.Axis.Y, livingEntity.getEyeY() - 0.3), livingEntity.getLookAngle(), 0.0F, 0.3F, 3).write());
+                NetworkManager.sendToPlayers(serverLevel.players(), AddParticlesPacket.Id, new AddParticlesPacket(BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.ENCHANTED_HIT).toString(), ParticleTypes.ENCHANTED_HIT, 25, livingEntity.getEyePosition().with(Direction.Axis.Y, livingEntity.getEyeY() - 0.3), livingEntity.getLookAngle(), 0.0F, 0.3F, 3).write());
             }
             ci.cancel();
         }

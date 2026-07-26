@@ -15,6 +15,7 @@ public class AArcanaSoundEvents {
     public static final RegistrySupplier<SoundEvent> SINGULARITY_SUMMON = register("singularity_summon");
     public static final RegistrySupplier<SoundEvent> SHIELD_BASH_START = register("shield_bash_start");
     public static final RegistrySupplier<SoundEvent> SHIELD_BASH_HIT = register("shield_bash_hit");
+    public static final RegistrySupplier<SoundEvent> SHATTERSHOT = register("shattershot");
 
     public static RegistrySupplier<SoundEvent> register(String id) {
         return SOUND_EVENTS.register(id, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.tryBuild(AscendantArcana.MOD_ID, id)));
