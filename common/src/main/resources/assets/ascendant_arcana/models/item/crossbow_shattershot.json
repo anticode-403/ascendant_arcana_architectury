@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/crossbow",
+  "textures": {
+    "layer0": "ascendant_arcana:item/crossbow_shattershot"
+  }
+}

@@ -139,9 +139,6 @@ public final class AscendantArcanaForge {
 
             event.enqueueWork(() -> {
                 MenuScreens.register(AArcanaMenus.ENCHANTING.get(), AArcanaEnchantingScreen::new);
-
-                ItemProperties.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "relic_type"), ((itemStack, clientLevel, livingEntity, i) -> Relics.toId(RelicItem.getRelicType(itemStack)) / 5F));
-                ItemProperties.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "relic_strength"), (itemStack, clientWorld, livingEntity, seed) -> RelicItem.getRelicStrength(itemStack) / 5F);
             });
         }
 
