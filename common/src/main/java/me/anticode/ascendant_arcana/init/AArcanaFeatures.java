@@ -24,7 +24,7 @@ public class AArcanaFeatures {
         FEATURES.register();
 
         BiomeModifications.addProperties((biomeContext, mutable) -> {
-            if (biomeContext.hasTag(BiomeTags.IS_OVERWORLD)) {
+            if (biomeContext.hasTag(BiomeTags.IS_OVERWORLD) && !biomeContext.hasTag(BiomeTags.IS_OCEAN)) {
                 mutable.getGenerationProperties().addFeature(
                         GenerationStep.Decoration.RAW_GENERATION,
                         ResourceKey.create(Registries.PLACED_FEATURE, RESTORINE_FEATURE_ID)
