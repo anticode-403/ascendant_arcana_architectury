@@ -36,6 +36,7 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -243,6 +244,11 @@ public class CrossbowItemMixin implements CrossbowAccess {
                 }
             }
         }
+    }
+
+    @ModifyReturnValue(method = "containsChargedProjectile", at = @At("RETURN"))
+    private static boolean onlyCheckLastProjectile(boolean original, @Local(argsOnly = true) ItemStack itemStack, @Local(argsOnly = true) Item item) {
+        return getChargedProjectiles(itemStack).get(0).is(item);
     }
 
     @WrapOperation(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;getPowerForTime(ILnet/minecraft/world/item/ItemStack;)F"))
