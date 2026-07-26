@@ -173,7 +173,7 @@ public class CrossbowItemMixin implements CrossbowAccess {
             float pitch = livingEntity.getXRot();
             float yaw = livingEntity.getYRot();
             int inaccuracy = 0;
-            int maxLength = 16 * (2 ^ EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BLAZEBOLT.get(), itemStack));
+            int maxLength = Mth.floor(16 * (Math.pow(2, EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BLAZEBOLT.get(), itemStack))));
             int damage = 4 + (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BLAZEBOLT.get(), itemStack) * 2);
             float damageMultiplier = (float) (1 + RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag()));
             if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), itemStack) > 0) {
