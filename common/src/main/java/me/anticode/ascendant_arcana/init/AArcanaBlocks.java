@@ -100,6 +100,7 @@ public class AArcanaBlocks {
         BLOCK_ENTITY_TYPES.register();
         CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, MASSIVE_RESTORINE_CLUSTER, RESTORINE_CLUSTER, LARGE_RESTORINE_BUD, MEDIUM_RESTORINE_BUD, SMALL_RESTORINE_BUD);
         CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, BUDDING_RESTORINE, NETHERRACK_BUDDING_RESTORINE);
+        CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, RESTORINE_BLOCK);
         CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, COPPER_ENCHANTING_TABLE);
 //        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register((itemGroup) -> {
 //            itemGroup.addAfter(after(Items.AMETHYST_CLUSTER), AArcanaBlocks.MASSIVE_RESTORINE_CLUSTER);
