@@ -159,11 +159,11 @@ public class ServerConfig implements ConfigData {
             These relics are additive.
             Because Enchantment Capacity is an integer, you cannot add a decimal value here.""")
     public Map<String, Integer> enchantment_capacity_relic_strengths = new HashMap<>(Map.ofEntries(
-            Map.entry("1", 10),
-            Map.entry("2", 15),
-            Map.entry("3", 20),
-            Map.entry("4", 25),
-            Map.entry("5", 30)
+            Map.entry("1", 5),
+            Map.entry("2", 10),
+            Map.entry("3", 15),
+            Map.entry("4", 20),
+            Map.entry("5", 25)
     ));
 
     @Override
