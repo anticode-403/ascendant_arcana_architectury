@@ -17,6 +17,6 @@
   },
   "shield_bash_start": {
     "subtitle": "sound.ascendant_arcana.shield_bash_start",
-    "sounds": ["ascendant_arcana:shield_bash_start_0", "ascendant_arcana:shield_bash_start_1", "ascendant_arcana:shield_bash_start_2", "ascendant_arcana:shield_bash_start_3"]
+    "sounds": ["ascendant_arcana:shield_bash_start_0", "ascendant_arcana:shield_bash_start_1", "ascendant_arcana:shield_bash_start_2", "ascendant_arcana:shield_bash_start_3", "ascendant_arcana:shield_bash_start_4", "ascendant_arcana:shield_bash_start_5"]
   }
 }
