@@ -158,6 +158,9 @@
   "sound.ascendant_arcana.blazebolt_shot": "Blazebolt Crossbow fires",
   "sound.ascendant_arcana.singularity": "Singularity pulls",
   "sound.ascendant_arcana.singularity_summon": "Singularity summoned",
+  "sound.ascendant_arcana.shield_bash_hit": "Shield hits something",
+  "sound.ascendant_arcana.shield_bash_start": "Shield bashes",
+  "sound.ascendant_arcana.shattershot": "Shattershot Crossbow fires",
   "tag.ascendant_arcana.enchanting_tables": "Enchanting Tables",
   "tag.ascendant_arcana.heart_items": "Warden Hearts",
   "tag.ascendant_arcana.relics": "Relics"
