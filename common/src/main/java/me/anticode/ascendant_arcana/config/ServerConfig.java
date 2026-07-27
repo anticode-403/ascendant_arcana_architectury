@@ -100,14 +100,19 @@ public class ServerConfig implements ConfigData {
             Map.entry("minecraft:fire_aspect", 2),
             Map.entry("minecraft:punch", 1),
             Map.entry("minecraft:flame", 2),
-            Map.entry("minecraft:respiration", 2),
-            Map.entry("minecraft:sweeping", 2),
+            Map.entry("minecraft:respiration", 1),
+            Map.entry("minecraft:sweeping", 1),
             Map.entry("minecraft:fortune", 4),
             Map.entry("minecraft:looting", 4),
             Map.entry("minecraft:infinity", 3),
             Map.entry("minecraft:lure", 1),
             Map.entry("minecraft:frost_walker", 2),
-            Map.entry("minecraft:thorns", 2)
+            Map.entry("minecraft:thorns", 2),
+            Map.entry("minecraft:aqua_affinity", 2),
+            Map.entry("minecraft:channeling", 2),
+            Map.entry("minecraft:feather_falling", 1),
+            Map.entry("minecraft:swift_sneak", 3),
+            Map.entry("minecraft:soul_speed", 3)
     ));
 
     @Comment("""
