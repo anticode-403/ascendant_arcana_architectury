@@ -24,6 +24,12 @@ public class AArcanaBlocks {
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(AscendantArcana.MOD_ID, Registries.BLOCK);
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(AscendantArcana.MOD_ID, Registries.BLOCK_ENTITY_TYPE);
 
+    public static final RegistrySupplier<Block> RESTORINE_BLOCK = register(
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.AMETHYST_BLOCK)),
+            "restorine_block",
+            true
+    );
+
     public static final RegistrySupplier<BuddingRestorineBlock> BUDDING_RESTORINE = register(
             () -> new BuddingRestorineBlock(BlockBehaviour.Properties.copy(Blocks.BUDDING_AMETHYST).requiresCorrectToolForDrops().explosionResistance(3f).strength(4.5f)),
             "budding_restorine",
@@ -94,6 +100,7 @@ public class AArcanaBlocks {
         BLOCK_ENTITY_TYPES.register();
         CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, MASSIVE_RESTORINE_CLUSTER, RESTORINE_CLUSTER, LARGE_RESTORINE_BUD, MEDIUM_RESTORINE_BUD, SMALL_RESTORINE_BUD);
         CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, BUDDING_RESTORINE, NETHERRACK_BUDDING_RESTORINE);
+        CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, RESTORINE_BLOCK);
         CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, COPPER_ENCHANTING_TABLE);
 //        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register((itemGroup) -> {
 //            itemGroup.addAfter(after(Items.AMETHYST_CLUSTER), AArcanaBlocks.MASSIVE_RESTORINE_CLUSTER);

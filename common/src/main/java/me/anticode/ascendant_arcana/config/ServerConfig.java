@@ -51,6 +51,17 @@ public class ServerConfig implements ConfigData {
     @Comment("Enchanted Books can only have one enchantment on them. Otherwise, they use the regular capacity system.")
     public boolean single_enchantment_books = true;
 
+    @Comment("Enchanted Books placed in Chiseled Bookshelves near an Enchanting Table will remove the scrap cost for that enchantment.")
+    public boolean books_remove_scrap_cost = false;
+
+    @Comment("""
+            The amount of tiers having an Enchanted Book in a Chiseled Bookshelf bypasses.
+            
+            For example, if this is set to 1 and you have a Miasma book in a nearby bookshelf you could now
+            enchant Miasma at Rare tier instead of Very Rare. If this is set to 4, books would completely
+            remove the power tier requirement at the enchanting table. Setting this to 0 disables this feature.""")
+    public int books_tier_bypass = 1;
+
     @Comment("""
             Ascendant Arcana disables many vanilla enchantments because they stress the capacity system too much with
             'required' enchantments. Enchantments are generally meant to be more interesting and meaningfully impactful
@@ -89,14 +100,19 @@ public class ServerConfig implements ConfigData {
             Map.entry("minecraft:fire_aspect", 2),
             Map.entry("minecraft:punch", 1),
             Map.entry("minecraft:flame", 2),
-            Map.entry("minecraft:respiration", 2),
-            Map.entry("minecraft:sweeping", 2),
+            Map.entry("minecraft:respiration", 1),
+            Map.entry("minecraft:sweeping", 1),
             Map.entry("minecraft:fortune", 4),
             Map.entry("minecraft:looting", 4),
             Map.entry("minecraft:infinity", 3),
             Map.entry("minecraft:lure", 1),
             Map.entry("minecraft:frost_walker", 2),
-            Map.entry("minecraft:thorns", 2)
+            Map.entry("minecraft:thorns", 2),
+            Map.entry("minecraft:aqua_affinity", 2),
+            Map.entry("minecraft:channeling", 2),
+            Map.entry("minecraft:feather_falling", 1),
+            Map.entry("minecraft:swift_sneak", 3),
+            Map.entry("minecraft:soul_speed", 3)
     ));
 
     @Comment("""
@@ -112,15 +128,24 @@ public class ServerConfig implements ConfigData {
     ));
 
     @Comment("""
+            If this is true, infusing a durability relic applies the below bonus additively (i.e. the item's base
+            durability + the relic durability).
+            If this is false, infusing a durability relic applies the below bonus multiplicatively (i.e. the item's
+            base durability * the relic durability).""")
+    public boolean durability_additive = true;
+
+    @Comment("""
             Durability Relics can apply to any item with a durability value. For all vanilla items, the default
             values are better than Unbreaking 3.
-            Because durability is stored as an integer in-game, durability relics cannot contain decimal values.""")
-    public Map<String, Integer> durability_relic_strengths = new HashMap<>(Map.ofEntries(
-            Map.entry("1", 600),
-            Map.entry("2", 1200),
-            Map.entry("3", 1800),
-            Map.entry("4", 2400),
-            Map.entry("5", 3000)
+            If durability_additive is true, these values must be integers.
+            If durability_additive is false, these values are calculated as so: base * (1 + relic_strength)
+            For example, a relic strength of 0.5 is a multiplier of 1.5.""")
+    public Map<String, Double> durability_relic_strengths = new HashMap<>(Map.ofEntries(
+            Map.entry("1", 600D),
+            Map.entry("2", 1200D),
+            Map.entry("3", 1800D),
+            Map.entry("4", 2400D),
+            Map.entry("5", 3000D)
     ));
 
     @Comment("""
@@ -159,11 +184,11 @@ public class ServerConfig implements ConfigData {
             These relics are additive.
             Because Enchantment Capacity is an integer, you cannot add a decimal value here.""")
     public Map<String, Integer> enchantment_capacity_relic_strengths = new HashMap<>(Map.ofEntries(
-            Map.entry("1", 10),
-            Map.entry("2", 15),
-            Map.entry("3", 20),
-            Map.entry("4", 25),
-            Map.entry("5", 30)
+            Map.entry("1", 5),
+            Map.entry("2", 10),
+            Map.entry("3", 15),
+            Map.entry("4", 20),
+            Map.entry("5", 25)
     ));
 
     @Override

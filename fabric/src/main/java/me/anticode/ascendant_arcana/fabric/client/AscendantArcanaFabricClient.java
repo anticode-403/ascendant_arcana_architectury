@@ -29,9 +29,6 @@ public final class AscendantArcanaFabricClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(AArcanaBlocks.RESTORINE_CLUSTER.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AArcanaBlocks.MASSIVE_RESTORINE_CLUSTER.get(), RenderType.cutout());
 
-        ItemProperties.register(AArcanaItems.RELIC.get(), new ResourceLocation("relic_type"), ((itemStack, clientLevel, livingEntity, i) -> Relics.toId(RelicItem.getRelicType(itemStack)) / 5F));
-        ItemProperties.register(AArcanaItems.RELIC.get(), new ResourceLocation("relic_strength"), (itemStack, clientWorld, livingEntity, seed) -> RelicItem.getRelicStrength(itemStack) / 5F);
-
         MenuScreens.register(AArcanaMenus.ENCHANTING.get(), AArcanaEnchantingScreen::new);
     }
 }

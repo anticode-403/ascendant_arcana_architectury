@@ -1,210 +1,225 @@
 package me.anticode.ascendant_arcana.worldgen.feature;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
-import me.anticode.ascendant_arcana.init.AArcanaBlocks;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BuddingAmethystBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Column;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-public class RestorineGrowthFeature extends Feature<RestorineGrowthFeatureConfig> {
-    public RestorineGrowthFeature(Codec<RestorineGrowthFeatureConfig> configCodec) {
-        super(configCodec);
+public class RestorineGrowthFeature extends Feature<RestorineGrowthFeatureConfig>
+{
+
+    public RestorineGrowthFeature(Codec<RestorineGrowthFeatureConfig> codec)
+    {
+        super(codec);
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<RestorineGrowthFeatureConfig> context) {
+    public boolean place(FeaturePlaceContext<RestorineGrowthFeatureConfig> ctx)
+    {
+        RandomSource random = ctx.random();
+        WorldGenLevel level = ctx.level();
+        BlockPos origin = ctx.origin();
+        RestorineGrowthFeatureConfig config = ctx.config();
 
-        WorldGenLevel level = context.level();
-        BlockPos pos = context.origin();
-        RandomSource random = context.random();
-        RestorineGrowthFeatureConfig config = context.config();
 
-        Optional<Column> optional = Column.scan(level, pos, config.floorToCeilingSearchRange(), RestorineGrowthFeature::canGenerate, RestorineGrowthFeature::canReplaceOrLava);
-        if (optional.isPresent() && !(optional.get() instanceof Column.Line)) {
-            Column column = optional.get();
-            int width = config.width().sample(random);
-            int heightScale = (int)(config.radiusToHeightRatio().sample(random) * (float)width);
-            if (column.getHeight().isPresent() && column.getHeight().getAsInt() < heightScale) return false;
-            boolean isStalagmite = random.nextFloat() < config.ceilingPercentage();
-            if (column instanceof Column.Ray && column.getCeiling().isPresent()) isStalagmite = true;
-            else if (column instanceof Column.Ray && column.getFloor().isPresent()) isStalagmite = false;
+        List<DirPos> offsets = Lists.newArrayList();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        pos.set(origin);
 
-            int y = isStalagmite ? column.getCeiling().getAsInt() : column.getFloor().getAsInt();
-            RestorineGrowthGenerator generator = new RestorineGrowthGenerator(pos.atY(y), isStalagmite, width, 0.1, heightScale, config.netherrack());
-            if (!generator.canGenerate(level)) return false;
+        DirPos originStart = new DirPos(Direction.from2DDataValue(random.nextInt(4)), pos.immutable(), config.baseHeight().sample(random));
+        offsets.add(originStart);
+        createOffsets(originStart.movedPosition, config.count().sample(random), offsets, originStart, random, config.heightOffset());
+        createOffsets(originStart.movedPosition.getOpposite(), config.count().sample(random), offsets, originStart, random, config.heightOffset());
 
-            generator.generate(level, random);
-        }
-        return false;
-    }
+        List<DirPos> spreadOffsets = Lists.newArrayList();
+        for(int i = 0; i < config.spreadOffset().sample(random); i++)
+            spreadOffset(offsets, spreadOffsets, random);
+        offsets.addAll(spreadOffsets);
 
-    private static boolean canGenerate(BlockState blockState) {
-        return blockState.isAir();
-    }
-
-    private static boolean canReplaceOrLava(BlockState state) {
-        return state.is(BlockTags.DRIPSTONE_REPLACEABLE) || state.is(BlockTags.BASE_STONE_NETHER) || state.is(Blocks.LAVA);
-    }
-
-    static final class RestorineGrowthGenerator {
-        private BlockPos pos;
-        private final boolean isStalagmite;
-        private int scale;
-        private final double bluntness;
-        private final double heightScale;
-        private final boolean netherrack;
-
-        RestorineGrowthGenerator(BlockPos pos, boolean isStalagmite, int scale, double bluntness, double heightScale, boolean netherrack) {
-            this.pos = pos;
-            this.isStalagmite = isStalagmite;
-            this.scale = scale;
-            this.bluntness = bluntness;
-            this.heightScale = heightScale;
-            this.netherrack = netherrack;
-        }
-
-        private int getBaseScale() {
-            return this.scale(0.0F);
-        }
-
-        boolean canGenerate(WorldGenLevel world) {
-            while(this.scale > 1) {
-                BlockPos.MutableBlockPos mutable = this.pos.mutable();
-                int i = Math.min(10, this.getBaseScale());
-
-                for(int j = 0; j < i; ++j) {
-                    if (world.getBlockState(mutable).is(Blocks.LAVA)) {
-                        return false;
-                    }
-
-                    if (canGenerateBase(world, mutable, this.scale)) {
-                        this.pos = mutable;
-                        return true;
-                    }
-
-                    mutable.move(this.isStalagmite ? Direction.DOWN : Direction.UP);
-                }
-
-                this.scale /= 2;
-            }
-
+        if(offsets.isEmpty())
             return false;
+
+        boolean generated = false;
+        Set<BlockPos> alternatePositions = Sets.newHashSet();
+
+        for(DirPos genPos : offsets)
+        {
+            pos.set(genPos.pos);
+
+            Optional<Column> scan = Column.scan(level, pos, 5, (b)->b.isAir() || b.is(Blocks.WATER), (b)->!b.isAir() && !b.is(Blocks.WATER));
+            if(scan.isEmpty() || scan.get().getFloor().isEmpty())
+                continue;
+
+            generated = true;
+            pos.setY(scan.get().getFloor().getAsInt());
+
+            int height = genPos.height;
+            for(int i = 0; i < height; i++)
+            {
+                BlockState fillState = config.fillBlock().getState(random, pos);
+                BlockState currentState = level.getBlockState(pos);
+                boolean isSource = currentState.getFluidState().isSource();
+                if (isSource && fillState.hasProperty(BlockStateProperties.WATERLOGGED)) {
+                    fillState = fillState.setValue(BlockStateProperties.WATERLOGGED, isSource);
+                }
+                else if(isSource && fillState.isAir())
+                    fillState = Blocks.WATER.defaultBlockState();
+
+                level.setBlock(pos, fillState, Block.UPDATE_CLIENTS);
+                level.scheduleTick(pos, fillState.getFluidState().getType(), 0);
+
+                float chance = 0.1F + (i / 5F);
+                if(chance > 1 || random.nextFloat() < chance)
+                    setAround(config.coreBlock(), config.depthBlock(), config.alternateCoreBlock(), config.alternateChance(), alternatePositions, fillState, pos, level, random);
+                pos.move(Direction.DOWN);
+            }
         }
 
-        static boolean canGenerateBase(WorldGenLevel level, BlockPos pos, int height) {
-            if (canGenerateOrLava(level, pos)) {
-                return false;
-            } else {
-                float g = 6.0F / (float)height;
+        List<BlockState> innerStates = config.innerPlacements();
+        for(BlockPos alternatePos : alternatePositions)
+        {
+            if(config.innerPlacementChance() > random.nextFloat())
+                continue;
+            if(!config.target().test(level, alternatePos))
+                continue;
 
-                for(float h = 0.0F; h < ((float)Math.PI * 2F); h += g) {
-                    int i = (int)(Mth.cos(h) * (float)height);
-                    int j = (int)(Mth.sin(h) * (float)height);
-                    if (canGenerateOrLava(level, pos.offset(i, 0, j))) {
-                        return false;
-                    }
+            BlockState placeState = Util.getRandom(innerStates, random);
+
+
+            for(Direction direction2 : Direction.values()) {
+                if (placeState.hasProperty(BlockStateProperties.FACING)) {
+                    placeState = placeState.setValue(BlockStateProperties.FACING, direction2);
                 }
 
-                return true;
-            }
-        }
+                BlockPos offsetPos = alternatePos.relative(direction2);
+                BlockState currentState = level.getBlockState(offsetPos);
+                if (placeState.hasProperty(BlockStateProperties.WATERLOGGED)) {
+                    placeState = placeState.setValue(BlockStateProperties.WATERLOGGED, currentState.getFluidState().isSource());
+                }
 
-        static boolean canGenerateOrLava(WorldGenLevel level, BlockPos pos) {
-            return level.isStateAtPosition(pos, RestorineGrowthGenerator::canGenerateOrLava);
-        }
-
-        public static boolean canGenerateOrLava(BlockState state) {
-            return state.isAir() || state.is(Blocks.WATER) || state.is(Blocks.LAVA);
-        }
-
-        private int scale(float height) {
-            return (int)scaleHeightFromRadius(height, this.scale, this.heightScale, this.bluntness);
-        }
-
-        static double scaleHeightFromRadius(double radius, double scale, double heightScale, double bluntness) {
-            if (radius < bluntness) {
-                radius = bluntness;
-            }
-
-            double e = radius / scale * 0.384;
-            double f = (double)0.75F * Math.pow(e, 1.3333333333333333);
-            double g = Math.pow(e, 0.6666666666666666);
-            double h = 0.3333333333333333 * Math.log(e);
-            double i = heightScale * (f - g - h);
-            i = Math.max(i, 0.0F);
-            return i / 0.384 * scale;
-        }
-
-        void generate(WorldGenLevel level, RandomSource random) {
-            List<BlockPos> budding_restorine = new ArrayList<>();
-            for(int i = -this.scale; i <= this.scale; ++i) {
-                for(int j = -this.scale; j <= this.scale; ++j) {
-                    float f = Mth.sqrt((float)(i * i + j * j));
-                    if (!(f > (float)this.scale)) {
-                        int k = this.scale(f);
-                        if (k > 0) {
-                            if ((double)random.nextFloat() < 0.2) {
-                                k = (int)((float)k * Mth.nextFloat(random, 0.8F, 1.0F));
-                            }
-
-                            BlockPos.MutableBlockPos mutable = this.pos.offset(i, 0, j).mutable();
-                            boolean bl = false;
-                            int l = this.isStalagmite ? level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, mutable.getX(), mutable.getZ()) : Integer.MAX_VALUE;
-
-                            for(int m = 0; m < k && mutable.getY() < l; ++m) {
-                                if (canGenerateOrLava(level, mutable)) {
-                                    bl = true;
-                                    Block block = netherrack ? Blocks.NETHERRACK : Blocks.STONE;
-                                    if (random.nextFloat() < 0.2F) {
-                                        block = netherrack ? AArcanaBlocks.NETHERRACK_BUDDING_RESTORINE.get() : AArcanaBlocks.BUDDING_RESTORINE.get();
-                                        budding_restorine.add(mutable.mutable());
-                                    }
-                                    level.setBlock(mutable, block.defaultBlockState(), 2);
-                                } else if (bl && level.getBlockState(mutable).is(BlockTags.BASE_STONE_OVERWORLD)) {
-                                    break;
-                                }
-
-                                mutable.move(this.isStalagmite ? Direction.UP : Direction.DOWN);
-                            }
-                        }
-                    }
+                if (placeState.canSurvive(level, offsetPos) && BuddingAmethystBlock.canClusterGrowAtState(currentState)) {
+                    level.setBlock(offsetPos, placeState, Block.UPDATE_CLIENTS);
+                    break;
                 }
             }
-            for (BlockPos pos : budding_restorine) {
-                for (int l = 0; l < 6; l++) {
-                    Block block = switch (random.nextInt(0, 13)) {
-                        case 0 -> AArcanaBlocks.SMALL_RESTORINE_BUD.get();
-                        case 1 -> AArcanaBlocks.MEDIUM_RESTORINE_BUD.get();
-                        case 2 -> AArcanaBlocks.LARGE_RESTORINE_BUD.get();
-                        case 3, 4, 5, 6 -> AArcanaBlocks.RESTORINE_CLUSTER.get();
-                        case 7, 8, 9, 10 -> AArcanaBlocks.MASSIVE_RESTORINE_CLUSTER.get();
-                        default -> Blocks.AIR;
-                    };
-                    if (block == Blocks.AIR) continue;
-                    BlockPos.MutableBlockPos mutable = pos.mutable();
-                    Direction[] directions = Direction.values();
-                    BlockPos restorineBud = mutable.mutable().offset(directions[l].getNormal());
-                    if (level.getBlockState(restorineBud).isAir()) {
-                        level.setBlock(restorineBud, block.defaultBlockState().setValue(AmethystClusterBlock.FACING, directions[l]).setValue(AmethystClusterBlock.WATERLOGGED, level.getBlockState(restorineBud).getFluidState().getType() == Fluids.WATER), 2);
-                    }
+        }
+
+        return generated;
+    }
+
+    public void setAround(BlockStateProvider coreState, BlockStateProvider depthState, BlockStateProvider alternateState, float alternateChance, Set<BlockPos> alternatePositions, BlockState fillState, BlockPos pos, WorldGenLevel level, RandomSource randomSource)
+    {
+        BlockPos.MutableBlockPos mutPos = new BlockPos.MutableBlockPos();
+        for(Direction direction : Direction.values())
+        {
+            if(direction == Direction.UP)
+                continue;
+
+            mutPos.setWithOffset(pos, direction);
+            BlockState existingState = level.getBlockState(mutPos);
+            if(!existingState.isAir() && !existingState.is(fillState.getBlock()))
+            {
+                BlockStateProvider stateProvider;
+                if(randomSource.nextFloat() < alternateChance) {
+                    stateProvider = alternateState;
+                    alternatePositions.add(mutPos.immutable());
+                }
+                else
+                    stateProvider = coreState;
+
+
+                if(existingState.is(BlockTags.STONE_ORE_REPLACEABLES) || existingState.is(BlockTags.DIRT) || existingState.is(Blocks.AIR)) {
+
+                    level.setBlock(mutPos, stateProvider.getState(randomSource, mutPos), Block.UPDATE_CLIENTS);
+
+                    mutPos.move(direction);
+                    BlockState current = level.getBlockState(mutPos);
+                    if (current.is(BlockTags.STONE_ORE_REPLACEABLES) || current.is(BlockTags.DIRT) || current.is(Blocks.AIR))
+                        level.setBlock(mutPos, depthState.getState(randomSource, mutPos), Block.UPDATE_CLIENTS);
                 }
             }
+        }
+    }
+
+    private void spreadOffset(List<DirPos> offsets, List<DirPos> spreadOffsets, RandomSource random)
+    {
+        List<DirPos> targetList = spreadOffsets.isEmpty() ? offsets : spreadOffsets;
+        List<DirPos> newPostions = Lists.newArrayList();
+
+        for(DirPos pos : targetList)
+        {
+            DirPos offset1 = createSpreadOffset(pos, pos.movedPosition.getClockWise(), random);
+            if(!offsets.contains(offset1) && !spreadOffsets.contains(offset1) && !newPostions.contains(offset1))
+                newPostions.add(offset1);
+
+            DirPos offset2 = createSpreadOffset(pos, pos.movedPosition.getCounterClockWise(), random);
+            if(!offsets.contains(offset2) && !spreadOffsets.contains(offset2) && !newPostions.contains(offset2))
+                newPostions.add(offset2);
+        }
+
+        spreadOffsets.addAll(newPostions);
+    }
+
+    private DirPos createSpreadOffset(DirPos dirPos, Direction direction, RandomSource randomSource)
+    {
+        return new DirPos(dirPos.movedPosition, dirPos.pos().relative(direction), Math.max(1, dirPos.height - randomSource.nextInt(2, 5)));
+    }
+
+    private void createOffsets(Direction direction, int count, List<DirPos> offsets, DirPos start, RandomSource random, IntProvider heightOffset)
+    {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        pos.set(start.pos.relative(direction));
+
+        DirPos last = start;
+        for(int i = 0; i < count; i++)
+        {
+            DirPos newPos = new DirPos(direction, pos.immutable(), last.height + heightOffset.sample(random));
+            last = newPos;
+            if(!offsets.contains(newPos))
+                offsets.add(newPos);
+
+            if(random.nextInt(5) == 0)
+                direction = random.nextBoolean() ? direction.getCounterClockWise() : direction.getClockWise();
+            pos.move(direction);
+        }
+    }
+
+    private record DirPos(Direction movedPosition, BlockPos pos, int height)
+    {
+        @Override
+        public boolean equals(Object o)
+        {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            DirPos dirPos = (DirPos) o;
+
+            return pos.equals(dirPos.pos);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return pos.hashCode();
         }
     }
 }

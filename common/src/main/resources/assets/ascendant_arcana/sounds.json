@@ -1,0 +1,26 @@
+{
+  "blazebolt_shot": {
+    "subtitle": "sound.ascendant_arcana.blazebolt_shot",
+    "sounds": ["ascendant_arcana:blazebolt_0", "ascendant_arcana:blazebolt_1", "ascendant_arcana:blazebolt_2", "ascendant_arcana:blazebolt_3"]
+  },
+  "singularity": {
+    "subtitle": "sound.ascendant_arcana.singularity",
+    "sounds": ["ascendant_arcana:singularity_0", "ascendant_arcana:singularity_1", "ascendant_arcana:singularity_2", "ascendant_arcana:singularity_3", "ascendant_arcana:singularity_4"]
+  },
+  "singularity_summon": {
+    "subtitle": "sound.ascendant_arcana.singularity_summon",
+    "sounds": ["ascendant_arcana:singularity_summon_0", "ascendant_arcana:singularity_summon_1", "ascendant_arcana:singularity_summon_2"]
+  },
+  "shield_bash_hit": {
+    "subtitle": "sound.ascendant_arcana.shield_bash_hit",
+    "sounds": ["ascendant_arcana:shield_bash_hit_0", "ascendant_arcana:shield_bash_hit_1", "ascendant_arcana:shield_bash_hit_2", "ascendant_arcana:shield_bash_hit_3"]
+  },
+  "shield_bash_start": {
+    "subtitle": "sound.ascendant_arcana.shield_bash_start",
+    "sounds": ["ascendant_arcana:shield_bash_start_0", "ascendant_arcana:shield_bash_start_1", "ascendant_arcana:shield_bash_start_2", "ascendant_arcana:shield_bash_start_3", "ascendant_arcana:shield_bash_start_4", "ascendant_arcana:shield_bash_start_5"]
+  },
+  "shattershot": {
+    "subtitle": "sound.ascendant_arcana.shattershot",
+    "sounds": ["ascendant_arcana:shattershot_0","ascendant_arcana:shattershot_1","ascendant_arcana:shattershot_2","ascendant_arcana:shattershot_3"]
+  }
+}

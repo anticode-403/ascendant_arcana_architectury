@@ -5,12 +5,15 @@ import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
+import me.anticode.ascendant_arcana.api.AArcanaPlayer;
 import me.anticode.ascendant_arcana.config.ServerConfig;
 import me.anticode.ascendant_arcana.config.ServerConfigWrapper;
 import me.anticode.ascendant_arcana.init.*;
 import me.anticode.ascendant_arcana.loot.PopulateRelicLootFunction;
+import me.anticode.ascendant_arcana.networking.ClientboundShieldBashPacket;
 import me.anticode.ascendant_arcana.networking.EnchantingScreenRemoveRecipe;
 import me.anticode.ascendant_arcana.networking.EnchantingScreenSendRecipe;
+import me.anticode.ascendant_arcana.networking.ServerboundShieldBashPacket;
 import me.anticode.ascendant_arcana.screenhandler.AArcanaEnchantingMenu;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -18,9 +21,12 @@ import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -52,6 +58,8 @@ public final class AscendantArcana {
         AArcanaMenus.initialize();
         AArcanaLootFunctionTypes.initialize();
         AArcanaFeatures.initialize();
+        AArcanaEntities.initialize();
+        AArcanaSoundEvents.initialize();
         TABS.register();
 
         NetworkManager.registerReceiver(NetworkManager.Side.C2S, EnchantingScreenRemoveRecipe.Id, (buf, packetContext) -> {
@@ -69,6 +77,16 @@ public final class AscendantArcana {
             if (player.containerMenu.containerId != packet.syncId()) return;
             AArcanaEnchantingMenu screenHandler = (AArcanaEnchantingMenu) player.containerMenu;
             screenHandler.recipe = packet.recipe();
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.C2S, ServerboundShieldBashPacket.Id, (buf, packetContext) -> {
+            Player player = packetContext.getPlayer();
+            ServerboundShieldBashPacket packet = ServerboundShieldBashPacket.read(buf);
+            if (!player.isUsingItem()) return;
+            AArcanaPlayer aPlayer = (AArcanaPlayer) player;
+            aPlayer.ascendant_arcana$setShieldBashStatus(packet.status());
+            ServerLevel serverLevel = (ServerLevel) packetContext.getPlayer().level();
+            NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), packet.status()).write());
         });
 
         LootEvent.MODIFY_LOOT_TABLE.register((dataManager, identifier, context, builtin) -> {

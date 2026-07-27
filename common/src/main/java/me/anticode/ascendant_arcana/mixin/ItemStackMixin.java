@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.init.AArcanaAttributes;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
@@ -91,7 +92,8 @@ public abstract class ItemStackMixin {
 
     @ModifyReturnValue(method = "getMaxDamage", at = @At("RETURN"))
     private int implementDurabilityRelic(int maxDamage) {
-        return Mth.floor(maxDamage + RelicHelper.getStrengthFromNbt(Relics.DURABILITY, getTag()));
+        if (AscendantArcana.config.durability_additive) return Mth.floor(maxDamage + RelicHelper.getStrengthFromNbt(Relics.DURABILITY, getTag()));
+        else return Mth.floor(maxDamage * (1 + RelicHelper.getStrengthFromNbt(Relics.DURABILITY, getTag())));
     }
 
     @ModifyReturnValue(method = "getAttributeModifiers", at = @At("RETURN"))
@@ -152,7 +154,7 @@ public abstract class ItemStackMixin {
         for (Map.Entry<Relics, Integer> entry : relics.entrySet()) {
             int visualStrength = RelicHelper.getTooltipStrength(entry.getKey(), entry.getValue());
             Component relicName = Component.translatable("item.relics.type." + entry.getKey().toString().toLowerCase());
-            String hasPercent = (entry.getKey() == Relics.HASTE || entry.getKey() == Relics.PROTECTION || entry.getKey() == Relics.DAMAGE) ? "%" : "";
+            String hasPercent = (entry.getKey() == Relics.HASTE || entry.getKey() == Relics.PROTECTION || entry.getKey() == Relics.DAMAGE || (entry.getKey() == Relics.DURABILITY && !AscendantArcana.config.durability_additive)) ? "%" : "";
             Component line = Component.translatable("item.relics.tooltip", visualStrength, relicName, hasPercent).withStyle(ChatFormatting.BLUE);
             tooltip.add(i++, line);
         }

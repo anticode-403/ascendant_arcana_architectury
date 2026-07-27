@@ -4,29 +4,47 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import dev.architectury.networking.NetworkManager;
 import me.anticode.ascendant_arcana.api.CrossbowAccess;
 import me.anticode.ascendant_arcana.api.EnchantedRocket;
+import me.anticode.ascendant_arcana.entity.BlazeboltEntity;
+import me.anticode.ascendant_arcana.init.AArcanaDamage;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
+import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
+import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.networking.AddParticlesPacket;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -148,6 +166,57 @@ public class CrossbowItemMixin implements CrossbowAccess {
         }
     }
 
+    @Inject(method = "shootProjectile", at = @At("HEAD"), cancellable = true)
+    private static void applyAlternateAmmoTypes(Level level, LivingEntity livingEntity, InteractionHand interactionHand, ItemStack itemStack, ItemStack itemStack2, float f, boolean bl, float g, float h, float i, CallbackInfo ci) {
+        if (level.isClientSide) return;
+        if (itemStack2.is(Items.BLAZE_ROD)) {
+            float pitch = livingEntity.getXRot();
+            float yaw = livingEntity.getYRot();
+            int inaccuracy = 0;
+            int maxLength = Mth.floor(16 * (Math.pow(2, EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BLAZEBOLT.get(), itemStack))));
+            int damage = 4 + (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BLAZEBOLT.get(), itemStack) * 2);
+            float damageMultiplier = (float) (1 + RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag()));
+            if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), itemStack) > 0) {
+                damageMultiplier -= 0.25F;
+            } else if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SALVO.get(), itemStack) > 0) {
+                damageMultiplier -= 0.5F;
+                inaccuracy += 4;
+                maxLength /= 4;
+            } else if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, itemStack) > 0) {
+                yaw += i;
+                maxLength /= 4;
+            }
+            inaccuracy += EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.INACCURACY_CURSE.get(), itemStack);
+            RandomSource random = livingEntity.getRandom();
+            if (inaccuracy > 0) {
+                float rand_pitch = random.nextFloat() * inaccuracy * 2f;
+                float rand_yaw = random.nextFloat() * inaccuracy * 2f;
+                pitch += (random.nextBoolean() ? rand_pitch : -rand_pitch);
+                yaw += (random.nextBoolean() ? rand_yaw : -rand_yaw);
+            }
+            Projectile projectile = new BlazeboltEntity(level, livingEntity, maxLength, damage * damageMultiplier, pitch, yaw);
+            level.addFreshEntity(projectile);
+            level.playSound((Player)null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), AArcanaSoundEvents.BLAZEBOLT_SHOT.get(), livingEntity.getSoundSource(), 1.0F, f);
+            ci.cancel();
+        } else if (itemStack2.is(Items.AMETHYST_SHARD)) {
+            float damageMultiplier = (float) (1 + RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag()));
+            level.getEntities(livingEntity, AABB.unitCubeFromLowerCorner(livingEntity.getEyePosition().add(livingEntity.getLookAngle().scale(2))).inflate(2), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and((entity -> entity != livingEntity))).forEach(entity -> {
+                LivingEntity targetEntity = (LivingEntity) entity;
+                targetEntity.hurt(AArcanaDamage.source(level, AArcanaDamage.SHATTERSHOT), 3 * damageMultiplier);
+                Vec3 offset = livingEntity.getLookAngle().with(Direction.Axis.Y, 0).normalize();
+                targetEntity.knockback(2, -offset.x, -offset.z);
+                targetEntity.hurtMarked = true;
+                targetEntity.addEffect(new MobEffectInstance(AArcanaMobEffects.SUNDERED.get(), 120, 0, false, false, true));
+            });
+            if (level instanceof ServerLevel serverLevel) {
+                serverLevel.playSound(null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), AArcanaSoundEvents.SHATTERSHOT.get(), livingEntity.getSoundSource(), 1.0F, f);
+                NetworkManager.sendToPlayers(serverLevel.players(), AddParticlesPacket.Id, new AddParticlesPacket(BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.BLOCK).toString(), new BlockParticleOption(ParticleTypes.BLOCK, Blocks.AMETHYST_CLUSTER.defaultBlockState()), 20, livingEntity.getEyePosition().with(Direction.Axis.Y, livingEntity.getEyeY() - 0.3), livingEntity.getLookAngle(), 0, 0.1F, 1).write());
+                NetworkManager.sendToPlayers(serverLevel.players(), AddParticlesPacket.Id, new AddParticlesPacket(BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.ENCHANTED_HIT).toString(), ParticleTypes.ENCHANTED_HIT, 25, livingEntity.getEyePosition().with(Direction.Axis.Y, livingEntity.getEyeY() - 0.3), livingEntity.getLookAngle(), 0.0F, 0.3F, 3).write());
+            }
+            ci.cancel();
+        }
+    }
+
     @Inject(method = "shootProjectile", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/Projectile;shoot(DDDFF)V", shift = At.Shift.AFTER))
     private static void applyCrossbowEnchantmentLevels(
             Level level, LivingEntity livingEntity, InteractionHand interactionHand, ItemStack itemStack,
@@ -176,6 +245,11 @@ public class CrossbowItemMixin implements CrossbowAccess {
                 }
             }
         }
+    }
+
+    @ModifyReturnValue(method = "containsChargedProjectile", at = @At("RETURN"))
+    private static boolean onlyCheckLastProjectile(boolean original, @Local(argsOnly = true) ItemStack itemStack, @Local(argsOnly = true) Item item) {
+        return isCharged(itemStack) && getChargedProjectiles(itemStack).get(0).is(item);
     }
 
     @WrapOperation(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;getPowerForTime(ILnet/minecraft/world/item/ItemStack;)F"))

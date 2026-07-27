@@ -1,6 +1,10 @@
 package me.anticode.ascendant_arcana.api;
 
 public interface EnchantedTrident {
+    void ascendant_arcana$setSingularityLevel(int singularityLevel);
+
+    int ascendant_arcana$getSingularityLevel();
+
     void ascendant_arcana$setAmbushLevel(int ambushLevel);
 
     void ascendant_arcana$setLifetideLevel(int lifetideLevel);

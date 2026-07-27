@@ -12,8 +12,11 @@ public class AArcanaEnchantments {
 
     public static RegistrySupplier<Enchantment> AMBUSH = register(new Ambush(), "ambush");
     public static RegistrySupplier<Enchantment> ARCHERS_GAMBIT = register(new ArchersGambit(), "archers_gambit");
+    public static RegistrySupplier<Enchantment> BASHING = register(new ShieldBash(), "bashing");
+    public static RegistrySupplier<Enchantment> BLAZEBOLT = register(new Blazebolt(), "blazebolt");
     public static RegistrySupplier<Enchantment> CLEANSE = register(new Cleanse(), "cleanse");
     public static RegistrySupplier<Enchantment> CROSS_COUNTER = register(new CrossCounter(), "cross_counter");
+    public static RegistrySupplier<Enchantment> CUSHIONING = register(new Cushioning(), "cushioning");
     public static RegistrySupplier<Enchantment> DEBILITATING_CHAIN = register(new DebilitatingChain(), "debilitating_chain");
     public static RegistrySupplier<Enchantment> DEFLECT = register(new Deflect(), "deflect");
     public static RegistrySupplier<Enchantment> EVOKERS_WRATH = register(new EvokersWrath(), "evokers_wrath");
@@ -28,6 +31,8 @@ public class AArcanaEnchantments {
     public static RegistrySupplier<Enchantment> RICOCHET = register(new Ricochet(), "ricochet");
     public static RegistrySupplier<Enchantment> ROCKETRY = register(new Rocketry(), "rocketry");
     public static RegistrySupplier<Enchantment> SALVO = register(new Salvo(), "salvo");
+    public static RegistrySupplier<Enchantment> SHATTERSHOT = register(new Shattershot(), "shattershot");
+    public static RegistrySupplier<Enchantment> SINGULARITY = register(new Singularity(), "singularity");
     public static RegistrySupplier<Enchantment> SMELTING = register(new Smelting(), "smelting");
     public static RegistrySupplier<Enchantment> SONIC_BLAST = register(new SonicBlast(), "sonic_blast");
     public static RegistrySupplier<Enchantment> SOUL_BURST = register(new SoulBurst(), "soul_burst");
