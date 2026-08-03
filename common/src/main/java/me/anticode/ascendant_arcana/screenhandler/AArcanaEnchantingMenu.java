@@ -22,10 +22,12 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
@@ -138,7 +140,7 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
             stackCopy = moveStack.copy();
             if (index <= 3) {
                 if (!this.moveItemStackTo(moveStack, 4, 40, true)) return ItemStack.EMPTY;
-            } else if (moveStack.isEnchantable() || moveStack.isEnchanted() || moveStack.is(Items.BOOK)) {
+            } else if (moveStack.isEnchantable() || moveStack.isEnchanted() || moveStack.is(Items.BOOK) || moveStack.is(Items.ENCHANTED_BOOK)) {
                 if (!this.moveItemStackTo(moveStack, 0, 1, false)) return ItemStack.EMPTY;
             } else if (moveStack.is(AArcanaItems.ENCHANTED_SCRAP.get())) {
                 if (!this.moveItemStackTo(moveStack, 1, 2, false)) return ItemStack.EMPTY;
@@ -190,7 +192,9 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
             if (!recipe.secondaryIngredientStack.getIngredient().test(secondaryStack)) return false;
             if (recipe.secondaryIngredientStack.getCount() > secondaryStack.getCount()) return false;
         }
-        Map<Enchantment, Integer> itemEnchants = EnchantmentHelper.getEnchantments(itemStack);
+        Map<Enchantment, Integer> itemEnchants;
+        if (itemStack.is(Items.ENCHANTED_BOOK)) itemEnchants = EnchantmentHelper.deserializeEnchantments(EnchantedBookItem.getEnchantments(itemStack));
+        else itemEnchants = EnchantmentHelper.getEnchantments(itemStack);
         if (itemEnchants.containsKey(recipe.enchantment)) {
             if (itemEnchants.get(recipe.enchantment) + 1 > recipe.enchantment.getMaxLevel()) return false;
         } else if (!EnchantmentHelper.isEnchantmentCompatible(itemEnchants.keySet(), recipe.enchantment)) return false;
@@ -200,10 +204,6 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
             if (!AscendantArcana.config.books_remove_scrap_cost || !unlockedTreasures.contains(recipe.enchantment))
                 scrapStack.setCount(scrapStack.getCount() - recipe.magicalScrapCost);
             ItemStack newStack = itemStack;
-            if (itemStack.is(Items.BOOK)) {
-                getSlot(0).set(new ItemStack(Items.ENCHANTED_BOOK));
-                newStack = getSlot(0).getItem();
-            }
             if (scrapStack.isEmpty()) {
                 inventory.setItem(1, ItemStack.EMPTY);
             }
@@ -219,16 +219,32 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
                     inventory.setItem(3, ItemStack.EMPTY);
                 }
             }
-            if (itemEnchants.containsKey(recipe.enchantment)) {
-                itemEnchants.put(recipe.enchantment, itemEnchants.get(recipe.enchantment) + 1);
-                EnchantmentHelper.setEnchantments(itemEnchants, newStack);
+            if (itemStack.is(Items.BOOK)) {
+                newStack = EnchantedBookItem.createForEnchantment(new EnchantmentInstance(recipe.enchantment, 1));
+            } else if (itemStack.is(Items.ENCHANTED_BOOK)) {
+                if (itemEnchants.containsKey(recipe.enchantment)) {
+                    newStack = EnchantedBookItem.createForEnchantment(new EnchantmentInstance(recipe.enchantment, itemEnchants.get(recipe.enchantment) + 1));
+                    for (Map.Entry<Enchantment, Integer> entry : itemEnchants.entrySet()) {
+                        if (entry.getKey() == recipe.enchantment) continue;
+                        EnchantedBookItem.addEnchantment(newStack, new EnchantmentInstance(entry.getKey(), entry.getValue()));
+                    }
+                } else {
+                    EnchantedBookItem.addEnchantment(newStack, new EnchantmentInstance(recipe.enchantment, 1));
+                }
             } else {
-                newStack.enchant(recipe.enchantment, 1);
+                if (itemEnchants.containsKey(recipe.enchantment)) {
+                    itemEnchants.put(recipe.enchantment, itemEnchants.get(recipe.enchantment) + 1);
+                    EnchantmentHelper.setEnchantments(itemEnchants, newStack);
+                } else {
+                    newStack.enchant(recipe.enchantment, 1);
+                }
             }
             player.awardStat(Stats.ENCHANT_ITEM);
             if (player instanceof ServerPlayer) {
                 CriteriaTriggers.ENCHANTED_ITEM.trigger((ServerPlayer)player, newStack, recipe.levelCost);
             }
+
+            getSlot(0).set(newStack);
 
             inventory.setChanged();
             slotsChanged(inventory);
@@ -255,7 +271,7 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return stack.isEnchantable() || stack.isEnchanted() || stack.is(Items.BOOK);
+            return stack.isEnchantable() || stack.isEnchanted() || stack.is(Items.BOOK) || stack.is(Items.ENCHANTED_BOOK);
         }
 
         @Override
