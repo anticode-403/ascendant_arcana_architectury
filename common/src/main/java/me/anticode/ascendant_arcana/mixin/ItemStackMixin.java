@@ -112,7 +112,7 @@ public abstract class ItemStackMixin {
                 case FEET -> UUID.fromString("93ef9100-4f32-45e0-8568-f837918e9b43");
                 default -> null;
             };
-            float protectionValue = (float) RelicHelper.getStrengthFromNbt(Relics.DAMAGE, getTag());
+            float protectionValue = (float) RelicHelper.getStrengthFromNbt(Relics.PROTECTION, getTag());
             if (protectionValue != 0) {
                 AttributeModifier modifier = new AttributeModifier(uuid, "Protection Relic Bonus", protectionValue, AttributeModifier.Operation.MULTIPLY_BASE);
                 modifiers.put(AArcanaAttributes.PROTECTION.get(), modifier);
