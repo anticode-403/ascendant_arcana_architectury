@@ -112,7 +112,8 @@ public class ServerConfig implements ConfigData {
             Map.entry("minecraft:channeling", 2),
             Map.entry("minecraft:feather_falling", 1),
             Map.entry("minecraft:swift_sneak", 3),
-            Map.entry("minecraft:soul_speed", 3)
+            Map.entry("minecraft:soul_speed", 3),
+            Map.entry("veinmining:vein_mining", 1)
     ));
 
     @Comment("""
