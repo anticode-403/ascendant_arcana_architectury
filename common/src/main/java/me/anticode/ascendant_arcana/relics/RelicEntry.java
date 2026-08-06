@@ -41,7 +41,7 @@ public class RelicEntry {
     }
 
     public double applyOperation(double input, int strength) {
-        return (operation == Operation.addition) ? input + strengths.get(strength - 1) : input * 1 + strengths.get(strength - 1);
+        return (operation == Operation.addition) ? input + strengths.get(strength - 1) : input * (1 + strengths.get(strength - 1));
     }
 
     public static RelicEntry fromJson(JsonReader reader) {
