@@ -14,10 +14,8 @@ import me.anticode.ascendant_arcana.api.EnchantedTrident;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.item.RelicItem;
 import me.anticode.ascendant_arcana.logic.Relics;
-import me.anticode.ascendant_arcana.networking.AddParticlesPacket;
-import me.anticode.ascendant_arcana.networking.ClientboundShieldBashPacket;
-import me.anticode.ascendant_arcana.networking.EnchantingScreenSync;
-import me.anticode.ascendant_arcana.networking.ForgeTridentSync;
+import me.anticode.ascendant_arcana.networking.*;
+import me.anticode.ascendant_arcana.relics.RelicRegistry;
 import me.anticode.ascendant_arcana.screenhandler.AArcanaEnchantingMenu;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -70,6 +68,9 @@ public class AscendantArcanaClient {
             if (player == null) return;
             AArcanaPlayer aPlayer = (AArcanaPlayer) player;
             aPlayer.ascendant_arcana$setShieldBashStatus(packet.status());
+        });
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, RelicRegistrySync.Id, (buf, context) -> {
+            RelicRegistry.fromNetwork(buf);
         });
 
         EntityRendererRegistry.register(AArcanaEntities.BLAZEBOLT_ENTITY, BlazeboltEntityRenderer::new);

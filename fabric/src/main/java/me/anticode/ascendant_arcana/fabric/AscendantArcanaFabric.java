@@ -1,11 +1,15 @@
 package me.anticode.ascendant_arcana.fabric;
 
+import dev.architectury.networking.NetworkManager;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.api.ItemEntryAccess;
 import me.anticode.ascendant_arcana.api.LeafEntryAccess;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.loot.PopulateRelicLootFunction;
+import me.anticode.ascendant_arcana.networking.RelicRegistrySync;
+import me.anticode.ascendant_arcana.relics.RelicRegistry;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
@@ -28,6 +32,14 @@ public final class AscendantArcanaFabric implements ModInitializer {
 
         // Run our common setup.
         AscendantArcana.initialize();
+
+        ServerLifecycleEvents.SERVER_STARTING.register((minecraftServer) -> {
+            RelicRegistry.loadRelics(minecraftServer.getResourceManager());
+        });
+
+        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(((serverPlayer, b) -> {
+            NetworkManager.sendToPlayer(serverPlayer, RelicRegistrySync.Id, RelicRegistry.toNetwork());
+        }));
 
         LootTableEvents.MODIFY.register(((resourceManager, lootDataManager, identifier, builder, lootTableSource) -> {
             if (lootTableSource.isBuiltin() && AscendantArcana.config.add_relics_to_entities) {

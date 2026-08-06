@@ -1,5 +1,6 @@
 package me.anticode.ascendant_arcana.forge;
 
+import dev.architectury.networking.NetworkManager;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import dev.architectury.platform.forge.EventBuses;
 import me.anticode.ascendant_arcana.api.ItemEntryAccess;
@@ -15,6 +16,8 @@ import me.anticode.ascendant_arcana.init.*;
 import me.anticode.ascendant_arcana.item.RelicItem;
 import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.loot.PopulateRelicLootFunction;
+import me.anticode.ascendant_arcana.networking.RelicRegistrySync;
+import me.anticode.ascendant_arcana.relics.RelicRegistry;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.EnchantTableRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -37,7 +40,9 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -128,6 +133,17 @@ public final class AscendantArcanaForge {
                     }
                 }
             }
+        }
+
+        @SubscribeEvent
+        public static void serverStarting(ServerStartingEvent event) {
+            RelicRegistry.loadRelics(event.getServer().getResourceManager());
+        }
+
+        @SubscribeEvent
+        public static void datapackSync(OnDatapackSyncEvent event) {
+            if (event.getPlayer() == null) return;
+            NetworkManager.sendToPlayer(event.getPlayer(), RelicRegistrySync.Id, RelicRegistry.toNetwork());
         }
     }
 
