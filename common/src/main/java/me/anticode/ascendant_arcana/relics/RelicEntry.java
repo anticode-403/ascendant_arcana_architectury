@@ -15,14 +15,29 @@ public class RelicEntry {
 
     private final List<Float> strengths;
 
-    public RelicEntry(ResourceLocation type, Operation operation, List<Float> strengths) {
+    private final Target target;
+
+    public RelicEntry(ResourceLocation type, Operation operation, List<Float> strengths, Target target) {
         this.type = type;
         this.operation = operation;
         this.strengths = strengths;
+        this.target = target;
     }
 
     public ResourceLocation getType() {
         return type;
+    }
+
+    public Operation getOperation() {
+        return operation;
+    }
+
+    public Float getStrength(int strength) {
+        return strengths.get(strength);
+    }
+
+    public Target getTarget() {
+        return target;
     }
 
     public double applyOperation(double input, int strength) {
@@ -36,6 +51,7 @@ public class RelicEntry {
     public static RelicEntry fromNetwork(FriendlyByteBuf buf) {
         ResourceLocation type = buf.readResourceLocation();
         Operation operation = buf.readEnum(Operation.class);
+        Target target = buf.readEnum(Target.class);
         List<Float> strengths = Lists.newArrayList(
             buf.readFloat(),
             buf.readFloat(),
@@ -43,12 +59,13 @@ public class RelicEntry {
             buf.readFloat(),
             buf.readFloat()
         );
-        return new RelicEntry(type, operation, strengths);
+        return new RelicEntry(type, operation, strengths, target);
     }
 
     public static void toNetwork(FriendlyByteBuf buf, RelicEntry entry) {
         buf.writeResourceLocation(entry.type);
         buf.writeEnum(entry.operation);
+        buf.writeEnum(entry.target);
         buf.writeFloat(entry.strengths.get(0));
         buf.writeFloat(entry.strengths.get(1));
         buf.writeFloat(entry.strengths.get(2));
@@ -63,5 +80,12 @@ public class RelicEntry {
     public enum Operation {
         addition,
         multiply_total
+    }
+
+    public enum Target {
+        armor,
+        tool,
+        durability,
+        enchantable
     }
 }
