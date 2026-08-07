@@ -5,175 +5,175 @@
       "model": "ascendant_arcana:item/relics/relic_damage_1",
       "predicate": {
         "relic_strength": 0.2,
-        "relic_type": 0.0
+        "damage_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_damage_2",
       "predicate": {
         "relic_strength": 0.4,
-        "relic_type": 0.0
+        "damage_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_damage_3",
       "predicate": {
         "relic_strength": 0.6,
-        "relic_type": 0.0
+        "damage_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_damage_4",
       "predicate": {
         "relic_strength": 0.8,
-        "relic_type": 0.0
+        "damage_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_damage_5",
       "predicate": {
         "relic_strength": 1.0,
-        "relic_type": 0.0
+        "damage_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_durability_1",
       "predicate": {
         "relic_strength": 0.2,
-        "relic_type": 0.2
+        "durability_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_durability_2",
       "predicate": {
         "relic_strength": 0.4,
-        "relic_type": 0.2
+        "durability_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_durability_3",
       "predicate": {
         "relic_strength": 0.6,
-        "relic_type": 0.2
+        "durability_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_durability_4",
       "predicate": {
         "relic_strength": 0.8,
-        "relic_type": 0.2
+        "durability_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_durability_5",
       "predicate": {
         "relic_strength": 1.0,
-        "relic_type": 0.2
+        "durability_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_protection_1",
       "predicate": {
         "relic_strength": 0.2,
-        "relic_type": 0.4
+        "protection_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_protection_2",
       "predicate": {
         "relic_strength": 0.4,
-        "relic_type": 0.4
+        "protection_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_protection_3",
       "predicate": {
         "relic_strength": 0.6,
-        "relic_type": 0.4
+        "protection_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_protection_4",
       "predicate": {
         "relic_strength": 0.8,
-        "relic_type": 0.4
+        "protection_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_protection_5",
       "predicate": {
         "relic_strength": 1.0,
-        "relic_type": 0.4
+        "protection_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_haste_1",
       "predicate": {
         "relic_strength": 0.2,
-        "relic_type": 0.6
+        "haste_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_haste_2",
       "predicate": {
         "relic_strength": 0.4,
-        "relic_type": 0.6
+        "haste_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_haste_3",
       "predicate": {
         "relic_strength": 0.6,
-        "relic_type": 0.6
+        "haste_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_haste_4",
       "predicate": {
         "relic_strength": 0.8,
-        "relic_type": 0.6
+        "haste_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_haste_5",
       "predicate": {
         "relic_strength": 1.0,
-        "relic_type": 0.6
+        "haste_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_magic_1",
       "predicate": {
         "relic_strength": 0.2,
-        "relic_type": 0.8
+        "enchantment_capacity_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_magic_2",
       "predicate": {
         "relic_strength": 0.4,
-        "relic_type": 0.8
+        "enchantment_capacity_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_magic_3",
       "predicate": {
         "relic_strength": 0.6,
-        "relic_type": 0.8
+        "enchantment_capacity_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_magic_4",
       "predicate": {
         "relic_strength": 0.8,
-        "relic_type": 0.8
+        "enchantment_capacity_relic": 1.0
       }
     },
     {
       "model": "ascendant_arcana:item/relics/relic_magic_5",
       "predicate": {
         "relic_strength": 1.0,
-        "relic_type": 0.8
+        "enchantment_capacity_relic": 1.0
       }
     }
   ],

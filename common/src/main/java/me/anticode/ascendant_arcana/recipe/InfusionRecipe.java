@@ -1,14 +1,12 @@
 package me.anticode.ascendant_arcana.recipe;
 
 import com.google.gson.JsonObject;
-import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.init.AArcanaRecipes;
 import me.anticode.ascendant_arcana.init.AArcanaTags;
 import me.anticode.ascendant_arcana.item.RelicItem;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
-import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.relics.RelicEntry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -63,13 +61,13 @@ public class InfusionRecipe implements SmithingRecipe {
 
     public boolean matches (ItemStack baseStack, ItemStack relicStack) {
         if (baseStack.is(AArcanaTags.Items.INFUSION_BLACKLIST)) return false;
-        Map<Relics, Integer> relicMap = RelicHelper.fromNbt(baseStack.getTag());
-        Relics relicType = RelicItem.getRelicType(relicStack);
+        Map<RelicEntry, Integer> relicMap = RelicHelper.fromNbt(baseStack.getTag());
+        RelicEntry relicType = RelicItem.getRelicType(relicStack);
         if (relicMap.size() < RelicHelper.getRelicCapacity(baseStack)) {
-            if (relicType == Relics.DURABILITY && baseStack.isDamageableItem()) return true;
-            if (relicType == Relics.ENCHANTMENT_CAPACITY && (baseStack.isEnchantable() || baseStack.isEnchanted())) return true;
-            else if ((relicType == Relics.HASTE || relicType == Relics.DAMAGE) && (baseStack.getItem() instanceof TieredItem || baseStack.getItem() instanceof BowItem || baseStack.getItem() instanceof CrossbowItem || baseStack.getItem() instanceof TridentItem || !baseStack.getItem().getDefaultInstance().getAttributeModifiers(EquipmentSlot.MAINHAND).get(Attributes.ATTACK_DAMAGE).isEmpty())) return true;
-            else return relicType == Relics.PROTECTION && baseStack.getItem() instanceof ArmorItem;
+            if (relicType.getTarget() == RelicEntry.Target.durability && baseStack.isDamageableItem()) return true;
+            if (relicType.getTarget() == RelicEntry.Target.enchantable && (baseStack.isEnchantable() || baseStack.isEnchanted())) return true;
+            else if (relicType.getTarget() == RelicEntry.Target.tool && (baseStack.getItem() instanceof TieredItem || baseStack.getItem() instanceof BowItem || baseStack.getItem() instanceof CrossbowItem || baseStack.getItem() instanceof TridentItem || !baseStack.getItem().getDefaultInstance().getAttributeModifiers(EquipmentSlot.MAINHAND).get(Attributes.ATTACK_DAMAGE).isEmpty())) return true;
+            else return relicType.getTarget() == RelicEntry.Target.armor && baseStack.getItem() instanceof ArmorItem;
         }
         else if (relicStack.getItem() instanceof  RelicItem) {
             if (relicMap.containsKey(relicType)) {
@@ -87,8 +85,8 @@ public class InfusionRecipe implements SmithingRecipe {
     public ItemStack getOutput(ItemStack baseStack, ItemStack relicStack) {
         ItemStack newStack = baseStack.copy();
         int relicStrength = RelicItem.getRelicStrength(relicStack);
-        Relics relicType = RelicItem.getRelicType(relicStack);
-        Map<Relics, Integer> relicsMap = RelicHelper.fromNbt(newStack.getTag());
+        RelicEntry relicType = RelicItem.getRelicType(relicStack);
+        Map<RelicEntry, Integer> relicsMap = RelicHelper.fromNbt(newStack.getTag());
         relicsMap.put(relicType, relicStrength);
         newStack.getOrCreateTag().put(RelicHelper.RELICS_KEY, RelicHelper.toNbt(relicsMap));
         return newStack;

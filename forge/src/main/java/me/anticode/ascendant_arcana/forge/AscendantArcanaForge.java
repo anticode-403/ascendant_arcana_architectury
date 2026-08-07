@@ -13,14 +13,12 @@ import me.anticode.ascendant_arcana.client.screen.AArcanaEnchantingScreen;
 import me.anticode.ascendant_arcana.forge.api.LootPoolAccess;
 import me.anticode.ascendant_arcana.forge.api.LootTableAccess;
 import me.anticode.ascendant_arcana.init.*;
-import me.anticode.ascendant_arcana.item.RelicItem;
-import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.loot.PopulateRelicLootFunction;
 import me.anticode.ascendant_arcana.networking.RelicRegistrySync;
 import me.anticode.ascendant_arcana.relics.RelicRegistry;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.EnchantTableRenderer;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -106,7 +104,7 @@ public final class AscendantArcanaForge {
                                 entryBuilder.setWeight(((LeafEntryAccess) entry).ascendantArcana$getWeight());
                                 addedWeights += ((LeafEntryAccess) entry).ascendantArcana$getWeight();
                                 entryBuilder.setQuality(((LeafEntryAccess) entry).ascendantArcana$getQuality());
-                                entryBuilder.apply(PopulateRelicLootFunction.builder(UniformGenerator.between(1, !bonus ? 3 : 4), new int[]{0, 1, 2, 4}));
+                                entryBuilder.apply(PopulateRelicLootFunction.builder(UniformGenerator.between(1, !bonus ? 3 : 4), new ResourceLocation[]{RelicTypes.DAMAGE, RelicTypes.DURABILITY, RelicTypes.PROTECTION, RelicTypes.HASTE, RelicTypes.ENCHANTMENT_CAPACITY}));
                                 // I can't figure out how to replicate conditions, so in the off chance the enchanted book has a conditional drop, we will unfortunately ignore it
                                 poolBuilder.add(entryBuilder);
                             } else if ((((ItemEntryAccess)entry).ascendantArcana$getItem() == Items.AMETHYST_SHARD || ((ItemEntryAccess)entry).ascendantArcana$getItem() == Items.DIAMOND) && AscendantArcana.config.add_restorine_to_chests) {

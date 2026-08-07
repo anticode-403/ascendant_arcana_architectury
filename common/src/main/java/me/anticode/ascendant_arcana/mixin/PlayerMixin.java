@@ -8,9 +8,10 @@ import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
-import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.networking.ClientboundShieldBashPacket;
 import me.anticode.ascendant_arcana.networking.ServerboundShieldBashPacket;
+import me.anticode.ascendant_arcana.relics.RelicEntry;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -70,9 +71,8 @@ public class PlayerMixin implements AArcanaPlayer {
         LivingEntity livingEntity = (LivingEntity)(Object)this;
         ItemStack mainStack = livingEntity.getMainHandItem();
         if (mainStack.getItem() instanceof TieredItem && mainStack.hasTag()) {
-            Map<Relics, Integer> relics = RelicHelper.fromNbt(mainStack.getTag());
-            if (relics.containsKey(Relics.HASTE)) {
-                float hasteMultiplier = 1 + (float) RelicHelper.getStrengthFromNbt(Relics.HASTE, mainStack.getTag()) / 2;
+            if (RelicHelper.containsAnyOfType(RelicTypes.HASTE, mainStack.getTag())) {
+                float hasteMultiplier = (float) RelicHelper.applyAllRelicsOfType(RelicTypes.HASTE, 1, mainStack.getTag()) / 2;
                 if (original * hasteMultiplier > 1) return 1;
                 return original * hasteMultiplier;
             }

@@ -33,7 +33,7 @@ public class RelicEntry {
     }
 
     public Float getStrength(int strength) {
-        return strengths.get(strength);
+        return strengths.get(strength - 1);
     }
 
     public Target getTarget() {
@@ -45,7 +45,8 @@ public class RelicEntry {
     }
 
     public static RelicEntry fromJson(JsonReader reader) {
-        return new Gson().fromJson(reader, RelicEntry.class);
+        AbstractedRelicEntry abstractedRelicEntry = new Gson().fromJson(reader, AbstractedRelicEntry.class);
+        return new RelicEntry(ResourceLocation.tryParse(abstractedRelicEntry.type()), abstractedRelicEntry.operation(), abstractedRelicEntry.strengths(), abstractedRelicEntry.target());
     }
 
     public static RelicEntry fromNetwork(FriendlyByteBuf buf) {

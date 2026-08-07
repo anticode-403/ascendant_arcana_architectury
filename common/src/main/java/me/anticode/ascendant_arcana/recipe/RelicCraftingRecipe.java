@@ -6,14 +6,13 @@ import com.google.gson.JsonParseException;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.init.AArcanaRecipes;
 import me.anticode.ascendant_arcana.item.RelicItem;
-import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.relics.RelicRegistry;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,18 +23,16 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class RelicCraftingRecipe extends CustomRecipe {
     final String group;
     final int strength;
-    final int relic;
+    final ResourceLocation relic;
     final NonNullList<Ingredient> input;
 
-    public RelicCraftingRecipe(ResourceLocation id, String group, CraftingBookCategory category, int strength, int relic, NonNullList<Ingredient> input) {
+    public RelicCraftingRecipe(ResourceLocation id, String group, CraftingBookCategory category, int strength, ResourceLocation relic, NonNullList<Ingredient> input) {
         super(id, category);
         this.group = group;
         this.strength = strength;
@@ -62,7 +59,7 @@ public class RelicCraftingRecipe extends CustomRecipe {
                     if (ingredient.test(itemStack)) {
                         Item item = itemStack.getItem();
                         if (itemStack.is(AArcanaItems.RELIC.get())) {
-                            if (RelicItem.getRelicType(itemStack) == Relics.fromId(relic) && RelicItem.getRelicStrength(itemStack) == strength - 1) {
+                            if (RelicItem.getRelicType(itemStack) == RelicRegistry.get(relic) && RelicItem.getRelicStrength(itemStack) == strength - 1) {
                                 if (inputs.containsKey(item)) {
                                     inputs.put(item, inputs.get(item) + 1);
                                 } else inputs.put(item, 1);
@@ -115,7 +112,7 @@ public class RelicCraftingRecipe extends CustomRecipe {
         ItemStack itemStack = new ItemStack(AArcanaItems.RELIC.get());
         CompoundTag nbt = itemStack.getOrCreateTag();
         nbt.putInt(RelicItem.RELIC_STRENGTH_KEY, strength);
-        nbt.putInt(RelicItem.RELIC_TYPE_KEY, relic);
+        nbt.putString(RelicItem.RELIC_TYPE_KEY, relic.toString());
         return itemStack;
     }
 
@@ -144,7 +141,7 @@ public class RelicCraftingRecipe extends CustomRecipe {
         public @NotNull RelicCraftingRecipe fromJson(ResourceLocation id, JsonObject json) {
             String group = GsonHelper.getAsString(json, "group", "");
             int strength = GsonHelper.getAsInt(json, "strength", 0);
-            int relic = GsonHelper.getAsInt(json, "relic", 0);
+            String relic = GsonHelper.getAsString(json, "relic", "");
             CraftingBookCategory craftingRecipeCategory = CraftingBookCategory.CODEC.byName(GsonHelper.getAsString(json, "category", null), CraftingBookCategory.MISC);
             NonNullList<Ingredient> defaultedList = getIngredients(GsonHelper.getAsJsonArray(json, "ingredients"));
             if (defaultedList.isEmpty()) {
@@ -152,7 +149,7 @@ public class RelicCraftingRecipe extends CustomRecipe {
             } else if (defaultedList.size() > 9) {
                 throw new JsonParseException("Too many ingredients for shapeless recipe");
             } else {
-                return new RelicCraftingRecipe(id, group, craftingRecipeCategory, strength, relic, defaultedList);
+                return new RelicCraftingRecipe(id, group, craftingRecipeCategory, strength, ResourceLocation.tryParse(relic), defaultedList);
             }
         }
 
@@ -174,7 +171,7 @@ public class RelicCraftingRecipe extends CustomRecipe {
             String group = buf.readUtf();
             CraftingBookCategory category = buf.readEnum(CraftingBookCategory.class);
             int strength = buf.readInt();
-            int relic = buf.readInt();
+            ResourceLocation relic = buf.readResourceLocation();
             int i = buf.readVarInt();
 
             NonNullList<Ingredient> list = NonNullList.withSize(i, Ingredient.EMPTY);
@@ -188,7 +185,7 @@ public class RelicCraftingRecipe extends CustomRecipe {
             buf.writeUtf(recipe.group);
             buf.writeEnum(recipe.category());
             buf.writeInt(recipe.strength);
-            buf.writeInt(recipe.relic);
+            buf.writeResourceLocation(recipe.relic);
             buf.writeVarInt(recipe.input.size());
 
             for (Ingredient ingredient : recipe.input) {

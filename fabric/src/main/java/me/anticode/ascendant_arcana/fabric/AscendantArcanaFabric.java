@@ -8,6 +8,7 @@ import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.loot.PopulateRelicLootFunction;
 import me.anticode.ascendant_arcana.networking.RelicRegistrySync;
 import me.anticode.ascendant_arcana.relics.RelicRegistry;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
@@ -44,9 +45,9 @@ public final class AscendantArcanaFabric implements ModInitializer {
         LootTableEvents.MODIFY.register(((resourceManager, lootDataManager, identifier, builder, lootTableSource) -> {
             if (lootTableSource.isBuiltin() && AscendantArcana.config.add_relics_to_entities) {
                 if (identifier.equals(ResourceLocation.tryBuild("minecraft", "gameplay/piglin_bartering"))) {
-                    builder.modifyPools((poolBuilder) -> poolBuilder.add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new int[]{3})).setWeight(13)));
+                    builder.modifyPools((poolBuilder) -> poolBuilder.add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new ResourceLocation[]{RelicTypes.HASTE})).setWeight(13)));
                 } else if (identifier.getPath().contains("archaeology/")) {
-                    builder.modifyPools((poolBuilder) -> poolBuilder.add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new int[]{1}))));
+                    builder.modifyPools((poolBuilder) -> poolBuilder.add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new ResourceLocation[]{RelicTypes.DURABILITY}))));
                 }
             }
             if (identifier.getPath().contains("chests") && (AscendantArcana.config.add_relics_to_chests || AscendantArcana.config.add_restorine_to_chests)) {
@@ -68,7 +69,7 @@ public final class AscendantArcanaFabric implements ModInitializer {
                                 LootPoolSingletonContainer.Builder<?> entryBuilder = LootItem.lootTableItem(AArcanaItems.RELIC.get());
                                 entryBuilder.setWeight(((LeafEntryAccess) entry).ascendantArcana$getWeight());
                                 entryBuilder.setQuality(((LeafEntryAccess) entry).ascendantArcana$getQuality());
-                                entryBuilder.apply(PopulateRelicLootFunction.builder(UniformGenerator.between(1, !bonus ? 3 : 4), new int[]{0, 1, 2, 4}));
+                                entryBuilder.apply(PopulateRelicLootFunction.builder(UniformGenerator.between(1, !bonus ? 3 : 4), new ResourceLocation[]{RelicTypes.DAMAGE, RelicTypes.DURABILITY, RelicTypes.PROTECTION, RelicTypes.ENCHANTMENT_CAPACITY}));
                                 // I can't figure out how to replicate conditions, so in the off chance the enchanted book has a conditional drop, we will unfortunately ignore it
                                 poolBuilder.with(entryBuilder.build());
                             } else if ((((ItemEntryAccess)entry).ascendantArcana$getItem() == Items.AMETHYST_SHARD || ((ItemEntryAccess)entry).ascendantArcana$getItem() == Items.DIAMOND) && AscendantArcana.config.add_restorine_to_chests) {

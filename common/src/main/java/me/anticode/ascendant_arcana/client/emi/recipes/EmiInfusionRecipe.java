@@ -12,6 +12,7 @@ import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.init.AArcanaTags;
 import me.anticode.ascendant_arcana.item.RelicItem;
 import me.anticode.ascendant_arcana.recipe.InfusionRecipe;
+import me.anticode.ascendant_arcana.relics.RelicRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +33,7 @@ public class EmiInfusionRecipe implements EmiRecipe {
     public EmiInfusionRecipe(InfusionRecipe recipe, ItemStack relic) {
         // this is incredibly cursed
         this.recipe = recipe;
-        this.id = recipe.getId().withPrefix("/").withSuffix("/" + RelicItem.getRelicType(relic).name().toLowerCase());
+        this.id = recipe.getId().withPrefix("/").withSuffix("/" + RelicRegistry.getId(RelicItem.getRelicType(relic)).toString().toLowerCase());
         this.template = EmiStack.of(BuiltInRegistries.ITEM.get(recipe.templateId));
         this.input = EmiIngredient.of(Ingredient.of(BuiltInRegistries.ITEM.stream().filter((item) -> recipe.isBaseIngredient(new ItemStack(item)) && recipe.matches(new ItemStack(item), relic) && !item.getDefaultInstance().is(AArcanaTags.Items.INFUSION_BLACKLIST)).map(ItemStack::new)));
         List<EmiStack> relics = new ArrayList<>();

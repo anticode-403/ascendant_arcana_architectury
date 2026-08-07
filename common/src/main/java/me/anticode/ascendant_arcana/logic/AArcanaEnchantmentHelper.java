@@ -3,6 +3,7 @@ package me.anticode.ascendant_arcana.logic;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -104,8 +105,7 @@ public class AArcanaEnchantmentHelper {
     }
 
     public static int getEnchantmentCapacity(ItemStack stack) {
-        int bonus_capacity = RelicHelper.getValueFromNbt(stack.getTag(), Relics.ENCHANTMENT_CAPACITY);
-        if (bonus_capacity != 0) bonus_capacity = 5 + (bonus_capacity * 5);
+        int bonus_capacity = Mth.floor(RelicHelper.getAllRawBonusesOfType(RelicTypes.ENCHANTMENT_CAPACITY, stack.getTag()));
         if (stack.hasTag() && stack.getTag().contains(ENCHANTMENT_CAPACITY_KEY)) {
             return stack.getTag().getInt(ENCHANTMENT_CAPACITY_KEY) + bonus_capacity;
         }

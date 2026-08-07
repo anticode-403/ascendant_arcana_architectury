@@ -2,7 +2,7 @@ package me.anticode.ascendant_arcana.mixin;
 
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
-import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -69,13 +69,13 @@ public class ItemMixin {
 
     @Inject(method = "getBarWidth", at = @At("HEAD"), cancellable = true)
     private void fixItemBarWithDurabilityRelic(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
-        if (RelicHelper.getValueFromNbt(stack.getTag(), Relics.DURABILITY) == 0) return;
+        if (!RelicHelper.containsAnyOfType(RelicTypes.DURABILITY, stack.getTag())) return;
         cir.setReturnValue(Math.round(13.0F - (float)stack.getDamageValue() * 13.0F / (float)stack.getMaxDamage()));
     }
 
     @Inject(method = "getBarColor", at = @At("HEAD"), cancellable = true)
     private void fixItemBarColorWithDurabilityRelic(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
-        if (RelicHelper.getValueFromNbt(stack.getTag(), Relics.DURABILITY) == 0) return;
+        if (!RelicHelper.containsAnyOfType(RelicTypes.DURABILITY, stack.getTag())) return;
         float f = Math.max(0.0F, ((float)stack.getMaxDamage() - (float)stack.getDamageValue()) / (float)stack.getMaxDamage());
         cir.setReturnValue(Mth.hsvToRgb(f / 3.0F, 1.0F, 1.0F));
     }

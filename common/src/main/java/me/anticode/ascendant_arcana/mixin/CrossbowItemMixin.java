@@ -14,8 +14,8 @@ import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
-import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.networking.AddParticlesPacket;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -175,7 +175,7 @@ public class CrossbowItemMixin implements CrossbowAccess {
             int inaccuracy = 0;
             int maxLength = Mth.floor(16 * (Math.pow(2, EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BLAZEBOLT.get(), itemStack))));
             int damage = 4 + (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BLAZEBOLT.get(), itemStack) * 2);
-            float damageMultiplier = (float) (1 + RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag()));
+            float damageMultiplier = (float) RelicHelper.applyAllRelicsOfType(RelicTypes.DAMAGE, 1, itemStack.getTag());
             if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.REPEATING.get(), itemStack) > 0) {
                 damageMultiplier -= 0.25F;
             } else if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SALVO.get(), itemStack) > 0) {
@@ -199,7 +199,7 @@ public class CrossbowItemMixin implements CrossbowAccess {
             level.playSound((Player)null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), AArcanaSoundEvents.BLAZEBOLT_SHOT.get(), livingEntity.getSoundSource(), 1.0F, f);
             ci.cancel();
         } else if (itemStack2.is(Items.AMETHYST_SHARD)) {
-            float damageMultiplier = (float) (1 + RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag()));
+            float damageMultiplier = (float) RelicHelper.applyAllRelicsOfType(RelicTypes.DAMAGE, 1, itemStack.getTag());
             level.getEntities(livingEntity, AABB.unitCubeFromLowerCorner(livingEntity.getEyePosition().add(livingEntity.getLookAngle().scale(2))).inflate(2), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and((entity -> entity != livingEntity))).forEach(entity -> {
                 LivingEntity targetEntity = (LivingEntity) entity;
                 targetEntity.hurt(AArcanaDamage.source(level, AArcanaDamage.SHATTERSHOT), 3 * damageMultiplier);
@@ -240,7 +240,7 @@ public class CrossbowItemMixin implements CrossbowAccess {
                 if (projectile instanceof FireworkRocketEntity rocket) {
                     EnchantedRocket enchantedRocket = (EnchantedRocket) rocket;
                     enchantedRocket.ascendant_arcana$setRocketryLevel(rocketry);
-                    double damageMultiplier = 1 + RelicHelper.getTooltipStrength(Relics.DAMAGE, RelicHelper.getValueFromNbt(itemStack.getTag(), Relics.DAMAGE))*0.01;
+                    double damageMultiplier = RelicHelper.applyAllRelicsOfType(RelicTypes.DAMAGE, 1, itemStack.getTag());
                     enchantedRocket.asecndant_arcana$setDamageMultiplier((float) damageMultiplier);
                 }
             }
@@ -254,14 +254,14 @@ public class CrossbowItemMixin implements CrossbowAccess {
 
     @WrapOperation(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;getPowerForTime(ILnet/minecraft/world/item/ItemStack;)F"))
     private float modifyGetPower(int i, ItemStack itemStack, Operation<Float> original) {
-        float hasteMultiplier = 1 + (float) RelicHelper.getStrengthFromNbt(Relics.HASTE, itemStack.getTag())/2;
+        float hasteMultiplier = (float) RelicHelper.applyAllRelicsOfType(RelicTypes.HASTE, 1, itemStack.getTag())/2;
         float multiLoadMultiplier = isCharged(itemStack) ? 1.5F : 1F;
         return original.call(Mth.ceil(i * hasteMultiplier * multiLoadMultiplier), itemStack);
     }
 
     @ModifyReturnValue(method = "getChargeDuration", at = @At(value = "RETURN"))
     private static int modifyChargeDuration(int i, ItemStack itemStack) {
-        float hasteMultiplier = 1 - (float) RelicHelper.getStrengthFromNbt(Relics.HASTE, itemStack.getTag())/2;
+        float hasteMultiplier = (float) RelicHelper.getAllRawBonusesOfType(RelicTypes.HASTE, itemStack.getTag())/2;
         float multiLoadMultiplier = isCharged(itemStack) ? 0.5F : 1F;
         return Mth.ceil(i * hasteMultiplier * multiLoadMultiplier);
     }

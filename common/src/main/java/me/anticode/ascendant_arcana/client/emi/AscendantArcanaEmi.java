@@ -16,10 +16,11 @@ import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.init.AArcanaRecipes;
 import me.anticode.ascendant_arcana.init.AArcanaTags;
 import me.anticode.ascendant_arcana.item.RelicItem;
-import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.recipe.EnchantmentRecipe;
 import me.anticode.ascendant_arcana.recipe.InfusionRecipe;
 import me.anticode.ascendant_arcana.recipe.RelicCraftingRecipe;
+import me.anticode.ascendant_arcana.relics.RelicEntry;
+import me.anticode.ascendant_arcana.relics.RelicRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -33,6 +34,7 @@ import net.minecraft.world.level.block.Blocks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @EmiEntrypoint
 public class AscendantArcanaEmi implements EmiPlugin {
@@ -68,8 +70,10 @@ public class AscendantArcanaEmi implements EmiPlugin {
         }
         for (SmithingRecipe recipe : manager.getAllRecipesFor(RecipeType.SMITHING)) {
             if (recipe instanceof InfusionRecipe infusionRecipe) {
-                for (int i = 0; i < Relics.values().length; i++) {
-                    Relics relicType = Relics.fromId(i);
+                Map<ResourceLocation, RelicEntry> relicEntryMap = RelicRegistry.getAll();
+                List<RelicEntry> relicEntries = relicEntryMap.values().stream().toList();
+                for (int i = 0; i < relicEntryMap.size(); i++) {
+                    RelicEntry relicType = relicEntries.get(i);
                     ItemStack stack = new ItemStack(AArcanaItems.RELIC.get());
                     RelicItem.writeRelicData(stack, relicType, 1);
                     emiRegistry.addRecipe(new EmiInfusionRecipe(infusionRecipe, stack));

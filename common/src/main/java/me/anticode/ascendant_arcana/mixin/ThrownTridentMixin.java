@@ -9,8 +9,8 @@ import me.anticode.ascendant_arcana.entity.SingularityEntity;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
-import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.networking.ForgeTridentSync;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -138,7 +138,7 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
         ascendant_arcana$setLifetideLevel(lifetideLevel);
         ascendant_arcana$setSunderingLevel(sunderingLevel);
         ascendant_arcana$setSingularityLevel(singularityLevel);
-        this.ascendant_arcana$relicDamageMultiplier = 1 + (float) RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag());
+        this.ascendant_arcana$relicDamageMultiplier = (float) RelicHelper.applyAllRelicsOfType(RelicTypes.DAMAGE, 1, itemStack.getTag());
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))

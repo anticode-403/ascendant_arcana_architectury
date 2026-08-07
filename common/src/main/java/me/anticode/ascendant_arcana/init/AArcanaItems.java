@@ -5,7 +5,8 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.item.*;
-import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.relics.RelicEntry;
+import me.anticode.ascendant_arcana.relics.RelicRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -13,8 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class AArcanaItems {
@@ -65,10 +65,11 @@ public class AArcanaItems {
         ITEMS.register();
 
         List<Supplier<ItemStack>> relicEntries = new ArrayList<>();
-        for (int i = 0; i < Relics.values().length * 5; i++) {
-            int relicId = Mth.floor((double) i / 5);
-            int strength = i + 1 - (relicId * 5);
-            Relics relicType = Relics.fromId(relicId);
+        List<Map.Entry<ResourceLocation, RelicEntry>> relicEntrySet = RelicRegistry.getAll().entrySet().stream().toList();
+        for (int i = 0; i < relicEntrySet.size() * 5; i++) {
+            int index = Mth.floor((double) i / 5);
+            int strength = i + 1 - (index * 5);
+            RelicEntry relicType = relicEntrySet.get(index).getValue();
             relicEntries.add(() -> {
                 ItemStack relic = new ItemStack(RELIC.get());
                 RelicItem.writeRelicData(relic, relicType, strength);

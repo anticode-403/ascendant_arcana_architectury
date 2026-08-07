@@ -13,9 +13,9 @@ import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.api.EnchantedTrident;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.item.RelicItem;
-import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.networking.*;
 import me.anticode.ascendant_arcana.relics.RelicRegistry;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import me.anticode.ascendant_arcana.screenhandler.AArcanaEnchantingMenu;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -77,7 +77,11 @@ public class AscendantArcanaClient {
         EntityModelLayerRegistry.register(SingularityModel.LAYER_LOCATION, SingularityModel::createBodyLayer);
         EntityRendererRegistry.register(AArcanaEntities.SINGULARITY_ENTITY, SingularityEntityRenderer::new);
 
-        ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "relic_type"), ((itemStack, clientLevel, livingEntity, i) -> Relics.toId(RelicItem.getRelicType(itemStack)) / 5F));
+        ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "damage_relic"), ((itemStack, clientLevel, livingEntity, i) -> RelicItem.getRelicType(itemStack).getType().equals(RelicTypes.DAMAGE) ? 1 : 0));
+        ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "durability_relic"), ((itemStack, clientLevel, livingEntity, i) -> RelicItem.getRelicType(itemStack).getType().equals(RelicTypes.DURABILITY) ? 1 : 0));
+        ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "protection_relic"), ((itemStack, clientLevel, livingEntity, i) -> RelicItem.getRelicType(itemStack).getType().equals(RelicTypes.PROTECTION) ? 1 : 0));
+        ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "haste_relic"), ((itemStack, clientLevel, livingEntity, i) -> RelicItem.getRelicType(itemStack).getType().equals(RelicTypes.HASTE) ? 1 : 0));
+        ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "enchantment_capacity_relic"), ((itemStack, clientLevel, livingEntity, i) -> RelicItem.getRelicType(itemStack).getType().equals(RelicTypes.ENCHANTMENT_CAPACITY) ? 1 : 0));
         ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "relic_strength"), (itemStack, clientWorld, livingEntity, seed) -> RelicItem.getRelicStrength(itemStack) / 5F);
         ItemPropertiesRegistry.register(Items.CROSSBOW, new ResourceLocation(AscendantArcana.MOD_ID, "amethyst_shard"), (stack, level, livingEntity, seed) -> CrossbowItem.containsChargedProjectile(stack, Items.AMETHYST_SHARD) ? 1 : 0);
         ItemPropertiesRegistry.register(Items.CROSSBOW, new ResourceLocation(AscendantArcana.MOD_ID, "blaze_rod"), (stack, level, livingEntity, seed) -> CrossbowItem.containsChargedProjectile(stack, Items.BLAZE_ROD) ? 1 : 0);

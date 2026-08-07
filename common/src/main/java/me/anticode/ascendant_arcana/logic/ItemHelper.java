@@ -2,6 +2,7 @@ package me.anticode.ascendant_arcana.logic;
 
 import me.anticode.ascendant_arcana.api.EnchantedArrow;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -43,7 +44,7 @@ public class ItemHelper {
     }
 
     public static void applyPpeRelicsAndEnchantments(AbstractArrow abstractArrow, ItemStack itemStack) {
-        double damageMultiplier = 1 + RelicHelper.getStrengthFromNbt(Relics.DAMAGE, itemStack.getTag());
+        double damageMultiplier = RelicHelper.applyAllRelicsOfType(RelicTypes.DAMAGE, 1, itemStack.getTag());
         Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(itemStack);
 
         if (enchantments.getOrDefault(AArcanaEnchantments.SALVO.get(), 0) != 0) damageMultiplier -= 0.25F;

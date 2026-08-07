@@ -6,7 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
-import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -44,7 +44,7 @@ public class BowItemMixin {
 
     @WrapOperation(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/BowItem;getPowerForTime(I)F"))
     private float modifyGetPower(int i, Operation<Float> original, @Local(argsOnly = true) ItemStack itemStack) {
-        float hasteMultiplier = 1 + (float) RelicHelper.getStrengthFromNbt(Relics.HASTE, itemStack.getTag())/2;
+        float hasteMultiplier = (float) RelicHelper.applyAllRelicsOfType(RelicTypes.HASTE, 1, itemStack.getTag())/2;
         return original.call(Mth.ceil(i * hasteMultiplier));
     }
 }

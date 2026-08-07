@@ -10,6 +10,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class RelicRegistry {
     static Map<ResourceLocation, RelicEntry> registrations = new HashMap<>();
@@ -18,8 +19,17 @@ public class RelicRegistry {
         registrations.put(id, entry);
     }
 
+    public static Map<ResourceLocation, RelicEntry> getAll() {
+        return new HashMap<>(registrations);
+    }
+
     public static RelicEntry get(ResourceLocation id) {
         return registrations.get(id);
+    }
+
+    public static ResourceLocation getId(RelicEntry relicEntry) {
+        Optional<Map.Entry<ResourceLocation, RelicEntry>> entry = registrations.entrySet().stream().filter(e -> e.getValue() == relicEntry).findFirst();
+        return entry.map(Map.Entry::getKey).orElse(null);
     }
 
     public static void loadRelics(ResourceManager resourceManager) {

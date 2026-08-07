@@ -2,10 +2,13 @@ package me.anticode.ascendant_arcana.item;
 
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
-import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.relics.RelicEntry;
+import me.anticode.ascendant_arcana.relics.RelicRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
@@ -49,16 +52,16 @@ public class RelicItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
         if (getRelicStrength(stack) == 0) return;
-        Relics relicType = getRelicType(stack);
-        int visualStrength = RelicHelper.getTooltipStrength(relicType, getRelicStrength(stack));
-        Component relicName = RelicHelper.getRelicTypeText(relicType);
-        String hasPercent = (relicType == Relics.HASTE || relicType == Relics.PROTECTION || relicType == Relics.DAMAGE || (relicType == Relics.DURABILITY && !AscendantArcana.config.durability_additive)) ? "%" : "";
+        RelicEntry relicEntry = getRelicType(stack);
+        int visualStrength = RelicHelper.getTooltipStrength(relicEntry, getRelicStrength(stack));
+        Component relicName = RelicHelper.getRelicTypeText(relicEntry);
+        String hasPercent = (relicEntry.getOperation() == RelicEntry.Operation.multiply_total) ? "%" : "";
         Component line = Component.translatable("item.relics.tooltip", visualStrength, relicName, hasPercent).withStyle(ChatFormatting.BLUE);
         String appliedToTooltip = "item.relics.tooltip.applied_any";
-        if (relicType == Relics.PROTECTION) {
+        if (relicEntry.getTarget() == RelicEntry.Target.armor) {
             appliedToTooltip = "item.relics.tooltip.applied_armor";
         }
-        else if (relicType == Relics.HASTE || relicType == Relics.DAMAGE) {
+        else if (relicEntry.getTarget() == RelicEntry.Target.tool) {
             appliedToTooltip = "item.relics.tooltip.applied_tool";
         }
         tooltip.add(Component.empty());
@@ -66,17 +69,26 @@ public class RelicItem extends Item {
         tooltip.add(line);
     }
 
-    public static Relics getRelicType(ItemStack stack) {
-        return Relics.fromId(stack.getOrCreateTag().getInt(RELIC_TYPE_KEY));
+    public static RelicEntry getRelicType(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTag();
+        if (tag.get(RELIC_TYPE_KEY) != null) {
+            if (tag.get(RELIC_TYPE_KEY) instanceof IntTag || tag.getString(RELIC_TYPE_KEY).startsWith("minecraft:")) {
+                int oldId;
+                if (tag.get(RELIC_TYPE_KEY) instanceof IntTag) oldId = tag.getInt(RELIC_TYPE_KEY);
+                else oldId = Integer.parseInt(tag.getString(RELIC_TYPE_KEY).replace("minecraft:", ""));
+                tag.putString(RELIC_TYPE_KEY, RelicHelper.convertFromOldRelicIds(oldId).toString());
+            }
+        }
+        return RelicRegistry.get(ResourceLocation.tryParse(tag.getString(RELIC_TYPE_KEY)));
     }
 
     public static int getRelicStrength(ItemStack stack) {
         return stack.getOrCreateTag().getInt(RELIC_STRENGTH_KEY);
     }
 
-    public static void writeRelicData(ItemStack stack, Relics relicType, int strength) {
+    public static void writeRelicData(ItemStack stack, RelicEntry relicEntry, int strength) {
         CompoundTag tag = stack.getOrCreateTag();
-        tag.putInt(RELIC_TYPE_KEY, Relics.toId(relicType));
+        tag.putString(RELIC_TYPE_KEY, relicEntry.getType().toString());
         tag.putInt(RELIC_STRENGTH_KEY, strength);
     }
 }
