@@ -66,6 +66,11 @@ public class PlayerMixin implements AArcanaPlayer {
         return AscendantArcana.config.xp_per_level;
     }
 
+    @ModifyReturnValue(method = "getDestroySpeed", at = @At("RETURN"))
+    private float applyHasteBonus(float original) {
+        return (float) RelicHelper.applyAllRelicsOfType(RelicTypes.HASTE, original, ((Player)(Object)this).getMainHandItem().getTag());
+    }
+
     @ModifyReturnValue(method = "getAttackStrengthScale", at = @At("RETURN"))
     private float modifyAttackCooldownProgress(float original) {
         LivingEntity livingEntity = (LivingEntity)(Object)this;

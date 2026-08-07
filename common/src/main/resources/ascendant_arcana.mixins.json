@@ -15,6 +15,7 @@
     "BowItemMixin",
     "CreativeModeTabItemDisplayBuilderMixin",
     "CrossbowItemMixin",
+    "DiggerItemMixin",
     "DragonFireballMixin",
     "EnchantCommandMixin",
     "EnchantingTableBlockMixin",
