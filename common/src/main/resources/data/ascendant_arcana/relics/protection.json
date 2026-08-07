@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:protection",
+  "target": "armor",
+  "operation": "multiply_total",
+  "strengths": [
+    0.03,
+    0.06,
+    0.09,
+    0.12,
+    0.15
+  ]
+}

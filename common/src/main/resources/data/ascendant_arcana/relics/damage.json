@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:damage",
+  "operation": "multiply_total",
+  "target": "tool",
+  "strengths": [
+    0.10,
+    0.16,
+    0.22,
+    0.26,
+    0.30
+  ]
+}

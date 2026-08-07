@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:enchantment_capacity",
+  "operation": "addition",
+  "target": "enchantable",
+  "strengths": [
+    5,
+    10,
+    15,
+    20,
+    25
+  ]
+}
