@@ -44,7 +44,7 @@ public class BowItemMixin {
 
     @WrapOperation(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/BowItem;getPowerForTime(I)F"))
     private float modifyGetPower(int i, Operation<Float> original, @Local(argsOnly = true) ItemStack itemStack) {
-        float hasteMultiplier = (float) RelicHelper.applyAllRelicsOfType(RelicTypes.HASTE, 1, itemStack.getTag())/2;
+        float hasteMultiplier = 1 + ((float) RelicHelper.getAllRawBonusesOfType(RelicTypes.HASTE, itemStack.getTag()) / 2);
         return original.call(Mth.ceil(i * hasteMultiplier));
     }
 }

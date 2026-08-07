@@ -254,14 +254,14 @@ public class CrossbowItemMixin implements CrossbowAccess {
 
     @WrapOperation(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/CrossbowItem;getPowerForTime(ILnet/minecraft/world/item/ItemStack;)F"))
     private float modifyGetPower(int i, ItemStack itemStack, Operation<Float> original) {
-        float hasteMultiplier = (float) RelicHelper.applyAllRelicsOfType(RelicTypes.HASTE, 1, itemStack.getTag())/2;
+        float hasteMultiplier = 1 + (float) (RelicHelper.getAllRawBonusesOfType(RelicTypes.HASTE, itemStack.getTag())/2);
         float multiLoadMultiplier = isCharged(itemStack) ? 1.5F : 1F;
         return original.call(Mth.ceil(i * hasteMultiplier * multiLoadMultiplier), itemStack);
     }
 
     @ModifyReturnValue(method = "getChargeDuration", at = @At(value = "RETURN"))
     private static int modifyChargeDuration(int i, ItemStack itemStack) {
-        float hasteMultiplier = (float) RelicHelper.getAllRawBonusesOfType(RelicTypes.HASTE, itemStack.getTag())/2;
+        float hasteMultiplier = 1 - ((float) RelicHelper.getAllRawBonusesOfType(RelicTypes.HASTE, itemStack.getTag())/2);
         float multiLoadMultiplier = isCharged(itemStack) ? 0.5F : 1F;
         return Mth.ceil(i * hasteMultiplier * multiLoadMultiplier);
     }
