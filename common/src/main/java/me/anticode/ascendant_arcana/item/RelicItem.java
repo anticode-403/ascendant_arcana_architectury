@@ -1,6 +1,5 @@
 package me.anticode.ascendant_arcana.item;
 
-import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.relics.RelicEntry;
 import me.anticode.ascendant_arcana.relics.RelicRegistry;
