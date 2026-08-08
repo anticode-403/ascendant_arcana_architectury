@@ -102,7 +102,8 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                     .add(ResourceKey.create(Registries.BLOCK, AArcanaBlocks.RESTORINE_CLUSTER.getId()))
                     .add(ResourceKey.create(Registries.BLOCK, AArcanaBlocks.MASSIVE_RESTORINE_CLUSTER.getId()))
                     .add(ResourceKey.create(Registries.BLOCK, AArcanaBlocks.BUDDING_RESTORINE.getId()))
-                    .add(ResourceKey.create(Registries.BLOCK, AArcanaBlocks.COPPER_ENCHANTING_TABLE.getId()));
+                    .add(ResourceKey.create(Registries.BLOCK, AArcanaBlocks.COPPER_ENCHANTING_TABLE.getId()))
+                    .add(ResourceKey.create(Registries.BLOCK, AArcanaBlocks.RESTORINE_BLOCK.getId()));
             tag(BlockTags.ENCHANTMENT_POWER_PROVIDER)
                     .add(ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.CHISELED_BOOKSHELF)));
         }
@@ -202,8 +203,8 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add("tag." + tag.location().toLanguageKey(), description);
         }
 
-        private void description(TranslationBuilder translationBuilder, Item item, String description) {
-            translationBuilder.add(item.getDescriptionId() + ".description", description);
+        private void description(TranslationBuilder translationBuilder, ItemLike item, String description) {
+            translationBuilder.add(item.asItem().getDescriptionId() + ".description", description);
         }
 
         private void description(TranslationBuilder translationBuilder, Enchantment enchantment, String description) {
@@ -257,7 +258,11 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add("item.relics.tooltip.on_tool", "Infused Relics (%1$s/%2$s):");
             // Blocks
             translationBuilder.add(AArcanaBlocks.BUDDING_RESTORINE.get(), "Budding Restorine");
+            description(translationBuilder, AArcanaBlocks.BUDDING_RESTORINE.get(), "A block that generates Restorine Buds over time when exposed to air.");
             translationBuilder.add(AArcanaBlocks.COPPER_ENCHANTING_TABLE.get(), "Copper Enchanting Table");
+            description(translationBuilder, AArcanaBlocks.COPPER_ENCHANTING_TABLE.get(), "A block that allows you to enchant items up to Uncommon rarity.");
+            translationBuilder.add(AArcanaBlocks.RESTORINE_BLOCK.get(), "Restorine Block");
+            description(translationBuilder, AArcanaBlocks.RESTORINE_BLOCK.get(), "A block of compressed Restorine.");
             // Restorine Clusters
             translationBuilder.add(AArcanaBlocks.SMALL_RESTORINE_BUD.get(), "Small Restorine Bud");
             translationBuilder.add(AArcanaBlocks.MEDIUM_RESTORINE_BUD.get(), "Medium Restorine Bud");
@@ -268,24 +273,33 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add(AArcanaAttributes.PROTECTION.get(), "Protection");
             translationBuilder.add(AArcanaAttributes.DAMAGE_TAKEN.get(), "Damage Taken");
             // Enchantments
-            registerEnchantment(translationBuilder, AArcanaEnchantments.ARCHERS_GAMBIT.get(), "Archer's Gambit", "Briefly increased draw speed after consecutively hitting a target. Stacks 3 times.");
-            registerEnchantment(translationBuilder, AArcanaEnchantments.ALCHEMISTS_HEART.get(), "Alchemist's Heart", "Increases the amplifier of all beneficial status effects.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.AMBUSH.get(), "Ambush", "When you hit a mob after throwing this Trident, teleport to it.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.ALCHEMISTS_HEART.get(), "Alchemist's Heart", "Increases the amplifier of all beneficial status effects.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.ARCHERS_GAMBIT.get(), "Archer's Gambit", "Briefly increased draw speed after consecutively hitting a target. Stacks 3 times.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.BASHING.get(), "Bashing", "While blocking press attack to charge forward and knock an enemy back.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.BLADEHEART.get(), "Bladeheart", "Slightly increases all damage dealt by physical attacks.");
-            registerEnchantment(translationBuilder, AArcanaEnchantments.COLDHEART.get(), "Coldheart", "Increases damage dealt by all cold attacks.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.BLAZEBOLT.get(), "Blazebolt", "Changes ammo type to Blaze Rods which fire a piercing, incinerating beam.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.CLEANSE.get(), "Cleanse", "Holding the shield up cleanses you of all status effects after a short time.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.COLDHEART.get(), "Coldheart", "Increases damage dealt by all cold attacks.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.CROSS_COUNTER.get(), "Cross Counter", "Blocking an attack immediately after raising the shield grants a brief damage bonus for the next attack.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.CUSHIONING.get(), "Cushioning", "Reduces damage dealt by colliding with blocks and other surfaces.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.DEBILITATING_CHAIN.get(), "Debilitating Chain", "Slaying a mob transfers all status effects to the nearest enemy.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.DEFLECT.get(), "Deflect", "Blocking a projectile with your shield will shoot it back.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.EVOKERS_WRATH.get(), "Evoker's Wrath", "Summons an Evoker Fang when the arrow lands.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.HELLWALKER.get(), "Hellwalker", "Crystalizes nearby lava so it can be walked on.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.HOBBLING_SHOT.get(), "Hobbling Shot", "Reduces movement speed and jump height, stacking 5 times.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.LIFETIDE.get(), "Lifetide", "On hit, sticks into the target and heals them for a short duration. You heal half as much.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.MIASMA.get(), "Miasma", "Tipped Arrows create a temporary effect cloud where they land.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.NETHER_HEART.get(), "Heart of the Nether", "Increases damage dealt by all fire attacks.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.PINCUSHION.get(), "Pincushion", "Reduced base damage, increases damage dealt based on the number of arrows stuck in the target.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.PROTECTIVE_ECHO.get(), "Protective Echo", "Instances of high damage are spread out over time.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.REJUVENATING_SHOT.get(), "Rejuvenating Shot", "Instead of doing damage, arrows heal for half the damage they would have done.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.REPEATING.get(), "Repeating", "Crouch to load multiple arrows at once, allowing you to rapidly fire them in sequence later.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.RICOCHET.get(), "Ricochet", "Arrows ricochet, dealing reduced initial damage but increasing with each bounce.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.ROCKETRY.get(), "Rocketry", "Changes ammo type to Firework Rockets, also granting knockback and reduced self damage.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.SALVO.get(), "Salvo", "Crouch to load multiple arrows at once, firing them in a wide blast. Arrows deal reduced base damage.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.SHATTERSHOT.get(), "Shattershot", "Changes ammo type to Amethyst Shards, firing a short-ranged blast of shrapnel that knocks enemies back and applies Sundered.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.SINGULARITY.get(), "Singularity", "Summons a singularity on hit, dealing damage and pulling in nearby enemies after a slight delay.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SMELTING.get(), "Smelting", "Smelts blocks mined.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SONIC_BLAST.get(), "Sonic Blast", "Holding up the shield charges a powerful sonic blast that ignores most forms of protection.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SOUL_BURST.get(), "Soul Burst", "Slain enemies deal damage to nearby entities based on their maximum health.");
@@ -796,26 +810,41 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                     .pattern("ccc")
                     .unlockedBy("obtain_restorine", InventoryChangeTrigger.TriggerInstance.hasItems(AArcanaItems.RESTORINE.get()))
                     .save(exporter);
+            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, AArcanaBlocks.RESTORINE_BLOCK.get())
+                    .define('r', AArcanaItems.RESTORINE.get())
+                    .pattern("rr")
+                    .pattern("rr")
+                    .unlockedBy("obtain_restorine", InventoryChangeTrigger.TriggerInstance.hasItems(AArcanaItems.RESTORINE.get()))
+                    .save(exporter);
 
             // Enchantments
-            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.ARCHERS_GAMBIT.get()).primary(Items.GOLD_INGOT, 3).level(7));
-            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.ALCHEMISTS_HEART.get()).scrap(12).primary(AArcanaTags.Items.HEARTS, 1).secondary(Items.GLISTERING_MELON_SLICE, 16).level(15));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.AMBUSH.get()).primary(Items.ENDER_PEARL, 8).secondary(Items.AMETHYST_SHARD, 3).level(3));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.ALCHEMISTS_HEART.get()).scrap(12).primary(AArcanaTags.Items.HEARTS, 1).secondary(Items.GLISTERING_MELON_SLICE, 16).level(15));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.ARCHERS_GAMBIT.get()).primary(Items.GOLD_INGOT, 3).level(7));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.BASHING.get()).primary(Items.RABBIT_FOOT, 1).secondary(Items.PISTON, 2).level(6).scrap(6));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.BLADEHEART.get()).scrap(12).primary(AArcanaTags.Items.HEARTS, 1).secondary(Items.DIAMOND, 8).level(15));
-            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.COLDHEART.get()).scrap(12).primary(AArcanaTags.Items.HEARTS, 1).secondary(Items.BLUE_ICE, 32).level(15));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.BLAZEBOLT.get()).scrap(6).primary(Items.WITHER_SKELETON_SKULL, 1).secondary(Items.IRON_INGOT, 4).level(6));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.CLEANSE.get()).scrap(9).primary(Items.MILK_BUCKET, 1).secondary(Items.PITCHER_PLANT, 4).level(9));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.COLDHEART.get()).scrap(12).primary(AArcanaTags.Items.HEARTS, 1).secondary(Items.BLUE_ICE, 32).level(15));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.CROSS_COUNTER.get()).scrap(3).primary(Items.CLOCK, 1).secondary(Items.IRON_NUGGET, 1).level(3));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.CUSHIONING.get()).scrap(6).primary(Items.PHANTOM_MEMBRANE, 3).secondary(ItemTags.WOOL, 2).level(6));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.DEBILITATING_CHAIN.get()).primary(Items.FERMENTED_SPIDER_EYE, 3).secondary(Items.GUNPOWDER, 3).level(3));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.DEFLECT.get()).scrap(4).primary(Items.SLIME_BALL, 4).secondary(Items.SCUTE, 2).level(5));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.EVOKERS_WRATH.get()).scrap(2).primary(Items.TOTEM_OF_UNDYING, 1).level(3));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.HELLWALKER.get()).scrap(12).primary(Items.BLAZE_ROD, 2).secondary(Items.TORCHFLOWER, 1).level(6));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.HOBBLING_SHOT.get()).scrap(3).primary(Items.VINE, 6).secondary(Items.BONE_MEAL, 6).level(6));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.LIFETIDE.get()).scrap(12).primary(Items.GHAST_TEAR, 6).level(9));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.MIASMA.get()).scrap(12).primary(Items.DRAGON_BREATH, 3).secondary(Items.ECHO_SHARD, 1).level(3));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.NETHER_HEART.get()).scrap(12).primary(AArcanaTags.Items.HEARTS, 1).secondary(Items.NETHERITE_INGOT, 2).level(15));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.PINCUSHION.get()).scrap(3).primary(Items.ECHO_SHARD, 1).secondary(Items.IRON_INGOT, 6).level(6));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.PROTECTIVE_ECHO.get()).scrap(6).primary(Items.POPPED_CHORUS_FRUIT, 4).secondary(Items.SCUTE, 2).level(8));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.REJUVENATING_SHOT.get()).scrap(6).primary(Items.GHAST_TEAR, 4).level(6));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.REPEATING.get()).scrap(6).primary(Items.PITCHER_PLANT, 4).secondary(Items.TRIPWIRE_HOOK, 1).level(3));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.RICOCHET.get()).scrap(6).primary(Items.SLIME_BALL, 23).level(6));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.ROCKETRY.get()).scrap(6).primary(Items.BLAZE_POWDER, 4).secondary(Items.NETHERITE_SCRAP, 1).level(3));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SALVO.get()).scrap(6).primary(Items.PITCHER_PLANT, 4).secondary(Items.AMETHYST_SHARD, 1).level(3));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SHATTERSHOT.get()).scrap(6).primary(Items.DIAMOND, 1).secondary(Items.TORCHFLOWER, 2).level(6));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SINGULARITY.get()).scrap(6).primary(Items.ENDER_PEARL, 2).secondary(Items.FERMENTED_SPIDER_EYE, 4).level(6));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SMELTING.get()).primary(Items.BLAZE_ROD, 2).level(3));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SONIC_BLAST.get()).scrap(6).primary(AArcanaTags.Items.HEARTS, 1).secondary(Items.ECHO_SHARD, 6).level(9));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SOUL_BURST.get()).primary(Items.SCULK_CATALYST, 1).secondary(Items.GUNPOWDER, 12).level(3));
@@ -861,12 +890,13 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
         @Override
         public void generate() {
             // Restorine Clusters
-            createSilkTouchOnlyTable(AArcanaBlocks.SMALL_RESTORINE_BUD.get());
-            createSilkTouchOnlyTable(AArcanaBlocks.MEDIUM_RESTORINE_BUD.get());
-            createSilkTouchOnlyTable(AArcanaBlocks.LARGE_RESTORINE_BUD.get());
+            dropWhenSilkTouch(AArcanaBlocks.SMALL_RESTORINE_BUD.get());
+            dropWhenSilkTouch(AArcanaBlocks.MEDIUM_RESTORINE_BUD.get());
+            dropWhenSilkTouch(AArcanaBlocks.LARGE_RESTORINE_BUD.get());
             add(AArcanaBlocks.RESTORINE_CLUSTER.get(), (block) -> createSilkTouchDispatchTable(block, (LootItem.lootTableItem(AArcanaItems.RESTORINE.get()).apply(SetItemCountFunction.setCount(ConstantValue.exactly(2))).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)).when(MatchTool.toolMatches(net.minecraft.advancements.critereon.ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES)))).otherwise(this.applyExplosionDecay(block, LootItem.lootTableItem(AArcanaItems.RESTORINE.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2)))))));
             add(AArcanaBlocks.MASSIVE_RESTORINE_CLUSTER.get(), (block) -> createSilkTouchDispatchTable(block, (LootItem.lootTableItem(AArcanaItems.RESTORINE.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(5, 6))).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)).when(MatchTool.toolMatches(net.minecraft.advancements.critereon.ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES)))).otherwise(this.applyExplosionDecay(block, LootItem.lootTableItem(AArcanaItems.RESTORINE.get()).apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 6)))))));
-            createSilkTouchOnlyTable(AArcanaBlocks.COPPER_ENCHANTING_TABLE.get());
+            dropSelf(AArcanaBlocks.COPPER_ENCHANTING_TABLE.get());
+            dropSelf(AArcanaBlocks.RESTORINE_BLOCK.get());
         }
     }
 }
