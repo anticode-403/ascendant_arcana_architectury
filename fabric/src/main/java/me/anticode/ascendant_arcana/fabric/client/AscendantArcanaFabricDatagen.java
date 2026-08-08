@@ -238,17 +238,17 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add("item.relics.strength.4", "Awakened");
             translationBuilder.add("item.relics.strength.5", "Ascendant");
 
-            translationBuilder.add("item.relics.type.damage", "Damage");
-            translationBuilder.add("item.relics.type.durability", "Durability");
-            translationBuilder.add("item.relics.type.protection", "Protection");
-            translationBuilder.add("item.relics.type.haste", "Swiftness");
-            translationBuilder.add("item.relics.type.enchantment_capacity", "Enchantment Capacity");
+            translationBuilder.add("item.ascendant_arcana.relics.type.damage", "Damage");
+            translationBuilder.add("item.ascendant_arcana.relics.type.durability", "Durability");
+            translationBuilder.add("item.ascendant_arcana.relics.type.protection", "Protection");
+            translationBuilder.add("item.ascendant_arcana.relics.type.haste", "Swiftness");
+            translationBuilder.add("item.ascendant_arcana.relics.type.enchantment_capacity", "Enchantment Capacity");
 
-            translationBuilder.add("item.relics.name.damage", "Violence");
-            translationBuilder.add("item.relics.name.durability", "Immutability");
-            translationBuilder.add("item.relics.name.protection", "Shielding");
-            translationBuilder.add("item.relics.name.haste", "Haste");
-            translationBuilder.add("item.relics.name.enchantment_capacity", "Magic");
+            translationBuilder.add("item.ascendant_arcana.relics.name.damage", "Violence");
+            translationBuilder.add("item.ascendant_arcana.relics.name.durability", "Immutability");
+            translationBuilder.add("item.ascendant_arcana.relics.name.protection", "Shielding");
+            translationBuilder.add("item.ascendant_arcana.relics.name.haste", "Haste");
+            translationBuilder.add("item.ascendant_arcana.relics.name.enchantment_capacity", "Magic");
 
             translationBuilder.add("item.relics.tooltip", "+%1$s%3$s %2$s");
             translationBuilder.add("item.relics.tooltip.applied_any", "When Applied to Item:");
