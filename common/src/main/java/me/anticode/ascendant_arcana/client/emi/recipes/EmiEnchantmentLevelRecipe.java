@@ -24,28 +24,34 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmiEnchantmentRecipe implements EmiRecipe {
+public class EmiEnchantmentLevelRecipe implements EmiRecipe {
     private final ResourceLocation id;
+    private final boolean isFinal;
     private final int levelCost;
-    private final int scrapCost;
+    private final int level;
+    private final EmiIngredient scrapStack;
     private final EmiIngredient primaryStack;
     private final EmiIngredient secondaryStack;
     private final Enchantment output;
     private final EmiIngredient targets;
 
-    public EmiEnchantmentRecipe(EnchantmentRecipe recipe) {
+    public EmiEnchantmentLevelRecipe(EnchantmentRecipe recipe, EnchantmentRecipe.EnchantmentLevelRecipe levelRecipe, int level) {
         this.id = recipe.getId();
+        this.level = level;
         this.output = recipe.enchantment;
-        this.levelCost = recipe.levelCost;
-        this.scrapCost = recipe.magicalScrapCost;
-        if (recipe.primaryIngredientStack != null) {
-            this.primaryStack = EmiIngredient.of(recipe.primaryIngredientStack.getIngredient(), (long)recipe.primaryIngredientStack.getCount());
+        this.levelCost = levelRecipe.levelCost();
+        if (levelRecipe.scrapStack() != null) {
+            this.scrapStack = EmiIngredient.of(levelRecipe.scrapStack().getIngredient(), levelRecipe.scrapStack().getCount());
+        } else scrapStack = null;
+        if (levelRecipe.primaryIngredientStack() != null) {
+            this.primaryStack = EmiIngredient.of(levelRecipe.primaryIngredientStack().getIngredient(), (long)levelRecipe.primaryIngredientStack().getCount());
         } else primaryStack = null;
-        if (recipe.secondaryIngredientStack != null) {
-            this.secondaryStack = EmiIngredient.of(recipe.secondaryIngredientStack.getIngredient(), (long)recipe.secondaryIngredientStack.getCount());
+        if (levelRecipe.secondaryIngredientStack() != null) {
+            this.secondaryStack = EmiIngredient.of(levelRecipe.secondaryIngredientStack().getIngredient(), (long)levelRecipe.secondaryIngredientStack().getCount());
         } else secondaryStack = null;
 
         this.targets = EmiIngredient.of(BuiltInRegistries.ITEM.stream().filter((item) -> output.canEnchant(new ItemStack(item))).map((item) -> EmiStack.of(new ItemStack(item))).toList());
+        this.isFinal = recipe.getLevels().size() == level;
     }
 
     @Override
@@ -61,7 +67,7 @@ public class EmiEnchantmentRecipe implements EmiRecipe {
     @Override
     public List<EmiIngredient> getInputs() {
         List<EmiIngredient> inputs = new ArrayList<>();
-        inputs.add(EmiStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), scrapCost));
+        if (scrapStack != null) inputs.add(scrapStack);
         if (primaryStack != null) inputs.add(primaryStack);
         if (secondaryStack != null) inputs.add(secondaryStack);
         inputs.add(targets);
@@ -71,9 +77,16 @@ public class EmiEnchantmentRecipe implements EmiRecipe {
     @Override
     public List<EmiStack> getOutputs() {
         ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
-        EnchantedBookItem.addEnchantment(book, new EnchantmentInstance(output, 1));
+        EnchantedBookItem.addEnchantment(book, new EnchantmentInstance(output, level));
         List<EmiStack> outputs = new ArrayList<>();
         outputs.add(EmiStack.of(book));
+        if (isFinal && level != this.output.getMaxLevel()) {
+            for (int i = 1; i <= this.output.getMaxLevel() - level; i++) {
+                ItemStack higherLevelBook = new ItemStack(Items.ENCHANTED_BOOK);
+                EnchantedBookItem.addEnchantment(higherLevelBook, new EnchantmentInstance(output, level + i));
+                outputs.add(EmiStack.of(higherLevelBook));
+            }
+        }
         outputs.addAll(targets.getEmiStacks());
         return outputs;
     }
@@ -90,7 +103,7 @@ public class EmiEnchantmentRecipe implements EmiRecipe {
 
     @Override
     public void addWidgets(WidgetHolder widgetHolder) {
-        widgetHolder.addSlot(EmiStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), scrapCost), 0, 0);
+        widgetHolder.addSlot(scrapStack, 0, 0);
         EmiIngredient primaryDisplayStack = EmiStack.EMPTY;
         if (primaryStack != null) {
             primaryDisplayStack = primaryStack;

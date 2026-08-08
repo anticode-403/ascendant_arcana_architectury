@@ -53,7 +53,11 @@ public class AscendantArcanaEmi implements EmiPlugin {
 
         RecipeManager manager = emiRegistry.getRecipeManager();
         for (EnchantmentRecipe recipe : manager.getAllRecipesFor(AArcanaRecipes.ENCHANTMENT_RECIPE_TYPE.get())) {
-            emiRegistry.addRecipe(new EmiEnchantmentRecipe(recipe));
+            int i = 1;
+            for (EnchantmentRecipe.EnchantmentLevelRecipe level : recipe.getLevels()) {
+                emiRegistry.addRecipe(new EmiEnchantmentLevelRecipe(recipe, level, i));
+                i++;
+            }
         }
         for (CraftingRecipe recipe : manager.getAllRecipesFor(RecipeType.CRAFTING)) {
             if (recipe instanceof RelicCraftingRecipe relicRecipe) {

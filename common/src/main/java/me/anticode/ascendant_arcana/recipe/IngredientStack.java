@@ -2,8 +2,11 @@ package me.anticode.ascendant_arcana.recipe;
 
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
 
 import java.util.function.Predicate;
 
@@ -39,6 +42,22 @@ public class IngredientStack implements Predicate<ItemStack> {
         json.add("ingredient", ingredient.toJson());
         json.addProperty("count", count);
         return json;
+    }
+
+    public static IngredientStack of(ItemLike item) {
+        return new IngredientStack(Ingredient.of(item), 1);
+    }
+
+    public static IngredientStack of(TagKey<Item> tag) {
+        return new IngredientStack(Ingredient.of(tag), 1);
+    }
+
+    public static IngredientStack of(ItemLike item, int count) {
+        return new IngredientStack(Ingredient.of(item), count);
+    }
+
+    public static IngredientStack of(TagKey<Item> tag, int count) {
+        return new IngredientStack(Ingredient.of(tag), count);
     }
 
     public static IngredientStack fromNetwork(FriendlyByteBuf buf) {
