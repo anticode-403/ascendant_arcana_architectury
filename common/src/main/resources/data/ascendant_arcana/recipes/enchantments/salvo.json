@@ -1,18 +1,48 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:salvo",
-  "level_cost": 3,
-  "magical_scrap_cost": 6,
-  "primary_ingredient": {
-    "count": 4,
-    "ingredient": {
-      "item": "minecraft:pitcher_plant"
+  "levels": [
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:pitcher_plant"
+        }
+      },
+      "scrap_stack": {
+        "count": 4,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:amethyst_cluster"
+        }
+      }
+    },
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:pitcher_plant"
+        }
+      },
+      "scrap_stack": {
+        "count": 4,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:glowstone_dust"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:amethyst_shard"
-    }
-  }
+  ]
 }

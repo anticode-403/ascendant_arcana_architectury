@@ -1,18 +1,48 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:singularity",
-  "level_cost": 6,
-  "magical_scrap_cost": 6,
-  "primary_ingredient": {
-    "count": 2,
-    "ingredient": {
-      "item": "minecraft:ender_pearl"
+  "levels": [
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:ender_pearl"
+        }
+      },
+      "scrap_stack": {
+        "count": 6,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:echo_shard"
+        }
+      }
+    },
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:ender_pearl"
+        }
+      },
+      "scrap_stack": {
+        "count": 4,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:echo_shard"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 4,
-    "ingredient": {
-      "item": "minecraft:fermented_spider_eye"
-    }
-  }
+  ]
 }

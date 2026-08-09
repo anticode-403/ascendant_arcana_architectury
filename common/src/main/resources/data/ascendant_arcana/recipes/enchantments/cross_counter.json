@@ -1,18 +1,69 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:cross_counter",
-  "level_cost": 3,
-  "magical_scrap_cost": 3,
-  "primary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:clock"
+  "levels": [
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:clock"
+        }
+      },
+      "scrap_stack": {
+        "count": 6,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:echo_shard"
+        }
+      }
+    },
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 6,
+        "ingredient": {
+          "item": "minecraft:copper_ingot"
+        }
+      },
+      "scrap_stack": {
+        "count": 6,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:echo_shard"
+        }
+      }
+    },
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 12,
+        "ingredient": {
+          "item": "minecraft:copper_ingot"
+        }
+      },
+      "scrap_stack": {
+        "count": 6,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:echo_shard"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:iron_nugget"
-    }
-  }
+  ]
 }

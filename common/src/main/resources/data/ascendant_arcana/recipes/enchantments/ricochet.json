@@ -1,12 +1,48 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:ricochet",
-  "level_cost": 6,
-  "magical_scrap_cost": 6,
-  "primary_ingredient": {
-    "count": 23,
-    "ingredient": {
-      "item": "minecraft:slime_ball"
+  "levels": [
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:slime_ball"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:amethyst_shard"
+        }
+      }
+    },
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:slime_ball"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:feather"
+        }
+      }
     }
-  }
+  ]
 }

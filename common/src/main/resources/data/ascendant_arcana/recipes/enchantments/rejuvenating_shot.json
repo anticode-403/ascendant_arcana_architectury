@@ -1,12 +1,21 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:rejuvenating_shot",
-  "level_cost": 6,
-  "magical_scrap_cost": 6,
-  "primary_ingredient": {
-    "count": 4,
-    "ingredient": {
-      "item": "minecraft:ghast_tear"
+  "levels": [
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:ghast_tear"
+        }
+      },
+      "scrap_stack": {
+        "count": 4,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      }
     }
-  }
+  ]
 }

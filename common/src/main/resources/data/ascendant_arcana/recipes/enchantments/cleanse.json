@@ -1,18 +1,27 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:cleanse",
-  "level_cost": 9,
-  "magical_scrap_cost": 9,
-  "primary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:milk_bucket"
+  "levels": [
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:milk_bucket"
+        }
+      },
+      "scrap_stack": {
+        "count": 1,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:big_dripleaf"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 4,
-    "ingredient": {
-      "item": "minecraft:pitcher_plant"
-    }
-  }
+  ]
 }

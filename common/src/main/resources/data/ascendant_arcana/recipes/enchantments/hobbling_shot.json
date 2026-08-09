@@ -1,18 +1,63 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:hobbling_shot",
-  "level_cost": 6,
-  "magical_scrap_cost": 3,
-  "primary_ingredient": {
-    "count": 6,
-    "ingredient": {
-      "item": "minecraft:vine"
+  "levels": [
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:vine"
+        }
+      },
+      "scrap_stack": {
+        "count": 4,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 6,
+        "ingredient": {
+          "item": "minecraft:bone_meal"
+        }
+      }
+    },
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:sugar"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:fermented_spider_eye"
+        }
+      }
+    },
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:cobweb"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 6,
-    "ingredient": {
-      "item": "minecraft:bone_meal"
-    }
-  }
+  ]
 }

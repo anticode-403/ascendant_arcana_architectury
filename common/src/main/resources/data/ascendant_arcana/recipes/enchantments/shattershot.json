@@ -1,18 +1,27 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:shattershot",
-  "level_cost": 6,
-  "magical_scrap_cost": 6,
-  "primary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:diamond"
+  "levels": [
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:honey_bottle"
+        }
+      },
+      "scrap_stack": {
+        "count": 6,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:diamond"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 2,
-    "ingredient": {
-      "item": "minecraft:torchflower"
-    }
-  }
+  ]
 }

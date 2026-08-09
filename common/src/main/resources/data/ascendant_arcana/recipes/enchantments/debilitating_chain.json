@@ -1,18 +1,48 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:debilitating_chain",
-  "level_cost": 3,
-  "magical_scrap_cost": 3,
-  "primary_ingredient": {
-    "count": 3,
-    "ingredient": {
-      "item": "minecraft:fermented_spider_eye"
+  "levels": [
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:fermented_spider_eye"
+        }
+      },
+      "scrap_stack": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:redstone"
+        }
+      }
+    },
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:spider_eye"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:string"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 3,
-    "ingredient": {
-      "item": "minecraft:gunpowder"
-    }
-  }
+  ]
 }

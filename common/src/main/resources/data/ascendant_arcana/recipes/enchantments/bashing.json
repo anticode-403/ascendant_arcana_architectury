@@ -1,18 +1,69 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:bashing",
-  "level_cost": 6,
-  "magical_scrap_cost": 6,
-  "primary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:rabbit_foot"
+  "levels": [
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:rabbit_foot"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:piston"
+        }
+      }
+    },
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:rabbit_foot"
+        }
+      },
+      "scrap_stack": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:slime_ball"
+        }
+      }
+    },
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:rabbit_foot"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:slime_ball"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 2,
-    "ingredient": {
-      "item": "minecraft:piston"
-    }
-  }
+  ]
 }

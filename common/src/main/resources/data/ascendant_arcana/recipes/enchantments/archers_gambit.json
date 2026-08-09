@@ -1,12 +1,69 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:archers_gambit",
-  "level_cost": 7,
-  "magical_scrap_cost": 3,
-  "primary_ingredient": {
-    "count": 3,
-    "ingredient": {
-      "item": "minecraft:gold_ingot"
+  "levels": [
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:gold_ingot"
+        }
+      },
+      "scrap_stack": {
+        "count": 5,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:string"
+        }
+      }
+    },
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:gold_ingot"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:string"
+        }
+      }
+    },
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:gold_ingot"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:feather"
+        }
+      }
     }
-  }
+  ]
 }

@@ -1,18 +1,48 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:miasma",
-  "level_cost": 3,
-  "magical_scrap_cost": 12,
-  "primary_ingredient": {
-    "count": 3,
-    "ingredient": {
-      "item": "minecraft:dragon_breath"
+  "levels": [
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:dragon_breath"
+        }
+      },
+      "scrap_stack": {
+        "count": 12,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:spore_blossom"
+        }
+      }
+    },
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:echo_shard"
+        }
+      },
+      "scrap_stack": {
+        "count": 4,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:spore_blossom"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:echo_shard"
-    }
-  }
+  ]
 }

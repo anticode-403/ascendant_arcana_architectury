@@ -1,18 +1,69 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:blazebolt",
-  "level_cost": 6,
-  "magical_scrap_cost": 6,
-  "primary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:wither_skeleton_skull"
+  "levels": [
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:wither_skeleton_skull"
+        }
+      },
+      "scrap_stack": {
+        "count": 6,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:ghast_tear"
+        }
+      }
+    },
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 18,
+        "ingredient": {
+          "item": "minecraft:quartz"
+        }
+      },
+      "scrap_stack": {
+        "count": 6,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:magma_cream"
+        }
+      }
+    },
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 32,
+        "ingredient": {
+          "item": "minecraft:quartz"
+        }
+      },
+      "scrap_stack": {
+        "count": 6,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 12,
+        "ingredient": {
+          "item": "minecraft:magma_cream"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 4,
-    "ingredient": {
-      "item": "minecraft:iron_ingot"
-    }
-  }
+  ]
 }

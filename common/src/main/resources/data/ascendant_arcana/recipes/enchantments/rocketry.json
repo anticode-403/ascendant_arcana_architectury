@@ -1,18 +1,27 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:rocketry",
-  "level_cost": 3,
-  "magical_scrap_cost": 6,
-  "primary_ingredient": {
-    "count": 4,
-    "ingredient": {
-      "item": "minecraft:blaze_powder"
+  "levels": [
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:gunpowder"
+        }
+      },
+      "scrap_stack": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:blaze_powder"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:netherite_scrap"
-    }
-  }
+  ]
 }

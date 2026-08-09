@@ -393,7 +393,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
 
             public record EnchantmentLevelRecipeProvider(IngredientStack scrapStack, IngredientStack primaryIngredient, IngredientStack secondaryIngredient, int levelCost) {
                 public void serializeRecipeData(JsonObject json) {
-                    if (scrapStack != null) json.add("scrap_stack", primaryIngredient.toJson());
+                    if (scrapStack != null) json.add("scrap_stack", scrapStack.toJson());
                     if (primaryIngredient != null) json.add("primary_ingredient", primaryIngredient.toJson());
                     if (secondaryIngredient != null) json.add("secondary_ingredient", secondaryIngredient.toJson());
                     if (levelCost != 0) json.addProperty("level_cost", levelCost);

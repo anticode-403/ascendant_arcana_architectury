@@ -1,18 +1,48 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "ascendant_arcana:cushioning",
-  "level_cost": 6,
-  "magical_scrap_cost": 6,
-  "primary_ingredient": {
-    "count": 3,
-    "ingredient": {
-      "item": "minecraft:phantom_membrane"
+  "levels": [
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:phantom_membrane"
+        }
+      },
+      "scrap_stack": {
+        "count": 6,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "tag": "minecraft:wool"
+        }
+      }
+    },
+    {
+      "level_cost": 2,
+      "primary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:phantom_membrane"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:feather"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 2,
-    "ingredient": {
-      "tag": "minecraft:wool"
-    }
-  }
+  ]
 }
