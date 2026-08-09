@@ -189,13 +189,14 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
 
                 EnchantmentTile tile = enchantments.get(selectedTile);
                 EnchantmentRecipe recipe = recipes.get(selectedTile);
+                EnchantmentRecipe.EnchantmentLevelRecipe levelRecipe = tile.levelRecipe;
                 boolean withinCapacity = AArcanaEnchantmentHelper.testEnchantmentCost(stack, AArcanaEnchantmentHelper.getEnchantmentCost(recipe.enchantment));
 
                 if (anySelected && !tile.locked && !tile.maxLevel && withinCapacity && !tile.incompatible) {
                     if (AscendantArcana.config.disable_xp) {
                         context.blit(OVERLAYS, panelX + 1, panelY + 105, 12, 8, 9, 7);
                     } else {
-                        if (getMenu().player.experienceLevel < recipe.levelCost) {
+                        if (getMenu().player.experienceLevel < levelRecipe.levelCost()) {
                             context.blit(OVERLAYS, panelX + 2, panelY + 105, 19, 0, 6, 7);
                         } else {
                             context.blit(OVERLAYS, panelX + 2, panelY + 105, 12, 0, 7, 7);
@@ -234,48 +235,48 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
                     context.drawWordWrap(font, enchantmentDescription, scaledPanelX + 2, scaledPanelY + 14, scaledPanelWidth, 5592405);
                     if (!tile.locked && !tile.maxLevel && withinCapacity && !tile.incompatible) {
                         ItemStack scrapStack = getMenu().getSlot(1).getItem();
-                        if (!tile.bypassScrap) {
+                        if (!tile.bypassScrap && levelRecipe.scrapStack() != null) {
                             int scrapColor = 16777215;
-                            if (scrapStack.getCount() < recipe.magicalScrapCost) {
+                            if (!levelRecipe.scrapStack().getIngredient().test(scrapStack) || scrapStack.getCount() < levelRecipe.scrapStack().getCount()) {
                                 scrapColor = 11141120;
                             }
-                            context.drawWordWrap(font, Component.translatable("gui.enchanting.item_cost", recipe.magicalScrapCost, Component.translatable(AArcanaItems.ENCHANTED_SCRAP.get().getDescriptionId())), scaledPanelX + 42, scaledPanelY + 102, 76,scrapColor);
+                            context.drawWordWrap(font, Component.translatable("gui.enchanting.item_cost", levelRecipe.scrapStack(), Component.translatable(levelRecipe.scrapStack().getIngredient().getItems()[0].getItem().getDescriptionId())), scaledPanelX + 42, scaledPanelY + 102, 76,scrapColor);
                         }
                         ItemStack primaryItemStack = getMenu().getSlot(2).getItem();
-                        if (recipe.primaryIngredientStack != null) {
+                        if (levelRecipe.primaryIngredientStack() != null) {
                             int color = 16777215;
-                            if (!recipe.primaryIngredientStack.getIngredient().test(primaryItemStack) || primaryItemStack.getCount() < recipe.primaryIngredientStack.getCount()) {
+                            if (!levelRecipe.primaryIngredientStack().getIngredient().test(primaryItemStack) || primaryItemStack.getCount() < levelRecipe.primaryIngredientStack().getCount()) {
                                 color = 11141120;
                             }
-                            context.drawWordWrap(font, Component.translatable("gui.enchanting.item_cost", recipe.primaryIngredientStack.getCount(), Component.translatable(recipe.primaryIngredientStack.getIngredient().getItems()[0].getDescriptionId())), scaledPanelX + 42, scaledPanelY + 138, 76, color);
+                            context.drawWordWrap(font, Component.translatable("gui.enchanting.item_cost", levelRecipe.primaryIngredientStack().getCount(), Component.translatable(levelRecipe.primaryIngredientStack().getIngredient().getItems()[0].getDescriptionId())), scaledPanelX + 42, scaledPanelY + 138, 76, color);
                         }
                         ItemStack secondaryItemStack = getMenu().getSlot(3).getItem();
-                        if (recipe.secondaryIngredientStack != null) {
+                        if (levelRecipe.secondaryIngredientStack() != null) {
                             int color = 16777215;
-                            if (!recipe.secondaryIngredientStack.getIngredient().test(secondaryItemStack) || secondaryItemStack.getCount() < recipe.secondaryIngredientStack.getCount()) {
+                            if (!levelRecipe.secondaryIngredientStack().getIngredient().test(secondaryItemStack) || secondaryItemStack.getCount() < levelRecipe.secondaryIngredientStack().getCount()) {
                                 color = 11141120;
                             }
-                            context.drawWordWrap(font, Component.translatable("gui.enchanting.item_cost", recipe.secondaryIngredientStack.getCount(), Component.translatable(recipe.secondaryIngredientStack.getIngredient().getItems()[0].getDescriptionId())), scaledPanelX + 42, scaledPanelY + 174, 76, color);
+                            context.drawWordWrap(font, Component.translatable("gui.enchanting.item_cost", levelRecipe.secondaryIngredientStack().getCount(), Component.translatable(levelRecipe.secondaryIngredientStack().getIngredient().getItems()[0].getDescriptionId())), scaledPanelX + 42, scaledPanelY + 174, 76, color);
                         }
                         if (AscendantArcana.config.disable_xp) {
                             font.drawInBatch8xOutline(Component.literal(String.valueOf(AArcanaEnchantmentHelper.getEnchantmentCost(recipe.enchantment))).getVisualOrderText(), scaledPanelX + 14, scaledPanelY + 216, 16733525, 0, context.pose().last().pose(), context.bufferSource(), 15728880);
                         } else {
-                            font.drawInBatch8xOutline(Component.literal(String.valueOf(recipe.levelCost)).getVisualOrderText(), scaledPanelX + 12, scaledPanelY + 216, 5635925, 0, context.pose().last().pose(), context.bufferSource(), 15728880);
+                            font.drawInBatch8xOutline(Component.literal(String.valueOf(levelRecipe.levelCost())).getVisualOrderText(), scaledPanelX + 12, scaledPanelY + 216, 5635925, 0, context.pose().last().pose(), context.bufferSource(), 15728880);
                             font.drawInBatch8xOutline(Component.literal(String.valueOf(AArcanaEnchantmentHelper.getEnchantmentCost(recipe.enchantment))).getVisualOrderText(), scaledPanelX + 14, scaledPanelY + 232, 16733525, 0, context.pose().last().pose(), context.bufferSource(), 15728880);
                         }
                         context.pose().popPose();
 
-                        boolean buttonEnabled = AscendantArcana.config.disable_xp || recipe.levelCost <= getMenu().player.experienceLevel;
-                        if (recipe.magicalScrapCost > 0 && !tile.bypassScrap) {
-                            if (!scrapStack.is(AArcanaItems.ENCHANTED_SCRAP.get()) || recipe.magicalScrapCost > scrapStack.getCount()) buttonEnabled = false;
+                        boolean buttonEnabled = AscendantArcana.config.disable_xp || levelRecipe.levelCost() <= getMenu().player.experienceLevel;
+                        if (levelRecipe.scrapStack().getCount() > 0 && !tile.bypassScrap) {
+                            if (!levelRecipe.scrapStack().getIngredient().test(scrapStack) || levelRecipe.scrapStack().getCount() > scrapStack.getCount()) buttonEnabled = false;
                         }
-                        if (recipe.primaryIngredientStack != null) {
-                            if (!recipe.primaryIngredientStack.getIngredient().test(primaryItemStack)) buttonEnabled = false;
-                            else if (recipe.primaryIngredientStack.getCount() > primaryItemStack.getCount()) buttonEnabled = false;
+                        if (levelRecipe.primaryIngredientStack() != null) {
+                            if (!levelRecipe.primaryIngredientStack().getIngredient().test(primaryItemStack)) buttonEnabled = false;
+                            else if (levelRecipe.primaryIngredientStack().getCount() > primaryItemStack.getCount()) buttonEnabled = false;
                         }
-                        if (recipe.secondaryIngredientStack != null) {
-                            if (!recipe.secondaryIngredientStack.getIngredient().test(secondaryItemStack)) buttonEnabled = false;
-                            else if (recipe.secondaryIngredientStack.getCount() > secondaryItemStack.getCount()) buttonEnabled = false;
+                        if (levelRecipe.secondaryIngredientStack() != null) {
+                            if (!levelRecipe.secondaryIngredientStack().getIngredient().test(secondaryItemStack)) buttonEnabled = false;
+                            else if (levelRecipe.secondaryIngredientStack().getCount() > secondaryItemStack.getCount()) buttonEnabled = false;
                         }
 
                         if (update || enchantingButtonEnabled != buttonEnabled) {
@@ -325,8 +326,14 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
         if (!locked && recipe.enchantment.isTreasureOnly() && !unlocked) locked = true;
         Map<Enchantment, Integer> appliedEnchantments = EnchantmentHelper.getEnchantments(lastItem);
         boolean incompatible = !EnchantmentHelper.isEnchantmentCompatible(appliedEnchantments.keySet(), recipe.enchantment);
-        if (appliedEnchantments.containsKey(recipe.enchantment)) incompatible = false;
-        EnchantmentTile tile = new EnchantmentTile(recipe, buttonX, buttonY, i, locked, incompatible, unlocked && AscendantArcana.config.books_remove_scrap_cost);
+        EnchantmentRecipe.EnchantmentLevelRecipe enchantmentLevelRecipe;
+        if (appliedEnchantments.containsKey(recipe.enchantment)) {
+            incompatible = false;
+            int appliedLevel = appliedEnchantments.get(recipe.enchantment);
+            if (recipe.getLevels().size() < appliedLevel) enchantmentLevelRecipe = recipe.getLevels().get(appliedLevel);
+            else enchantmentLevelRecipe = recipe.getLevels().get(recipe.getLevels().size() - 1);
+        } else enchantmentLevelRecipe = recipe.getLevels().get(0);
+        EnchantmentTile tile = new EnchantmentTile(recipe, enchantmentLevelRecipe, buttonX, buttonY, i, locked, incompatible, unlocked && AscendantArcana.config.books_remove_scrap_cost);
         enchantments.add(tile);
         addRenderableWidget(tile);
     }
@@ -389,6 +396,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
 
     private class EnchantmentTile extends AbstractButton {
         private final EnchantmentRecipe recipe;
+        private final EnchantmentRecipe.EnchantmentLevelRecipe levelRecipe;
         private final int i;
         protected boolean locked;
         protected boolean maxLevel = false;
@@ -396,13 +404,14 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
         protected boolean bypassScrap = false;
         private int offset = 0;
 
-        public EnchantmentTile(EnchantmentRecipe recipe, int x, int y, int i, boolean locked, boolean incompatible, boolean bypassScrap) {
+        public EnchantmentTile(EnchantmentRecipe recipe, EnchantmentRecipe.EnchantmentLevelRecipe levelRecipe, int x, int y, int i, boolean locked, boolean incompatible, boolean bypassScrap) {
             super(x, y, 0, 27, Component.translatable(recipe.enchantment.getDescriptionId()));
             this.locked = locked;
             this.incompatible = incompatible;
             this.bypassScrap = bypassScrap;
             this.i = i;
             this.recipe = recipe;
+            this.levelRecipe = levelRecipe;
             this.width = 84;
             this.height = 19;
             if (lastItem.isEnchanted()) {
@@ -426,7 +435,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
                 if (AscendantArcana.config.disable_xp) {
                     context.blit(OVERLAYS, getX() + 74, getY() + 11, 12, 8, 9, 7);
                 } else {
-                    if (recipe.levelCost > getMenu().player.experienceLevel) {
+                    if (levelRecipe.levelCost() > getMenu().player.experienceLevel) {
                         context.blit(OVERLAYS, getX() + 76, getY() + 11, 19, 0, 6, 7);
                     } else {
                         context.blit(OVERLAYS, getX() + 76, getY() + 11, 12, 0, 7, 7);
@@ -452,24 +461,23 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
             }
             if (levelText != null) font.drawInBatch(levelText, scaledX + 12, scaledY + 14, 5592405, false, positionMatrix, context.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
 
-            ItemStack magicalScraps = new ItemStack(AArcanaItems.ENCHANTED_SCRAP.get(), recipe.magicalScrapCost);
-
             if (!maxLevel && !locked && !incompatible && (getHeight() > 10 && offset == 0)) {
                 int itemX = scaledX + 108;
                 int itemY = scaledY + 4;
-                if (!bypassScrap) {
+                if (!bypassScrap && levelRecipe.scrapStack() != null) {
+                    ItemStack magicalScraps = new ItemStack(levelRecipe.scrapStack().getIngredient().getItems()[0].getItem(), levelRecipe.scrapStack().getCount());
                     context.renderItem(magicalScraps, itemX, itemY);
                     context.renderItemDecorations(font, magicalScraps, itemX, itemY);
                 }
-                if (recipe.primaryIngredientStack != null) {
-                    Item primaryIngredientItem = recipe.primaryIngredientStack.getIngredient().getItems()[0].getItem();
-                    ItemStack primaryIngredient = new ItemStack(primaryIngredientItem, recipe.primaryIngredientStack.getCount());
+                if (levelRecipe.primaryIngredientStack() != null) {
+                    Item primaryIngredientItem = levelRecipe.primaryIngredientStack().getIngredient().getItems()[0].getItem();
+                    ItemStack primaryIngredient = new ItemStack(primaryIngredientItem, levelRecipe.primaryIngredientStack().getCount());
                     context.renderItem(primaryIngredient, itemX + 20, itemY);
                     context.renderItemDecorations(font, primaryIngredient, itemX + 20, itemY);
                 }
-                if (recipe.secondaryIngredientStack != null) {
-                    Item secondaryIngredientItem = recipe.secondaryIngredientStack.getIngredient().getItems()[0].getItem();
-                    ItemStack secondaryIngredient = new ItemStack(secondaryIngredientItem, recipe.secondaryIngredientStack.getCount());
+                if (levelRecipe.secondaryIngredientStack() != null) {
+                    Item secondaryIngredientItem = levelRecipe.secondaryIngredientStack().getIngredient().getItems()[0].getItem();
+                    ItemStack secondaryIngredient = new ItemStack(secondaryIngredientItem, levelRecipe.secondaryIngredientStack().getCount());
                     context.renderItem(secondaryIngredient, itemX + 40, itemY);
                     context.renderItemDecorations(font, secondaryIngredient, itemX + 40, itemY);
                 }
@@ -477,10 +485,10 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
                     if (AscendantArcana.config.disable_xp) {
                         font.drawInBatch8xOutline(Component.literal(String.valueOf(AArcanaEnchantmentHelper.getEnchantmentCost(recipe.enchantment))).getVisualOrderText(), scaledX + 160, scaledY + 28, 16733525, 0, positionMatrix, context.bufferSource(), 15728880);
                     } else {
-                        if (recipe.levelCost < 10) {
-                            font.drawInBatch8xOutline(Component.literal(String.valueOf(recipe.levelCost)).getVisualOrderText(), scaledX + 160, scaledY + 28, 5635925, 0, positionMatrix, context.bufferSource(), 15728880);
+                        if (levelRecipe.levelCost() < 10) {
+                            font.drawInBatch8xOutline(Component.literal(String.valueOf(levelRecipe.levelCost())).getVisualOrderText(), scaledX + 160, scaledY + 28, 5635925, 0, positionMatrix, context.bufferSource(), 15728880);
                         } else {
-                            font.drawInBatch8xOutline(Component.literal(String.valueOf(recipe.levelCost)).getVisualOrderText(), scaledX + 154, scaledY + 28, 5635925, 0, positionMatrix, context.bufferSource(), 15728880);
+                            font.drawInBatch8xOutline(Component.literal(String.valueOf(levelRecipe.levelCost())).getVisualOrderText(), scaledX + 154, scaledY + 28, 5635925, 0, positionMatrix, context.bufferSource(), 15728880);
                         }
                         font.drawInBatch8xOutline(Component.literal(String.valueOf(AArcanaEnchantmentHelper.getEnchantmentCost(recipe.enchantment))).getVisualOrderText(), scaledX + 144, scaledY + 28, 16733525, 0, positionMatrix, context.bufferSource(), 15728880);
                     }
