@@ -237,15 +237,15 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
                         ItemStack scrapStack = getMenu().getSlot(1).getItem();
                         if (!tile.bypassScrap && levelRecipe.scrapStack() != null) {
                             int scrapColor = 16777215;
-                            if (!levelRecipe.scrapStack().getIngredient().test(scrapStack) || scrapStack.getCount() < levelRecipe.scrapStack().getCount()) {
+                            if (!levelRecipe.scrapStack().test(scrapStack)) {
                                 scrapColor = 11141120;
                             }
-                            context.drawWordWrap(font, Component.translatable("gui.enchanting.item_cost", levelRecipe.scrapStack(), Component.translatable(levelRecipe.scrapStack().getIngredient().getItems()[0].getItem().getDescriptionId())), scaledPanelX + 42, scaledPanelY + 102, 76,scrapColor);
+                            context.drawWordWrap(font, Component.translatable("gui.enchanting.item_cost", levelRecipe.scrapStack().getCount(), Component.translatable(levelRecipe.scrapStack().getIngredient().getItems()[0].getDescriptionId())), scaledPanelX + 42, scaledPanelY + 102, 76,scrapColor);
                         }
                         ItemStack primaryItemStack = getMenu().getSlot(2).getItem();
                         if (levelRecipe.primaryIngredientStack() != null) {
                             int color = 16777215;
-                            if (!levelRecipe.primaryIngredientStack().getIngredient().test(primaryItemStack) || primaryItemStack.getCount() < levelRecipe.primaryIngredientStack().getCount()) {
+                            if (!levelRecipe.primaryIngredientStack().test(primaryItemStack)) {
                                 color = 11141120;
                             }
                             context.drawWordWrap(font, Component.translatable("gui.enchanting.item_cost", levelRecipe.primaryIngredientStack().getCount(), Component.translatable(levelRecipe.primaryIngredientStack().getIngredient().getItems()[0].getDescriptionId())), scaledPanelX + 42, scaledPanelY + 138, 76, color);
@@ -253,7 +253,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
                         ItemStack secondaryItemStack = getMenu().getSlot(3).getItem();
                         if (levelRecipe.secondaryIngredientStack() != null) {
                             int color = 16777215;
-                            if (!levelRecipe.secondaryIngredientStack().getIngredient().test(secondaryItemStack) || secondaryItemStack.getCount() < levelRecipe.secondaryIngredientStack().getCount()) {
+                            if (!levelRecipe.secondaryIngredientStack().test(secondaryItemStack)) {
                                 color = 11141120;
                             }
                             context.drawWordWrap(font, Component.translatable("gui.enchanting.item_cost", levelRecipe.secondaryIngredientStack().getCount(), Component.translatable(levelRecipe.secondaryIngredientStack().getIngredient().getItems()[0].getDescriptionId())), scaledPanelX + 42, scaledPanelY + 174, 76, color);
@@ -267,16 +267,14 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
                         context.pose().popPose();
 
                         boolean buttonEnabled = AscendantArcana.config.disable_xp || levelRecipe.levelCost() <= getMenu().player.experienceLevel;
-                        if (levelRecipe.scrapStack().getCount() > 0 && !tile.bypassScrap) {
-                            if (!levelRecipe.scrapStack().getIngredient().test(scrapStack) || levelRecipe.scrapStack().getCount() > scrapStack.getCount()) buttonEnabled = false;
+                        if (levelRecipe.scrapStack() != null && !tile.bypassScrap) {
+                            if (!levelRecipe.scrapStack().test(scrapStack)) buttonEnabled = false;
                         }
                         if (levelRecipe.primaryIngredientStack() != null) {
-                            if (!levelRecipe.primaryIngredientStack().getIngredient().test(primaryItemStack)) buttonEnabled = false;
-                            else if (levelRecipe.primaryIngredientStack().getCount() > primaryItemStack.getCount()) buttonEnabled = false;
+                            if (!levelRecipe.primaryIngredientStack().test(primaryItemStack)) buttonEnabled = false;
                         }
                         if (levelRecipe.secondaryIngredientStack() != null) {
-                            if (!levelRecipe.secondaryIngredientStack().getIngredient().test(secondaryItemStack)) buttonEnabled = false;
-                            else if (levelRecipe.secondaryIngredientStack().getCount() > secondaryItemStack.getCount()) buttonEnabled = false;
+                            if (!levelRecipe.secondaryIngredientStack().test(secondaryItemStack)) buttonEnabled = false;
                         }
 
                         if (update || enchantingButtonEnabled != buttonEnabled) {
