@@ -1,18 +1,27 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "majruszsenchantments:fuse_cutter",
-  "level_cost": 3,
-  "magical_scrap_cost": 3,
-  "primary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:shears"
+  "levels": [
+    {
+      "level_cost": 3,
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "primary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:shears"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 6,
+        "ingredient": {
+          "item": "minecraft:sugar"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 6,
-    "ingredient": {
-      "item": "minecraft:sugar"
-    }
-  }
+  ]
 }
