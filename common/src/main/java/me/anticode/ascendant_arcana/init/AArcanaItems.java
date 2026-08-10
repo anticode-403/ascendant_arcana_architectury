@@ -64,21 +64,7 @@ public class AArcanaItems {
     public static void initialize() {
         ITEMS.register();
 
-        List<Supplier<ItemStack>> relicEntries = new ArrayList<>();
-        List<Map.Entry<ResourceLocation, RelicEntry>> relicEntrySet = RelicRegistry.getAll().entrySet().stream().toList();
-        for (int i = 0; i < relicEntrySet.size() * 5; i++) {
-            int index = Mth.floor((double) i / 5);
-            int strength = i + 1 - (index * 5);
-            RelicEntry relicType = relicEntrySet.get(index).getValue();
-            relicEntries.add(() -> {
-                ItemStack relic = new ItemStack(RELIC.get());
-                RelicItem.writeRelicData(relic, relicType, strength);
-                return relic;
-            });
-        }
-
         CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, ENCHANTED_SCRAP, RESTORINE, WARDEN_HEART, INFUSION_SMITHING_TEMPLATE);
 
-        CreativeTabRegistry.appendStack(AscendantArcana.ASCENDANT_ARCANA_TAB, relicEntries.stream());
     }
 }
