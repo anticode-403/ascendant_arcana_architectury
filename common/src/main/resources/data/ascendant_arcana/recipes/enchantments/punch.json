@@ -1,18 +1,42 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "minecraft:punch",
-  "level_cost": 4,
-  "magical_scrap_cost": 2,
-  "primary_ingredient": {
-    "count": 2,
-    "ingredient": {
-      "item": "minecraft:piston"
+  "levels": [
+    {
+      "level_cost": 2,
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:piston"
+        }
+      },
+      "scrap_stack": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:redstone"
+        }
+      }
+    },
+    {
+      "level_cost": 2,
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:piston"
+        }
+      },
+      "scrap_stack": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 4,
-    "ingredient": {
-      "item": "minecraft:redstone"
-    }
-  }
+  ]
 }

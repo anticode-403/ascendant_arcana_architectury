@@ -1124,30 +1124,251 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(Items.CAULDRON),
                             6)));
 
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.AQUA_AFFINITY).scrap(3).primary(Items.PRISMARINE_CRYSTALS, 4).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.CHANNELING).scrap(5).primary(Items.LIGHTNING_ROD, 1).secondary(Items.GOLD_INGOT, 3).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.DEPTH_STRIDER).scrap(6).primary(Items.SCUTE, 4).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FIRE_ASPECT).scrap(6).primary(Items.BLAZE_POWDER, 9).secondary(Items.FLINT, 2).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FLAMING_ARROWS).scrap(6).primary(Items.BLAZE_POWDER, 12).secondary(Items.FLINT, 2).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.BLOCK_FORTUNE).scrap(12).primary(Items.DIAMOND, 3).secondary(Items.ECHO_SHARD, 1).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FROST_WALKER).scrap(6).primary(Items.BLUE_ICE, 2).secondary(Items.ECHO_SHARD, 1).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FALL_PROTECTION).scrap(2).primary(Items.FEATHER, 5).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.INFINITY_ARROWS).scrap(12).primary(Items.ECHO_SHARD, 2).secondary(Items.ARROW, 1).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.THORNS).scrap(3).primary(Items.CACTUS, 2).secondary(Items.SLIME_BALL, 1).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.KNOCKBACK).scrap(1).primary(Items.PISTON, 2).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.SOUL_SPEED).scrap(6).primary(Items.SCULK_CATALYST, 1).secondary(Items.FEATHER, 2).level(6));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.SWIFT_SNEAK).scrap(6).primary(Items.FEATHER, 5).secondary(Items.ECHO_SHARD, 1).level(6));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.MOB_LOOTING).scrap(12).primary(Items.ENDER_PEARL, 3).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.RESPIRATION).scrap(3).primary(Items.GLASS_BOTTLE, 2).secondary(Items.BAMBOO, 1).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.RIPTIDE).scrap(9).primary(Items.NAUTILUS_SHELL, 2).secondary(Items.PRISMARINE_CRYSTALS, 3).level(9));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.LOYALTY).scrap(4).primary(Items.COPPER_INGOT, 6).secondary(Items.SALMON, 1).level(5));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.SWEEPING_EDGE).scrap(2).primary(Items.AMETHYST_SHARD, 2).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.PIERCING).scrap(2).primary(Items.STONE, 3).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.SILK_TOUCH).scrap(4).primary(Items.STRING, 6).level(5));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.PUNCH_ARROWS).scrap(2).primary(Items.PISTON, 2).secondary(Items.REDSTONE, 4).level(4));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.MULTISHOT).scrap(6).primary(Items.ECHO_SHARD, 2).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FISHING_SPEED).scrap(1).primary(Items.IRON_NUGGET, 1).secondary(Items.COD, 3).level(3));
-//            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FISHING_LUCK).scrap(4).primary(Items.RABBIT_FOOT, 1).level(3));
+            // Vanilla
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.AQUA_AFFINITY)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI),
+                            IngredientStack.of(Items.PRISMARINE_CRYSTALS, 3),
+                            null,
+                            6)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.CHANNELING)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.LIGHTNING_ROD),
+                            IngredientStack.of(Items.GOLD_INGOT, 3),
+                            6)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.DEPTH_STRIDER)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.SCUTE, 4),
+                            null,
+                            2))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.SCUTE, 4),
+                            null,
+                            2))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.SOUL_SAND, 2),
+                            null,
+                            2)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FIRE_ASPECT)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.BLAZE_POWDER, 4),
+                            IngredientStack.of(Items.FLINT, 1),
+                            2)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FLAMING_ARROWS)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.BLAZE_POWDER, 6),
+                            IngredientStack.of(Items.FLINT, 2),
+                            2)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.BLOCK_FORTUNE)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 3),
+                            IngredientStack.of(Items.COPPER_INGOT, 6),
+                            IngredientStack.of(Items.IRON_INGOT, 3),
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.QUARTZ, 6),
+                            IngredientStack.of(Items.GOLD_INGOT, 3),
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.DIAMOND, 3),
+                            IngredientStack.of(Items.ECHO_SHARD),
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FROST_WALKER)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 3),
+                            IngredientStack.of(Items.ICE, 4),
+                            null,
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get()),
+                            IngredientStack.of(Items.BLUE_ICE, 4),
+                            null,
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FALL_PROTECTION)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 2),
+                            IngredientStack.of(Items.FEATHER, 5),
+                            null,
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 3),
+                            IngredientStack.of(Items.FEATHER, 6),
+                            null,
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 2),
+                            IngredientStack.of(Items.FEATHER, 5),
+                            IngredientStack.of(Items.PHANTOM_MEMBRANE, 2),
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.INFINITY_ARROWS)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 4),
+                            IngredientStack.of(Items.ECHO_SHARD, 2),
+                            IngredientStack.of(Items.ARROW),
+                            4)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.THORNS)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 3),
+                            IngredientStack.of(Items.CACTUS, 2),
+                            IngredientStack.of(Items.SLIME_BALL),
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 3),
+                            IngredientStack.of(Items.PRISMARINE_SHARD, 4),
+                            IngredientStack.of(Items.SLIME_BALL),
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 3),
+                            IngredientStack.of(Items.QUARTZ, 6),
+                            null,
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.KNOCKBACK)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 1),
+                            IngredientStack.of(Items.PISTON, 2),
+                            null,
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.SOUL_SPEED)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.SOUL_SAND, 2),
+                            IngredientStack.of(Items.SUGAR, 4),
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.SWIFT_SNEAK)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 3),
+                            IngredientStack.of(Items.SUGAR, 4),
+                            IngredientStack.of(Items.ECHO_SHARD),
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.MOB_LOOTING)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.ENDER_PEARL, 3),
+                            IngredientStack.of(Items.BONE, 2),
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.RABBIT_FOOT, 1),
+                            IngredientStack.of(Items.GUNPOWDER, 4),
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.WITHER_SKELETON_SKULL, 1),
+                            IngredientStack.of(Items.RABBIT_FOOT, 2),
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.RESPIRATION)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 3),
+                            IngredientStack.of(Items.GLASS_BOTTLE, 2),
+                            IngredientStack.of(Items.BAMBOO),
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 2),
+                            IngredientStack.of(Items.GLASS_BOTTLE, 2),
+                            null,
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.RIPTIDE)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.NAUTILUS_SHELL, 1),
+                            null,
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.NAUTILUS_SHELL, 2),
+                            IngredientStack.of(Items.SUGAR, 2),
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.NAUTILUS_SHELL, 1),
+                            IngredientStack.of(Items.PHANTOM_MEMBRANE, 3),
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.LOYALTY)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.COD_BUCKET),
+                            null,
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(ItemTags.FISHES, 3),
+                            null,
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.SWEEPING_EDGE)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 3),
+                            IngredientStack.of(Items.AMETHYST_SHARD, 2),
+                            null,
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.PIERCING)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 3),
+                            IngredientStack.of(Items.TORCHFLOWER),
+                            null,
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 2),
+                            IngredientStack.of(Items.FEATHER, 2),
+                            null,
+                            2)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.SILK_TOUCH)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 2),
+                            IngredientStack.of(Items.STRING, 2),
+                            IngredientStack.of(Items.HONEY_BOTTLE),
+                            2)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.PUNCH_ARROWS)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 2),
+                            IngredientStack.of(Items.PISTON, 2),
+                            IngredientStack.of(Items.REDSTONE, 1),
+                            2))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 2),
+                            IngredientStack.of(Items.PISTON, 2),
+                            null,
+                            2)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.MULTISHOT)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get()),
+                            IngredientStack.of(Items.ECHO_SHARD, 2),
+                            null,
+                            2)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FISHING_SPEED)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 2),
+                            IngredientStack.of(ItemTags.FISHES, 3),
+                            IngredientStack.of(Items.IRON_NUGGET, 1),
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 2),
+                            IngredientStack.of(ItemTags.FISHES, 2),
+                            null,
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FISHING_LUCK)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.COD),
+                            IngredientStack.of(Items.SALMON),
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.PUFFERFISH),
+                            null,
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.TROPICAL_FISH),
+                            null,
+                            3)));
         }
     }
 }

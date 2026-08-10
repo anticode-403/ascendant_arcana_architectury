@@ -1,12 +1,21 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "minecraft:sweeping",
-  "level_cost": 3,
-  "magical_scrap_cost": 2,
-  "primary_ingredient": {
-    "count": 2,
-    "ingredient": {
-      "item": "minecraft:amethyst_shard"
+  "levels": [
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:amethyst_shard"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      }
     }
-  }
+  ]
 }

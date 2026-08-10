@@ -1,18 +1,69 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "minecraft:fortune",
-  "level_cost": 3,
-  "magical_scrap_cost": 12,
-  "primary_ingredient": {
-    "count": 3,
-    "ingredient": {
-      "item": "minecraft:diamond"
+  "levels": [
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 6,
+        "ingredient": {
+          "item": "minecraft:copper_ingot"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:iron_ingot"
+        }
+      }
+    },
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 6,
+        "ingredient": {
+          "item": "minecraft:quartz"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:gold_ingot"
+        }
+      }
+    },
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:diamond"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:echo_shard"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:echo_shard"
-    }
-  }
+  ]
 }

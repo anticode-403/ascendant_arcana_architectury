@@ -1,18 +1,27 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "minecraft:flame",
-  "level_cost": 3,
-  "magical_scrap_cost": 6,
-  "primary_ingredient": {
-    "count": 12,
-    "ingredient": {
-      "item": "minecraft:blaze_powder"
+  "levels": [
+    {
+      "level_cost": 2,
+      "primary_ingredient": {
+        "count": 6,
+        "ingredient": {
+          "item": "minecraft:blaze_powder"
+        }
+      },
+      "scrap_stack": {
+        "count": 2,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:flint"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 2,
-    "ingredient": {
-      "item": "minecraft:flint"
-    }
-  }
+  ]
 }

@@ -1,12 +1,57 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "minecraft:feather_falling",
-  "level_cost": 3,
-  "magical_scrap_cost": 2,
-  "primary_ingredient": {
-    "count": 5,
-    "ingredient": {
-      "item": "minecraft:feather"
+  "levels": [
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 5,
+        "ingredient": {
+          "item": "minecraft:feather"
+        }
+      },
+      "scrap_stack": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      }
+    },
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 6,
+        "ingredient": {
+          "item": "minecraft:feather"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      }
+    },
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 5,
+        "ingredient": {
+          "item": "minecraft:feather"
+        }
+      },
+      "scrap_stack": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:phantom_membrane"
+        }
+      }
     }
-  }
+  ]
 }
