@@ -1,0 +1,8 @@
+{
+  "type": "ascendant_arcana:repair_recipe",
+  "ingredient": {
+    "item": "ascendant_arcana:restorine"
+  },
+  "addition": false,
+  "repair_amount": 0.125
+}
