@@ -33,7 +33,7 @@ public class EmiInfusionRecipe implements EmiRecipe {
     public EmiInfusionRecipe(InfusionRecipe recipe, ItemStack relic) {
         // this is incredibly cursed
         this.recipe = recipe;
-        this.id = recipe.getId().withPrefix("/").withSuffix("/" + RelicRegistry.getId(RelicItem.getRelicType(relic)).toString().toLowerCase());
+        this.id = recipe.getId().withPrefix("/").withSuffix("/" + RelicRegistry.getId(RelicItem.getRelicType(relic)).getNamespace() + "/" + RelicRegistry.getId(RelicItem.getRelicType(relic)).getPath().toLowerCase());
         this.template = EmiStack.of(BuiltInRegistries.ITEM.get(recipe.templateId));
         this.input = EmiIngredient.of(Ingredient.of(BuiltInRegistries.ITEM.stream().filter((item) -> recipe.isBaseIngredient(new ItemStack(item)) && recipe.matches(new ItemStack(item), relic) && !item.getDefaultInstance().is(AArcanaTags.Items.INFUSION_BLACKLIST)).map(ItemStack::new)));
         List<EmiStack> relics = new ArrayList<>();

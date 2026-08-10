@@ -1,5 +1,6 @@
 package me.anticode.ascendant_arcana.client.emi.recipes;
 
+import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.recipe.VanillaEmiRecipeCategories;
@@ -7,23 +8,31 @@ import dev.emi.emi.api.render.EmiTexture;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
-import me.anticode.ascendant_arcana.init.AArcanaItems;
+import me.anticode.ascendant_arcana.init.AArcanaTags;
+import me.anticode.ascendant_arcana.recipe.UniversalRepairRecipe;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class EmiRestorineRepairRecipe implements EmiRecipe {
-    private final EmiStack tool;
+public class EmiUniversalRepairRecipe implements EmiRecipe {
+    private final List<EmiStack> tools;
     private final EmiIngredient resource;
     private final ResourceLocation id;
     private final int uniq = new Random().nextInt();
+    private final float repairAmount;
+    private final boolean addition;
 
-    public EmiRestorineRepairRecipe(EmiStack tool, ResourceLocation id) {
-        this.tool = tool;
-        this.resource = EmiStack.of(AArcanaItems.RESTORINE.get());
-        this.id = id;
+    public EmiUniversalRepairRecipe(UniversalRepairRecipe repairRecipe, EmiRegistry emiRegistry) {
+        this.resource = EmiIngredient.of(repairRecipe.getIngredient());
+        this.tools = BuiltInRegistries.ITEM.stream().filter(item -> item.getMaxDamage() > 0 && !item.getDefaultInstance().is(AArcanaTags.Items.RESTORINE_BLACKLIST) && !emiRegistry.isStackDisabled(EmiStack.of(item))).map(EmiStack::of).toList();
+        this.id = repairRecipe.getId();
+        this.repairAmount = repairRecipe.getRepairAmount();
+        this.addition = repairRecipe.getAddition();
     }
 
     @Override
@@ -38,12 +47,15 @@ public class EmiRestorineRepairRecipe implements EmiRecipe {
 
     @Override
     public List<EmiIngredient> getInputs() {
-        return List.of(tool, resource);
+        List<EmiIngredient> inputs = new ArrayList<>();
+        inputs.add(resource);
+        inputs.addAll(tools);
+        return inputs;
     }
 
     @Override
     public List<EmiStack> getOutputs() {
-        return List.of(tool);
+        return tools;
     }
 
     @Override
@@ -71,15 +83,19 @@ public class EmiRestorineRepairRecipe implements EmiRecipe {
     }
 
     private EmiStack getTool(Random r, boolean repaired) {
-        ItemStack stack = tool.getItemStack().copy();
+        ItemStack stack = tools.get(r.nextInt(0, tools.size() - 1)).getItemStack().copy();
         if (stack.getMaxDamage() <= 0) {
-            return tool;
+            return EmiStack.of(stack);
         }
-        int d = r.nextInt(stack.getMaxDamage());
+        int d = r.nextInt(1, stack.getMaxDamage());
         if (repaired) {
-            d -= stack.getMaxDamage() / 4;
+            if (addition) {
+                d -= Mth.floor(repairAmount);
+            } else {
+                d -= Mth.floor(stack.getMaxDamage() * repairAmount);
+            }
             if (d <= 0) {
-                return tool;
+                return EmiStack.of(stack);
             }
         }
         stack.setDamageValue(d);

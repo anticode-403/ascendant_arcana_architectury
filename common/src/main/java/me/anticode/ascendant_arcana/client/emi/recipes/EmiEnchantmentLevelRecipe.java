@@ -36,7 +36,7 @@ public class EmiEnchantmentLevelRecipe implements EmiRecipe {
     private final EmiIngredient targets;
 
     public EmiEnchantmentLevelRecipe(EnchantmentRecipe recipe, EnchantmentRecipe.EnchantmentLevelRecipe levelRecipe, int level) {
-        this.id = recipe.getId();
+        this.id = recipe.getId().withPrefix("/").withSuffix("/" + level);
         this.level = level;
         this.output = recipe.enchantment;
         this.levelCost = levelRecipe.levelCost();
@@ -76,16 +76,12 @@ public class EmiEnchantmentLevelRecipe implements EmiRecipe {
 
     @Override
     public List<EmiStack> getOutputs() {
-        ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
-        EnchantedBookItem.addEnchantment(book, new EnchantmentInstance(output, level));
         List<EmiStack> outputs = new ArrayList<>();
-        outputs.add(EmiStack.of(book));
-        if (isFinal && level != this.output.getMaxLevel()) {
-            for (int i = 1; i <= this.output.getMaxLevel() - level; i++) {
-                ItemStack higherLevelBook = new ItemStack(Items.ENCHANTED_BOOK);
-                EnchantedBookItem.addEnchantment(higherLevelBook, new EnchantmentInstance(output, level + i));
-                outputs.add(EmiStack.of(higherLevelBook));
-            }
+        for (int i = 0; i + level <= this.output.getMaxLevel(); i++) {
+            ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
+            EnchantedBookItem.addEnchantment(book, new EnchantmentInstance(output, level + i));
+            outputs.add(EmiStack.of(book));
+            if (!isFinal) break;
         }
         outputs.addAll(targets.getEmiStacks());
         return outputs;
@@ -115,7 +111,7 @@ public class EmiEnchantmentLevelRecipe implements EmiRecipe {
         }
         widgetHolder.addSlot(secondaryDisplayStack, 36, 0);
         ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
-        enchantedBook.enchant(output, 1);
+        enchantedBook.enchant(output, level);
         widgetHolder.addTexture(EmiTexture.EMPTY_ARROW, 59, 1);
         widgetHolder.addSlot(EmiStack.of(enchantedBook, 1), 88, 0).recipeContext(this);
 
