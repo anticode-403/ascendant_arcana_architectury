@@ -39,7 +39,7 @@ public class EnchantmentRecipe implements Recipe<Inventory> {
 
     @Override
     public @NotNull ItemStack assemble(Inventory inventory, RegistryAccess registryManager) {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class EnchantmentRecipe implements Recipe<Inventory> {
 
     @Override
     public @NotNull ItemStack getResultItem(RegistryAccess registryManager) {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
