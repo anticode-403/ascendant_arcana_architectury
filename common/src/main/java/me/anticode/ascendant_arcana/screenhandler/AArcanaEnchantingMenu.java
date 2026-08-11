@@ -148,7 +148,7 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
                     ((Slot)this.slots.get(0)).setByPlayer(stackCopy);
                 }
                 else if (!this.moveItemStackTo(moveStack, 0, 1, false)) return ItemStack.EMPTY;
-            } else if (moveStack.is(AArcanaItems.ENCHANTED_SCRAP.get())) {
+            } else if (moveStack.is(AArcanaItems.ENCHANTED_SCRAP.get()) || moveStack.is(Items.LAPIS_LAZULI)) {
                 if (!this.moveItemStackTo(moveStack, 1, 2, false)) return ItemStack.EMPTY;
             } else {
                 if (!this.moveItemStackTo(moveStack, 2, 4, false)) return ItemStack.EMPTY;
@@ -296,7 +296,7 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return stack.is(AArcanaItems.ENCHANTED_SCRAP.get()) && AArcanaEnchantingMenu.this.recipe != null;
+            return AArcanaEnchantingMenu.this.recipe != null;
         }
     }
 
