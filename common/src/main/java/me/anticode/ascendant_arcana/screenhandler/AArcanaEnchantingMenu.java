@@ -134,6 +134,7 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
     @Override
     public @NotNull ItemStack quickMoveStack(Player player, int index) {
         ItemStack stackCopy = ItemStack.EMPTY;
+
         Slot slot = this.slots.get(index);
         if (slot.hasItem()) {
             ItemStack moveStack = slot.getItem();
@@ -141,7 +142,12 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
             if (index <= 3) {
                 if (!this.moveItemStackTo(moveStack, 4, 40, true)) return ItemStack.EMPTY;
             } else if (moveStack.isEnchantable() || moveStack.isEnchanted() || moveStack.is(Items.BOOK) || moveStack.is(Items.ENCHANTED_BOOK)) {
-                if (!this.moveItemStackTo(moveStack, 0, 1, false)) return ItemStack.EMPTY;
+                if (moveStack.is(Items.BOOK)) {
+                    stackCopy = moveStack.copyWithCount(1);
+                    moveStack.shrink(1);
+                    ((Slot)this.slots.get(0)).setByPlayer(stackCopy);
+                }
+                else if (!this.moveItemStackTo(moveStack, 0, 1, false)) return ItemStack.EMPTY;
             } else if (moveStack.is(AArcanaItems.ENCHANTED_SCRAP.get())) {
                 if (!this.moveItemStackTo(moveStack, 1, 2, false)) return ItemStack.EMPTY;
             } else {
