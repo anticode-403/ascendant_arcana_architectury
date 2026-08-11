@@ -4,6 +4,13 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.enchantment.*;
+import me.anticode.ascendant_arcana.enchantment.armor.*;
+import me.anticode.ascendant_arcana.enchantment.bow.*;
+import me.anticode.ascendant_arcana.enchantment.elytra.*;
+import me.anticode.ascendant_arcana.enchantment.shield.*;
+import me.anticode.ascendant_arcana.enchantment.sword.*;
+import me.anticode.ascendant_arcana.enchantment.tool.*;
+import me.anticode.ascendant_arcana.enchantment.trident.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.enchantment.Enchantment;
 
