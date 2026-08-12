@@ -407,6 +407,7 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
             }
 
             projectile.level().addFreshEntity(areaEffectCloud);
+            projectile.discard();
         }
     }
 }
