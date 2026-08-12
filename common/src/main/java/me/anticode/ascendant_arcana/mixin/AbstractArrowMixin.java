@@ -9,6 +9,7 @@ import me.anticode.ascendant_arcana.api.EnchantedArrow;
 import me.anticode.ascendant_arcana.api.EnchantedTrident;
 import me.anticode.ascendant_arcana.api.PotionArrow;
 import me.anticode.ascendant_arcana.entity.SingularityEntity;
+import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import net.minecraft.core.BlockPos;
@@ -30,6 +31,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.*;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -102,6 +104,9 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
     @Unique
     private int ascendant_arcana$miasmaLevel = 0;
 
+    @Unique
+    private int ascendant_arcana$guidingLevel = 0;
+
     @Override
     public void ascendant_arcana$setArchersGambitLevel(int value) {
         this.ascendant_arcana$archersGambitLevel = value;
@@ -132,6 +137,11 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         this.ascendant_arcana$miasmaLevel = value;
     }
 
+    @Override
+    public void ascendant_arcana$setGuidingLevel(int value) {
+        this.ascendant_arcana$guidingLevel = value;
+    }
+
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     private void writeCustomAttributes(CompoundTag nbt, CallbackInfo ci) {
         nbt.putInt("archersGambitLevel", ascendant_arcana$archersGambitLevel);
@@ -139,6 +149,7 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         nbt.putInt("rejuvenatingShotLevel", ascendant_arcana$rejuvenatingShotLevel);
         nbt.putInt("ricochetLevel", ascendant_arcana$ricochetLevel);
         nbt.putInt("miasmaLevel", ascendant_arcana$miasmaLevel);
+        nbt.putInt("guidingLevel", ascendant_arcana$guidingLevel);
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
@@ -148,12 +159,22 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         this.ascendant_arcana$rejuvenatingShotLevel = nbt.getInt("rejuvenatingShotLevel");
         this.ascendant_arcana$ricochetLevel = nbt.getInt("ricochetLevel");
         this.ascendant_arcana$miasmaLevel = nbt.getInt("miasmaLevel");
+        this.ascendant_arcana$guidingLevel = nbt.getInt("guidingLevel");
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void willRicochet(CallbackInfo ci) {
         Projectile projectile = (Projectile)((Object)this);
         if (projectile.level().isClientSide()) return;
+
+        if (!inGround && ascendant_arcana$guidingLevel > 0 && projectile.getOwner() != null) {
+            if (projectile.getOwner() instanceof LivingEntity livingEntity) {
+                if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.GUIDING.get(), livingEntity.getMainHandItem()) != 0) {
+                    projectile.setDeltaMovement(projectile.getOwner().getLookAngle().scale(projectile.getDeltaMovement().length()));
+                    projectile.hurtMarked = true;
+                }
+            }
+        }
 
         Vec3 vel = projectile.getDeltaMovement();
         Vec3 pos = projectile.position();
