@@ -31,6 +31,7 @@ import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -200,6 +201,10 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add(statusEffect.getDescriptionId() + ".description", description);
         }
 
+        private void registerSoundEvent(TranslationBuilder translationBuilder, SoundEvent soundEvent, String description) {
+            translationBuilder.add("sound." + soundEvent.getLocation().toLanguageKey(), description);
+        }
+
         public <T> void registerTag(TranslationBuilder translationBuilder, TagKey<T> tag, String description) {
             translationBuilder.add("tag." + tag.location().toLanguageKey(), description);
         }
@@ -273,6 +278,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             // Attributes
             translationBuilder.add(AArcanaAttributes.PROTECTION.get(), "Protection");
             translationBuilder.add(AArcanaAttributes.DAMAGE_TAKEN.get(), "Damage Taken");
+            translationBuilder.add(AArcanaAttributes.DRAW_SPEED.get(), "Draw Speed");
             // Enchantments
             registerEnchantment(translationBuilder, AArcanaEnchantments.AMBUSH.get(), "Ambush", "When you hit a mob after throwing this Trident, teleport to it.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.ALCHEMISTS_HEART.get(), "Alchemist's Heart", "Increases the amplifier of all beneficial status effects.");
@@ -345,6 +351,18 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add("gui.emi.ascendant_arcana.enchanting_power", "Required Enchanting Table power");
             translationBuilder.add("gui.emi.ascendant_arcana.level_cost", "XP Level Cost");
             translationBuilder.add("gui.emi.ascendant_arcana.capacity_cost", "Required Enchantment Capacity");
+            // Entities
+            translationBuilder.add(AArcanaEntities.BLAZEBOLT_ENTITY.get(), "Blazebolt");
+            translationBuilder.add(AArcanaEntities.SINGULARITY_ENTITY.get(), "Singularity");
+            // Sounds
+            registerSoundEvent(translationBuilder, AArcanaSoundEvents.SHATTERSHOT.get(), "Shattershot Crossbow fires");
+            registerSoundEvent(translationBuilder, AArcanaSoundEvents.SHIELD_BASH_START.get(), "Shield bashes");
+            registerSoundEvent(translationBuilder, AArcanaSoundEvents.SHIELD_BASH_HIT.get(), "Shield hits something");
+            registerSoundEvent(translationBuilder, AArcanaSoundEvents.SINGULARITY_SUMMON.get(), "Singularity summoned");
+            registerSoundEvent(translationBuilder, AArcanaSoundEvents.SINGULARITY.get(), "Singularity pulls");
+            registerSoundEvent(translationBuilder, AArcanaSoundEvents.BLAZEBOLT_SHOT.get(), "Blazebolt Crossbow fires");
+            // Other
+            translationBuilder.add("category.ascendant_arcana", "Ascendant Arcana");
         }
     }
 
