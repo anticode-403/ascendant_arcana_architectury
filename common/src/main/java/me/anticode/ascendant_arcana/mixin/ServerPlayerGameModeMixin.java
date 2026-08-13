@@ -125,7 +125,11 @@ public abstract class ServerPlayerGameModeMixin {
         int id = blockPositions.indexOf(blockPos);
         // Realistically there exists a universe in which this ID is already reserved by another player which could technically cause
         // minor visual issues but seeing as this is purely visual and not a gameplay effect
-        return Integer.parseInt("69" + playerId + playerId + id);
+        try {
+            return Integer.parseInt("69" + playerId + playerId + id);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     @Unique
