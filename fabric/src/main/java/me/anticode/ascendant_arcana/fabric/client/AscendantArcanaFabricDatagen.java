@@ -293,6 +293,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerEnchantment(translationBuilder, AArcanaEnchantments.DEBILITATING_CHAIN.get(), "Debilitating Chain", "Slaying a mob transfers all status effects to the nearest enemy.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.DEFLECT.get(), "Deflect", "Blocking a projectile with your shield will shoot it back.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.EVOKERS_WRATH.get(), "Evoker's Wrath", "Summons an Evoker Fang when the arrow lands.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.EXCAVATING.get(), "Excavating", "Mine multiple blocks in an area at once.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.GUIDING.get(), "Guiding", "While holding this bow, fired arrows follow the direction you're looking.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.HELLWALKER.get(), "Hellwalker", "Crystalizes nearby lava so it can be walked on.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.HOBBLING_SHOT.get(), "Hobbling Shot", "Reduces movement speed and jump height, stacking 5 times.");
@@ -969,6 +970,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(Items.EMERALD, 4),
                             IngredientStack.of(Items.BONE, 4),
                             4)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.EXCAVATING.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.AMETHYST_SHARD, 9),
+                            IngredientStack.of(Items.COPPER_INGOT, 3),
+                            3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.GUIDING.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
