@@ -74,19 +74,25 @@ public abstract class ServerPlayerGameModeMixin {
         }
     }
 
+    @Inject(method = "tick", at = @At(value = "HEAD"))
+    private void destroyBlockEarly(CallbackInfo ci) {
+        if (ascendant_arcana$excavatingBlockProgresses.isEmpty()) return;
+        for (BlockPos blockPos : ascendant_arcana$excavatingBlockProgresses.keySet()) {
+            if (ascendant_arcana$excavatingBlockProgresses.get(blockPos) >= 1) {
+                destroyBlock(blockPos);
+            }
+        }
+    }
+
     @Inject(method = "incrementDestroyProgress", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getDestroyProgress(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)F"))
     private void incrementExcavatingDestroyProgress(BlockState blockState, BlockPos blockPos, int i, CallbackInfoReturnable<Float> cir) {
         List<BlockPos> excavatingTargets = ascendant_arcana$getExtractingBlockPositions(blockPos, ascendant_arcana$excavatingDirection);
         if (excavatingTargets == null) return;
         for (BlockPos excavatingTarget : excavatingTargets) {
             BlockState targetBlockState = level.getBlockState(excavatingTarget);
-            float f = targetBlockState.getDestroyProgress(this.player, this.player.level(), excavatingTarget) * (float)(gameTicks - i + 1);
+            float f = targetBlockState.getDestroyProgress(this.player, this.player.level(), excavatingTarget) * (float)(gameTicks - i);
             ascendant_arcana$excavatingBlockProgresses.put(excavatingTarget, f);
             int k = (int)(f * 10.0F);
-            if (f >= 1F) {
-                destroyAndAck(excavatingTarget, i, "excavating destroyed");
-                ascendant_arcana$excavatingBlockProgresses.remove(excavatingTarget);
-            }
             level.destroyBlockProgress(ascendant_arcana$getDestroyProgressId(excavatingTargets, excavatingTarget, player.getId()), excavatingTarget, k);
         }
     }
