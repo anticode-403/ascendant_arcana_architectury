@@ -72,7 +72,7 @@ public abstract class ServerPlayerGameModeMixin {
             float f = blockState.getDestroyProgress(this.player, this.player.level(), excavatingTarget) * (float)(gameTicks - i + 1);
             ascendant_arcana$excavatingBlockProgresses.put(excavatingTarget, f);
             int k = (int)(f * 10.0F);
-            level.destroyBlockProgress(this.player.getId(), excavatingTarget, k);
+            level.destroyBlockProgress(ascendant_arcana$getDestroyProgressId(excavatingTargets, excavatingTarget, player.getId()), excavatingTarget, k);
         }
     }
 
@@ -113,13 +113,20 @@ public abstract class ServerPlayerGameModeMixin {
             if (blockState.isAir()) continue;
             float f = blockState.getDestroyProgress(this.player, this.player.level(), excavatingTarget);
             if (action != ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK && action != ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK) {
-                level.destroyBlockProgress(this.player.getId(), excavatingTarget, (int) (f * 10F));
+                level.destroyBlockProgress(ascendant_arcana$getDestroyProgressId(excavatingTargets, excavatingTarget, player.getId()), excavatingTarget, (int) (f * 10F));
             } else {
-                level.destroyBlockProgress(this.player.getId(), excavatingTarget, -1);
+                level.destroyBlockProgress(ascendant_arcana$getDestroyProgressId(excavatingTargets, excavatingTarget, player.getId()), excavatingTarget, -1);
             }
         }
     }
 
+    @Unique
+    private int ascendant_arcana$getDestroyProgressId(List<BlockPos> blockPositions, BlockPos blockPos, int playerId) {
+        int id = blockPositions.indexOf(blockPos);
+        // Realistically there exists a universe in which this ID is already reserved by another player which could technically cause
+        // minor visual issues but seeing as this is purely visual and not a gameplay effect
+        return Integer.parseInt("69" + playerId + playerId + id);
+    }
 
     @Unique
     private List<BlockPos> ascendant_arcana$getExtractingBlockPositions(BlockPos originalPos, Direction direction) {
