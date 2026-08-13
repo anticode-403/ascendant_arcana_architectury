@@ -32,6 +32,7 @@ public class AArcanaEnchantments {
     public static RegistrySupplier<Enchantment> HELLWALKER = register(new HellWalker(), "hellwalker");
     public static RegistrySupplier<Enchantment> HOBBLING_SHOT = register(new HobblingShot(), "hobbling_shot");
     public static RegistrySupplier<Enchantment> LIFETIDE = register(new Lifetide(), "lifetide");
+    public static RegistrySupplier<Enchantment> SLAYING_TEMPO = register(new Meganeura(), "slaying_tempo");
     public static RegistrySupplier<Enchantment> MIASMA = register(new Miasma(), "miasma");
     public static RegistrySupplier<Enchantment> PINCUSHION = register(new Pincushion(), "pincushion");
     public static RegistrySupplier<Enchantment> PROTECTIVE_ECHO = register(new ProtectiveEcho(), "protective_echo");

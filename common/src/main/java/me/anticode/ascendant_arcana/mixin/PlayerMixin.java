@@ -10,7 +10,6 @@ import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.networking.ClientboundShieldBashPacket;
 import me.anticode.ascendant_arcana.networking.ServerboundShieldBashPacket;
-import me.anticode.ascendant_arcana.relics.RelicEntry;
 import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -19,6 +18,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Abilities;
@@ -27,6 +27,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
@@ -38,11 +39,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Map;
 import java.util.function.Predicate;
 
 @Mixin(Player.class)
-public class PlayerMixin implements AArcanaPlayer {
+public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer {
     @Shadow
     @Final
     private Inventory inventory;
@@ -50,6 +50,9 @@ public class PlayerMixin implements AArcanaPlayer {
     @Shadow
     @Final
     private Abilities abilities;
+
+    @Shadow
+    public abstract float getCurrentItemAttackStrengthDelay();
 
     @Unique
     private int shieldBashTicks = 0;
@@ -59,6 +62,10 @@ public class PlayerMixin implements AArcanaPlayer {
 
     @Unique
     private Vec3 shieldBashDirection = Vec3.ZERO;
+
+    protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
+        super(entityType, level);
+    }
 
     @ModifyReturnValue(method = "getXpNeededForNextLevel", at = @At("RETURN"))
     private int xp(int original) {
@@ -83,6 +90,20 @@ public class PlayerMixin implements AArcanaPlayer {
             }
         }
         return original;
+    }
+
+    @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getAttackStrengthScale(F)F"))
+    private void giveMeganeuraEffect(Entity entity, CallbackInfo ci) {
+        Player player = (Player)(Object)this;
+        if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SLAYING_TEMPO.get(), player) != 0) {
+            float attackStrength = ((float)attackStrengthTicker + 0.5F) / getCurrentItemAttackStrengthDelay();
+            if (attackStrength < 1.1F && attackStrength > 1F) {
+                int amplifier;
+                if (player.hasEffect(AArcanaMobEffects.MEGANEURA.get())) amplifier = player.getEffect(AArcanaMobEffects.MEGANEURA.get()).getAmplifier() + 1;
+                else amplifier = 0;
+                player.addEffect(new MobEffectInstance(AArcanaMobEffects.MEGANEURA.get(), 100, amplifier, false, false, true));
+            }
+        }
     }
 
     @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"), cancellable = true)

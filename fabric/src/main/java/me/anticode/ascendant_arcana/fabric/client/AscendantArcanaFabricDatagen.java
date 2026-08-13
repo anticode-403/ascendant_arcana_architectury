@@ -309,6 +309,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerEnchantment(translationBuilder, AArcanaEnchantments.SALVO.get(), "Salvo", "Crouch to load multiple arrows at once, firing them in a wide blast. Arrows deal reduced base damage.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SHATTERSHOT.get(), "Shattershot", "Changes ammo type to Amethyst Shards, firing a short-ranged blast of shrapnel that knocks enemies back and applies Sundered.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SINGULARITY.get(), "Singularity", "Summons a singularity on hit, dealing damage and pulling in nearby enemies after a slight delay.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.SLAYING_TEMPO.get(), "Slaying Tempo", "Repeated perfect hits makes the next slain enemy explode.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SMELTING.get(), "Smelting", "Smelts blocks mined.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SONIC_BLAST.get(), "Sonic Blast", "Holding up the shield charges a powerful sonic blast that ignores most forms of protection.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SOUL_BURST.get(), "Soul Burst", "Slain enemies deal damage to nearby entities based on their maximum health.");
@@ -344,6 +345,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerStatusEffect(translationBuilder, AArcanaMobEffects.HOBBLED.get(), "Hobbled", "Slightly reduces movement speed and jump height.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.SUNDERED.get(), "Sundered", "Significantly reduces armor and armor toughness.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.CROSS_COUNTER.get(), "Cross Counter", "Increases attack damage for the next attack.");
+            registerStatusEffect(translationBuilder, AArcanaMobEffects.MEGANEURA.get(), "Meganeura", "Next slain enemy explodes.");
             // Tags
             registerTag(translationBuilder, AArcanaTags.Items.HEARTS, "Warden Hearts");
             registerTag(translationBuilder, AArcanaTags.Items.RELICS, "Relics");
@@ -1102,6 +1104,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(Items.ENDER_PEARL, 2),
                             IngredientStack.of(Items.ECHO_SHARD, 2),
                             4)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SLAYING_TEMPO.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 6),
+                            IngredientStack.of(Items.GUNPOWDER, 6),
+                            IngredientStack.of(Items.MAGMA_CREAM, 3),
+                            6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SMELTING.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),

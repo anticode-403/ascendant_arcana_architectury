@@ -30,6 +30,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -243,6 +244,12 @@ public abstract class LivingEntityMixin {
     private void onDeathEnchantments(DamageSource damageSource, CallbackInfo ci) {
         if (damageSource.getEntity() instanceof LivingEntity attackingEntity) {
             LivingEntity livingEntity = (LivingEntity) (Object) this;
+
+            if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SLAYING_TEMPO.get(), attackingEntity) != 0) {
+                int meganeuraLevel = attackingEntity.getEffect(AArcanaMobEffects.MEGANEURA.get()).getAmplifier() + 1;
+                livingEntity.level().explode(attackingEntity, livingEntity.getX(), (livingEntity.getY() + livingEntity.getEyeY()) / 2, livingEntity.getZ(), 1F + (0.4F * meganeuraLevel), Level.ExplosionInteraction.NONE);
+                attackingEntity.removeEffect(AArcanaMobEffects.MEGANEURA.get());
+            }
 
             int soulBurstLevel = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SOUL_BURST.get(), attackingEntity);
             if (soulBurstLevel > 0) {
