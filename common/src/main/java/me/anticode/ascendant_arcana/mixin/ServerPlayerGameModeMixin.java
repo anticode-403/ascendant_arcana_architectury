@@ -47,18 +47,28 @@ public abstract class ServerPlayerGameModeMixin {
 
     @Shadow
     private int destroyProgressStart;
+    @Shadow
+    private boolean isDestroyingBlock;
+    @Shadow
+    private boolean hasDelayedDestroy;
     @Unique
     HashMap<BlockPos, Float> ascendant_arcana$excavatingBlockProgresses = new HashMap<>();
 
     @Unique
     private Direction ascendant_arcana$excavatingDirection = null;
 
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void cleanupBlockProgresses(CallbackInfo ci) {
+        if (!isDestroyingBlock && !hasDelayedDestroy) {
+            ascendant_arcana$excavatingBlockProgresses.clear();
+        }
+    }
+
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;destroyBlock(Lnet/minecraft/core/BlockPos;)Z"))
     private void destroyBlock(CallbackInfo ci) {
-        List<BlockPos> excavatingTargets = ascendant_arcana$getExtractingBlockPositions(delayedDestroyPos, ascendant_arcana$excavatingDirection);
-        if (excavatingTargets == null) return;
-        for (BlockPos blockPos : excavatingTargets) {
-            if (ascendant_arcana$excavatingBlockProgresses.containsKey(blockPos) && ascendant_arcana$excavatingBlockProgresses.get(blockPos) >= 1) {
+        if (ascendant_arcana$excavatingBlockProgresses.isEmpty()) return;
+        for (BlockPos blockPos : ascendant_arcana$excavatingBlockProgresses.keySet()) {
+            if (ascendant_arcana$excavatingBlockProgresses.get(blockPos) >= 1) {
                 destroyBlock(blockPos);
             }
         }
@@ -69,9 +79,14 @@ public abstract class ServerPlayerGameModeMixin {
         List<BlockPos> excavatingTargets = ascendant_arcana$getExtractingBlockPositions(blockPos, ascendant_arcana$excavatingDirection);
         if (excavatingTargets == null) return;
         for (BlockPos excavatingTarget : excavatingTargets) {
-            float f = blockState.getDestroyProgress(this.player, this.player.level(), excavatingTarget) * (float)(gameTicks - i + 1);
+            BlockState targetBlockState = level.getBlockState(excavatingTarget);
+            float f = targetBlockState.getDestroyProgress(this.player, this.player.level(), excavatingTarget) * (float)(gameTicks - i + 1);
             ascendant_arcana$excavatingBlockProgresses.put(excavatingTarget, f);
             int k = (int)(f * 10.0F);
+            if (f >= 1F) {
+                destroyAndAck(excavatingTarget, i, "excavating destroyed");
+                ascendant_arcana$excavatingBlockProgresses.remove(excavatingTarget);
+            }
             level.destroyBlockProgress(ascendant_arcana$getDestroyProgressId(excavatingTargets, excavatingTarget, player.getId()), excavatingTarget, k);
         }
     }
@@ -98,8 +113,10 @@ public abstract class ServerPlayerGameModeMixin {
             ascendant_arcana$excavatingBlockProgresses.put(excavatingTarget, f);
             if (f >= 1F) {
                 destroyAndAck(excavatingTarget, j, "excavating insta mine");
+                ascendant_arcana$excavatingBlockProgresses.remove(excavatingTarget);
             } else if (action == ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK && g >= 0.7F) {
                 destroyAndAck(excavatingTarget, j, "excavating destroyed");
+                ascendant_arcana$excavatingBlockProgresses.remove(excavatingTarget);
             }
         }
     }
@@ -111,8 +128,14 @@ public abstract class ServerPlayerGameModeMixin {
         for (BlockPos excavatingTarget : excavatingTargets) {
             BlockState blockState = level.getBlockState(excavatingTarget);
             if (blockState.isAir()) continue;
+            blockState.attack(this.level, excavatingTarget, this.player);
             float f = blockState.getDestroyProgress(this.player, this.player.level(), excavatingTarget);
             if (action != ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK && action != ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK) {
+                ascendant_arcana$excavatingBlockProgresses.put(excavatingTarget, f);
+                if (f >= 1F) {
+                    destroyAndAck(excavatingTarget, j, "excavating insta mine");
+                    ascendant_arcana$excavatingBlockProgresses.remove(excavatingTarget);
+                }
                 level.destroyBlockProgress(ascendant_arcana$getDestroyProgressId(excavatingTargets, excavatingTarget, player.getId()), excavatingTarget, (int) (f * 10F));
             } else {
                 level.destroyBlockProgress(ascendant_arcana$getDestroyProgressId(excavatingTargets, excavatingTarget, player.getId()), excavatingTarget, -1);
