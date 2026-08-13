@@ -37,6 +37,7 @@
     "MappedRegistryMixin",
     "PlayerMixin",
     "ProjectileMixin",
+    "ServerPlayerGameModeMixin",
     "SmallFireballMixin",
     "TagEntryMixin",
     "ThrownTridentMixin",
