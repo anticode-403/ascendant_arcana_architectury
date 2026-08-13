@@ -312,6 +312,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerEnchantment(translationBuilder, AArcanaEnchantments.SMELTING.get(), "Smelting", "Smelts blocks mined.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SONIC_BLAST.get(), "Sonic Blast", "Holding up the shield charges a powerful sonic blast that ignores most forms of protection.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SOUL_BURST.get(), "Soul Burst", "Slain enemies deal damage to nearby entities based on their maximum health.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.STOPPING_POWER.get(), "Stopping Power", "Deal increased damage to enemies with low health.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.STORM_HEART.get(), "Heart of the Storm", "Increases the damage dealt by all lightning attacks.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.STRAFE.get(), "Strafe", "Allows you to sprint in any direction and reduces movement speed penalties while using an item.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SUNDERING.get(), "Sundering", "On hit, sticks into the target and deals damage over time, reducing their armor.");
@@ -1118,6 +1119,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 1),
                             IngredientStack.of(Items.SCULK_CATALYST, 1),
                             IngredientStack.of(Items.GUNPOWDER, 4),
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.STOPPING_POWER.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 6),
+                            IngredientStack.of(Items.TORCHFLOWER),
+                            null,
                             3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.STORM_HEART.get())
                     .level(new  EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(

@@ -83,6 +83,12 @@ public abstract class LivingEntityMixin {
     @Shadow
     public abstract LivingEntity getLastAttacker();
 
+    @Shadow
+    public abstract float getMaxHealth();
+
+    @Shadow
+    public abstract float getHealth();
+
     @Unique
     private Map<AArcanaEnchantments.IndirectHeartDamageTypes, Integer> heartAttackers = new EnumMap<>(AArcanaEnchantments.IndirectHeartDamageTypes.class);
 
@@ -196,6 +202,8 @@ public abstract class LivingEntityMixin {
                 damage *= 1.2F;
             if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PINCUSHION.get(), attacker) > 0) {
                 damage *= 0.9F + (0.1F * ((LivingEntity)(Object)this).getArrowCount());
+            } else if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.STOPPING_POWER.get(), attacker) > 0 && getHealth() / getMaxHealth() <= 0.3) {
+                damage *= 1.3F;
             }
         }
 
