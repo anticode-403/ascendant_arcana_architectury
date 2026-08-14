@@ -328,7 +328,7 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
         if (appliedEnchantments.containsKey(recipe.enchantment)) {
             incompatible = false;
             int appliedLevel = appliedEnchantments.get(recipe.enchantment);
-            if (recipe.getLevels().size() < appliedLevel) enchantmentLevelRecipe = recipe.getLevels().get(appliedLevel);
+            if (recipe.getLevels().size() > appliedLevel) enchantmentLevelRecipe = recipe.getLevels().get(appliedLevel);
             else enchantmentLevelRecipe = recipe.getLevels().get(recipe.getLevels().size() - 1);
         } else enchantmentLevelRecipe = recipe.getLevels().get(0);
         EnchantmentTile tile = new EnchantmentTile(recipe, enchantmentLevelRecipe, buttonX, buttonY, i, locked, incompatible, unlocked && AscendantArcana.config.books_remove_scrap_cost);
