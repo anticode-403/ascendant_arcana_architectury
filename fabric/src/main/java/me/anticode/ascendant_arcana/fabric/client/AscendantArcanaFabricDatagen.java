@@ -302,6 +302,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerEnchantment(translationBuilder, AArcanaEnchantments.MIASMA.get(), "Miasma", "Tipped Arrows create a temporary effect cloud where they land.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.NETHER_HEART.get(), "Heart of the Nether", "Increases damage dealt by all fire attacks.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.PINCUSHION.get(), "Pincushion", "Reduced base damage, increases damage dealt based on the number of arrows stuck in the target.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.PREPARED_SHOT.get(), "Prepared Shot", "Holding the bow at full draw for a short delay gives increased damage and makes slain enemies explode.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.PROTECTIVE_ECHO.get(), "Protective Echo", "Instances of high damage are spread out over time.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.REJUVENATING_SHOT.get(), "Rejuvenating Shot", "Instead of doing damage, arrows heal for half the damage they would have done.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.REPEATING.get(), "Repeating", "Crouch to load multiple arrows at once, allowing you to rapidly fire them in sequence later.");
@@ -347,6 +348,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerStatusEffect(translationBuilder, AArcanaMobEffects.ECHOING_DAMAGE.get(), "Echoing Damage", "Deals damage every second based on amplification.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.HOBBLED.get(), "Hobbled", "Slightly reduces movement speed and jump height.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.MEGANEURA.get(), "Meganeura", "Next slain enemy explodes.");
+            registerStatusEffect(translationBuilder, AArcanaMobEffects.PREPARED.get(), "Prepared", "Increased arrow damage, the next arrow explodes slain enemies.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.SUNDERED.get(), "Sundered", "Significantly reduces armor and armor toughness.");
             // Tags
             registerTag(translationBuilder, AArcanaTags.Items.HEARTS, "Warden Hearts");
@@ -1049,6 +1051,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(Items.CACTUS, 4),
                             IngredientStack.of(Items.TORCHFLOWER_SEEDS, 2),
                             4)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.PREPARED_SHOT.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.GLOWSTONE_DUST, 3),
+                            IngredientStack.of(Items.GUNPOWDER, 3),
+                            3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.PROTECTIVE_ECHO.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 9),

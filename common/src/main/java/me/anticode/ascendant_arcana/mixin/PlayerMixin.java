@@ -239,6 +239,9 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
                 }
             }
         }
+        if (hasEffect(AArcanaMobEffects.PREPARED.get()) && (!isUsingItem() || EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.PREPARED_SHOT.get(), getUseItem()) == 0)) {
+            removeEffect(AArcanaMobEffects.PREPARED.get());
+        }
     }
 
     @Override

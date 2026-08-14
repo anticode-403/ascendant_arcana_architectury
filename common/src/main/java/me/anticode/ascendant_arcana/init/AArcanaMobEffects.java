@@ -18,6 +18,7 @@ public class AArcanaMobEffects {
     public static RegistrySupplier<MobEffect> ECHOING_DAMAGE = register("echoing_damage", EchoingDamageEffect::new);
     public static RegistrySupplier<MobEffect> HOBBLED = register("hobbled", HobbledEffect::new);
     public static RegistrySupplier<MobEffect> MEGANEURA = register("meganeura", MeganeuraEffect::new);
+    public static RegistrySupplier<MobEffect> PREPARED = register("prepared", PreparedEffect::new);
     public static RegistrySupplier<MobEffect> SUNDERED = register("sundered", SunderedEffect::new);
 
     public static RegistrySupplier<MobEffect> register(String name, Supplier<MobEffect> effect) {

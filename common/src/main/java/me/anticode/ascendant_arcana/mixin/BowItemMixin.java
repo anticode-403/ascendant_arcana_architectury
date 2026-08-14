@@ -3,7 +3,9 @@ package me.anticode.ascendant_arcana.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import me.anticode.ascendant_arcana.api.EnchantedArrow;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
+import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.relics.RelicTypes;
@@ -31,6 +33,11 @@ public class BowItemMixin {
         ItemHelper.applyPpeRelicsAndEnchantments(projectile, stack);
         int piercing = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, stack);
         projectile.setPierceLevel((byte) piercing);
+
+        if (user.hasEffect(AArcanaMobEffects.PREPARED.get())) {
+            int prepared = user.getEffect(AArcanaMobEffects.PREPARED.get()).getAmplifier();
+            ((EnchantedArrow) projectile).ascendant_arcana$setPreparedLevel(prepared);
+        }
 
         RandomSource random = RandomSource.createNewThreadLocalInstance();
         int inaccuracy = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.INACCURACY_CURSE.get(), stack);

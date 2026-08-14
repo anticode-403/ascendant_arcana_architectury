@@ -36,6 +36,7 @@ public class AArcanaEnchantments {
     public static RegistrySupplier<Enchantment> SLAYING_TEMPO = register(new Meganeura(), "slaying_tempo");
     public static RegistrySupplier<Enchantment> MIASMA = register(new Miasma(), "miasma");
     public static RegistrySupplier<Enchantment> PINCUSHION = register(new Pincushion(), "pincushion");
+    public static RegistrySupplier<Enchantment> PREPARED_SHOT = register(new PreparedShot(), "prepared_shot");
     public static RegistrySupplier<Enchantment> PROTECTIVE_ECHO = register(new ProtectiveEcho(), "protective_echo");
     public static RegistrySupplier<Enchantment> REJUVENATING_SHOT = register(new RejuvenatingShot(), "rejuvenating_shot");
     public static RegistrySupplier<Enchantment> REPEATING = register(new Repeating(), "repeating");

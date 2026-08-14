@@ -14,4 +14,6 @@ public interface EnchantedArrow {
     void ascendant_arcana$setMiasmaLevel(int miasmaLevel);
 
     void ascendant_arcana$setGuidingLevel(int guidingLevel);
+
+    void ascendant_arcana$setPreparedLevel(int preparedLevel);
 }

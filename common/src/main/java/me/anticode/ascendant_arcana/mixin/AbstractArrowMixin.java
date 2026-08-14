@@ -107,6 +107,9 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
     @Unique
     private int ascendant_arcana$guidingLevel = 0;
 
+    @Unique
+    private int ascendant_arcana$preparedLevel = 0;
+
     @Override
     public void ascendant_arcana$setArchersGambitLevel(int value) {
         this.ascendant_arcana$archersGambitLevel = value;
@@ -142,6 +145,10 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         this.ascendant_arcana$guidingLevel = value;
     }
 
+    public void ascendant_arcana$setPreparedLevel(int value) {
+        this.ascendant_arcana$preparedLevel = value;
+    }
+
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     private void writeCustomAttributes(CompoundTag nbt, CallbackInfo ci) {
         nbt.putInt("archersGambitLevel", ascendant_arcana$archersGambitLevel);
@@ -150,6 +157,7 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         nbt.putInt("ricochetLevel", ascendant_arcana$ricochetLevel);
         nbt.putInt("miasmaLevel", ascendant_arcana$miasmaLevel);
         nbt.putInt("guidingLevel", ascendant_arcana$guidingLevel);
+        nbt.putInt("preparedLevel", ascendant_arcana$preparedLevel);
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
@@ -160,6 +168,7 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         this.ascendant_arcana$ricochetLevel = nbt.getInt("ricochetLevel");
         this.ascendant_arcana$miasmaLevel = nbt.getInt("miasmaLevel");
         this.ascendant_arcana$guidingLevel = nbt.getInt("guidingLevel");
+        this.ascendant_arcana$preparedLevel = nbt.getInt("preparedLevel");
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -256,7 +265,16 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         else if (ascendant_arcana$ricochetLevel >= 1 && ascendant_arcana$ricochetBounces > 0) {
             amount += ascendant_arcana$ricochetBounces * 2;
         }
-        return original.call(instance, damageSource, amount);
+        if (ascendant_arcana$preparedLevel >= 1) {
+            amount += ascendant_arcana$preparedLevel * 4;
+        }
+        boolean didHurt = original.call(instance, damageSource, amount);
+        if (didHurt && instance instanceof LivingEntity livingEntity) {
+            if (livingEntity.isDeadOrDying()) {
+                livingEntity.level().explode(((AbstractArrow)(Object)this).getOwner(), livingEntity.getX(), livingEntity.getRandomY(), livingEntity.getZ(), 1.4F + (ascendant_arcana$preparedLevel * 0.1F), Level.ExplosionInteraction.NONE);
+            }
+        }
+        return didHurt;
     }
 
     @Inject(method = "onHitEntity", at = @At("TAIL"))
