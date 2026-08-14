@@ -95,13 +95,30 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
     @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getAttackStrengthScale(F)F"))
     private void giveMeganeuraEffect(Entity entity, CallbackInfo ci) {
         Player player = (Player)(Object)this;
-        if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SLAYING_TEMPO.get(), player) != 0) {
+        int slayingTempoLevel = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SLAYING_TEMPO.get(), player);
+        int allegroLevel = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.ALLEGRO.get(), player);
+        if (slayingTempoLevel != 0 || allegroLevel != 0) {
             float attackStrength = ((float)attackStrengthTicker + 0.5F) / getCurrentItemAttackStrengthDelay();
-            if (attackStrength < 1.1F && attackStrength > 1F) {
-                int amplifier;
-                if (player.hasEffect(AArcanaMobEffects.MEGANEURA.get())) amplifier = player.getEffect(AArcanaMobEffects.MEGANEURA.get()).getAmplifier() + 1;
-                else amplifier = 0;
-                player.addEffect(new MobEffectInstance(AArcanaMobEffects.MEGANEURA.get(), 100, amplifier, false, false, true));
+            float perfectWindow;
+            if (allegroLevel != 0 && slayingTempoLevel != 0) {
+                if (player.hasEffect(AArcanaMobEffects.ALLEGRO.get())) perfectWindow = 1.2F + ((player.getEffect(AArcanaMobEffects.ALLEGRO.get()).getAmplifier() + 1F) * 0.1F);
+                else perfectWindow = 1.2F;
+            }
+            else if (player.hasEffect(AArcanaMobEffects.ALLEGRO.get())) perfectWindow = 1.1F + ((player.getEffect(AArcanaMobEffects.ALLEGRO.get()).getAmplifier() + 1F) * 0.1F);
+            else perfectWindow = 1.1F;
+            if (attackStrength < perfectWindow && attackStrength > 1F) {
+                if (slayingTempoLevel != 0) {
+                    int amplifier;
+                    if (player.hasEffect(AArcanaMobEffects.MEGANEURA.get())) amplifier = player.getEffect(AArcanaMobEffects.MEGANEURA.get()).getAmplifier() + 1;
+                    else amplifier = 0;
+                    player.addEffect(new MobEffectInstance(AArcanaMobEffects.MEGANEURA.get(), 100, amplifier, false, false, true));
+                }
+                if (allegroLevel != 0) {
+                    int amplifier;
+                    if (player.hasEffect(AArcanaMobEffects.ALLEGRO.get())) amplifier = player.getEffect(AArcanaMobEffects.ALLEGRO.get()).getAmplifier() + 1;
+                    else amplifier = 0;
+                    player.addEffect(new MobEffectInstance(AArcanaMobEffects.ALLEGRO.get(), 20 + (allegroLevel * 20), amplifier, false, false, true));
+                }
             }
         }
     }

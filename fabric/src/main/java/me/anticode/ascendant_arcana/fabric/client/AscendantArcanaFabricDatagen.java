@@ -280,8 +280,9 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add(AArcanaAttributes.DAMAGE_TAKEN.get(), "Damage Taken");
             translationBuilder.add(AArcanaAttributes.DRAW_SPEED.get(), "Draw Speed");
             // Enchantments
-            registerEnchantment(translationBuilder, AArcanaEnchantments.AMBUSH.get(), "Ambush", "When you hit a mob after throwing this Trident, teleport to it.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.ALCHEMISTS_HEART.get(), "Alchemist's Heart", "Increases the amplifier of all beneficial status effects.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.ALLEGRO.get(), "Allegro", "Repeated perfected hits increases attack speed.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.AMBUSH.get(), "Ambush", "When you hit a mob after throwing this Trident, teleport to it.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.ARCHERS_GAMBIT.get(), "Archer's Gambit", "Briefly increased draw speed after consecutively hitting a target. Stacks 3 times.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.BASHING.get(), "Bashing", "While blocking press attack to charge forward and knock an enemy back.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.BLADEHEART.get(), "Bladeheart", "Slightly increases all damage dealt by physical attacks.");
@@ -340,12 +341,13 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add("gui.enchanting.item_cost", "x%1$s %2$s");
             translationBuilder.add("gui.enchanting.enchant", "Enchant!");
             // Status Effects
+            registerStatusEffect(translationBuilder, AArcanaMobEffects.ALLEGRO.get(), "Allegro", "Increased attack speed and perfect hit window.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.ARCHERS_GAMBIT.get(), "Archer's Gambit", "Faster draw speed of bows and crossbows.");
+            registerStatusEffect(translationBuilder, AArcanaMobEffects.CROSS_COUNTER.get(), "Cross Counter", "Increases attack damage for the next attack.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.ECHOING_DAMAGE.get(), "Echoing Damage", "Deals damage every second based on amplification.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.HOBBLED.get(), "Hobbled", "Slightly reduces movement speed and jump height.");
-            registerStatusEffect(translationBuilder, AArcanaMobEffects.SUNDERED.get(), "Sundered", "Significantly reduces armor and armor toughness.");
-            registerStatusEffect(translationBuilder, AArcanaMobEffects.CROSS_COUNTER.get(), "Cross Counter", "Increases attack damage for the next attack.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.MEGANEURA.get(), "Meganeura", "Next slain enemy explodes.");
+            registerStatusEffect(translationBuilder, AArcanaMobEffects.SUNDERED.get(), "Sundered", "Significantly reduces armor and armor toughness.");
             // Tags
             registerTag(translationBuilder, AArcanaTags.Items.HEARTS, "Warden Hearts");
             registerTag(translationBuilder, AArcanaTags.Items.RELICS, "Relics");
@@ -844,17 +846,28 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                     .save(exporter);
 
             // Enchantments
-            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.AMBUSH.get())
-                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
-                            IngredientStack.of(Items.ENDER_PEARL, 6),
-                            IngredientStack.of(Items.AMETHYST_SHARD, 3),
-                            3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.ALCHEMISTS_HEART.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 12),
                             IngredientStack.of(AArcanaTags.Items.HEARTS),
                             IngredientStack.of(Items.GLISTERING_MELON_SLICE, 12),
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.ALLEGRO.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 6),
+                            IngredientStack.of(Items.GOLD_INGOT, 6),
+                            IngredientStack.of(Items.MAGMA_CREAM, 3),
+                            6))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.GOLD_INGOT, 6),
+                            null,
+                            6)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.AMBUSH.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.ENDER_PEARL, 6),
+                            IngredientStack.of(Items.AMETHYST_SHARD, 3),
                             3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.ARCHERS_GAMBIT.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(

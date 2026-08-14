@@ -6,8 +6,8 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
-public class Meganeura extends Enchantment {
-    public Meganeura() {
+public class Allegro extends Enchantment {
+    public Allegro() {
         super(Rarity.RARE, EnchantmentCategory.WEAPON, new EquipmentSlot[]{EquipmentSlot.MAINHAND});
     }
 
@@ -23,7 +23,7 @@ public class Meganeura extends Enchantment {
 
     @Override
     public int getMaxLevel() {
-        return 1;
+        return 3;
     }
 
     @Override
@@ -33,6 +33,6 @@ public class Meganeura extends Enchantment {
 
     @Override
     protected boolean checkCompatibility(Enchantment other) {
-        return super.checkCompatibility(other) && !(other instanceof SoulBurst);
+        return super.checkCompatibility(other);
     }
 }

@@ -17,6 +17,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 public class AArcanaEnchantments {
     private static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(AscendantArcana.MOD_ID, Registries.ENCHANTMENT);
 
+    public static RegistrySupplier<Enchantment> ALLEGRO = register(new Allegro(), "allegro");
     public static RegistrySupplier<Enchantment> AMBUSH = register(new Ambush(), "ambush");
     public static RegistrySupplier<Enchantment> ARCHERS_GAMBIT = register(new ArchersGambit(), "archers_gambit");
     public static RegistrySupplier<Enchantment> BASHING = register(new ShieldBash(), "bashing");
