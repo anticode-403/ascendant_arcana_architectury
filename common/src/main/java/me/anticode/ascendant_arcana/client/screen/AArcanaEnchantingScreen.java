@@ -3,7 +3,6 @@ package me.anticode.ascendant_arcana.client.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.architectury.networking.NetworkManager;
 import me.anticode.ascendant_arcana.AscendantArcana;
-import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.init.AArcanaRecipes;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import me.anticode.ascendant_arcana.networking.EnchantingScreenRemoveRecipe;
@@ -89,6 +88,27 @@ public class AArcanaEnchantingScreen extends AbstractContainerScreen<AArcanaEnch
                     recipes.add(recipe);
                 }
             }
+            recipes.sort((a, b) -> {
+                int aRarity = switch(a.enchantment.getRarity()) {
+                    case COMMON -> 0;
+                    case UNCOMMON -> 1;
+                    case RARE -> 2;
+                    case VERY_RARE -> 3;
+                };
+                int bRarity = switch(b.enchantment.getRarity()) {
+                    case COMMON -> 0;
+                    case UNCOMMON -> 1;
+                    case RARE -> 2;
+                    case VERY_RARE -> 3;
+                };
+                if (aRarity == bRarity) {
+                    int aTreasure = a.enchantment.isTreasureOnly() ? 1 : 0;
+                    int bTreasure = b.enchantment.isTreasureOnly() ? 1 : 0;
+                    if (aTreasure == bTreasure) {
+                        return a.enchantment.getDescriptionId().compareTo(b.enchantment.getDescriptionId());
+                    } else return Integer.compare(aTreasure, bTreasure);
+                } else return Integer.compare(aRarity, bRarity);
+            });
         }
         lastItem = itemStack;
 
