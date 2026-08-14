@@ -199,21 +199,30 @@ public class AArcanaEnchantmentHelper {
     }
 
     public static ItemStack convertEnchantmentsToScrap(Map<Enchantment, Integer> appliedEnchants) {
-        ItemStack itemStack = new ItemStack(AArcanaItems.ENCHANTED_SCRAP.get());
+        int runningTotal = 0;
         for (Map.Entry<Enchantment, Integer> entry : appliedEnchants.entrySet()) {
             int baseCount = 3;
             if (entry.getKey() != null && !entry.getKey().isCurse()) {
                 baseCount = switch (entry.getKey().getRarity()) {
-                    case COMMON, UNCOMMON -> 1;
+                    case COMMON -> 1;
+                    case UNCOMMON -> 2;
                     case RARE -> 3;
                     case VERY_RARE -> 4;
                 };
                 if (entry.getKey().isTreasureOnly()) baseCount += 1;
             }
             if (entry.getKey() != null && entry.getKey().isCurse()) baseCount = 1;
-            itemStack.setCount(itemStack.getCount() + (baseCount * entry.getValue()));
+            runningTotal += baseCount * entry.getValue();
         }
 
+        ItemStack itemStack;
+        if (runningTotal > 9) {
+            itemStack = new ItemStack(AArcanaItems.ENCHANTED_SCRAP.get());
+            runningTotal /= 2;
+        }
+        else itemStack = new ItemStack(Items.LAPIS_LAZULI);
+
+        itemStack.setCount(runningTotal);
         if (itemStack.getCount() > itemStack.getMaxStackSize()) itemStack.setCount(itemStack.getMaxStackSize());
         return itemStack;
     }
