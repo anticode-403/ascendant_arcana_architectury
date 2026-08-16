@@ -1,0 +1,27 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:slaying_tempo",
+  "levels": [
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 6,
+        "ingredient": {
+          "item": "minecraft:gunpowder"
+        }
+      },
+      "scrap_stack": {
+        "count": 6,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:magma_cream"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:prepared_shot",
+  "levels": [
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:glowstone_dust"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:gunpowder"
+        }
+      }
+    }
+  ]
+}
