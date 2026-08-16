@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -115,7 +116,7 @@ public abstract class ServerPlayerGameModeMixin {
             if (blockState.isAir()) continue;
             blockState.attack(this.level, excavatingTarget, this.player);
             float f = blockState.getDestroyProgress(this.player, this.player.level(), excavatingTarget);
-            float g = f * (float)(gameTicks - destroyProgressStart + 1);
+            float g = f * (float)(gameTicks - destroyProgressStart);
             ascendant_arcana$excavatingBlockProgresses.put(excavatingTarget, f);
             if (f >= 1F) {
                 destroyAndAck(excavatingTarget, j, "excavating insta mine");
@@ -165,39 +166,56 @@ public abstract class ServerPlayerGameModeMixin {
     private List<BlockPos> ascendant_arcana$getExtractingBlockPositions(BlockPos originalPos, Direction direction) {
         if (direction == null) return null;
         if (player.isCrouching()) return null;
-        if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.EXCAVATING.get(), player.getMainHandItem()) <= 0) return null;
+        int excavatingLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.EXCAVATING.get(), player.getMainHandItem());
+        if (excavatingLevel <= 0) return null;
 
         // There is a cleaner way to do this algorithmically but this is faster.
-        return switch (direction.getAxis()) {
-            case X -> Lists.newArrayList(
-                    originalPos.relative(Direction.UP),
-                    originalPos.relative(Direction.DOWN),
-                    originalPos.relative(Direction.NORTH),
-                    originalPos.relative(Direction.SOUTH),
-                    originalPos.relative(Direction.UP).relative(Direction.NORTH),
-                    originalPos.relative(Direction.UP).relative(Direction.SOUTH),
-                    originalPos.relative(Direction.DOWN).relative(Direction.NORTH),
-                    originalPos.relative(Direction.DOWN).relative(Direction.SOUTH)
-            );
-            case Y -> Lists.newArrayList(
-                    originalPos.relative(Direction.EAST),
-                    originalPos.relative(Direction.WEST),
-                    originalPos.relative(Direction.NORTH),
-                    originalPos.relative(Direction.SOUTH),
-                    originalPos.relative(Direction.EAST).relative(Direction.NORTH),
-                    originalPos.relative(Direction.EAST).relative(Direction.SOUTH),
-                    originalPos.relative(Direction.WEST).relative(Direction.NORTH),
-                    originalPos.relative(Direction.WEST).relative(Direction.SOUTH)
-            );
-            case Z -> Lists.newArrayList(
-                    originalPos.relative(Direction.EAST),
-                    originalPos.relative(Direction.WEST),
-                    originalPos.relative(Direction.UP),
-                    originalPos.relative(Direction.DOWN),
-                    originalPos.relative(Direction.EAST).relative(Direction.UP),
-                    originalPos.relative(Direction.EAST).relative(Direction.DOWN),
-                    originalPos.relative(Direction.WEST).relative(Direction.UP),
-                    originalPos.relative(Direction.WEST).relative(Direction.DOWN));
-        };
+        ArrayList<BlockPos> blockPositions = new ArrayList<>();
+        if (excavatingLevel == 1) {
+            if (direction.getAxis() != Direction.Axis.Y) {
+                blockPositions.add(originalPos.relative(Direction.DOWN));
+            }
+        }
+        else switch (direction.getAxis()) {
+            case X:
+                blockPositions.add(originalPos.relative(Direction.UP));
+                blockPositions.add(originalPos.relative(Direction.NORTH));
+                blockPositions.add(originalPos.relative(Direction.SOUTH));
+                blockPositions.add(originalPos.relative(Direction.DOWN));
+                break;
+            case Y:
+                blockPositions.add(originalPos.relative(Direction.EAST));
+                blockPositions.add(originalPos.relative(Direction.WEST));
+                blockPositions.add(originalPos.relative(Direction.NORTH));
+                blockPositions.add(originalPos.relative(Direction.SOUTH));
+                break;
+            case Z:
+                blockPositions.add(originalPos.relative(Direction.EAST));
+                blockPositions.add(originalPos.relative(Direction.WEST));
+                blockPositions.add(originalPos.relative(Direction.UP));
+                blockPositions.add(originalPos.relative(Direction.DOWN));
+                break;
+        }
+        if (excavatingLevel >= 3) switch (direction.getAxis()) {
+            case X:
+                blockPositions.add(originalPos.relative(Direction.UP).relative(Direction.NORTH));
+                blockPositions.add(originalPos.relative(Direction.UP).relative(Direction.SOUTH));
+                blockPositions.add(originalPos.relative(Direction.DOWN).relative(Direction.NORTH));
+                blockPositions.add(originalPos.relative(Direction.DOWN).relative(Direction.SOUTH));
+                break;
+            case Y:
+                blockPositions.add(originalPos.relative(Direction.EAST).relative(Direction.NORTH));
+                blockPositions.add(originalPos.relative(Direction.EAST).relative(Direction.SOUTH));
+                blockPositions.add(originalPos.relative(Direction.WEST).relative(Direction.NORTH));
+                blockPositions.add(originalPos.relative(Direction.WEST).relative(Direction.SOUTH));
+                break;
+            case Z:
+                blockPositions.add(originalPos.relative(Direction.EAST).relative(Direction.UP));
+                blockPositions.add(originalPos.relative(Direction.EAST).relative(Direction.DOWN));
+                blockPositions.add(originalPos.relative(Direction.WEST).relative(Direction.UP));
+                blockPositions.add(originalPos.relative(Direction.WEST).relative(Direction.DOWN));
+                break;
+        }
+        return blockPositions;
     }
 }
