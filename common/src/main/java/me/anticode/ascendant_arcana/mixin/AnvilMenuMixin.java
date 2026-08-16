@@ -15,16 +15,14 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Mixin(AnvilMenu.class)
@@ -66,23 +64,19 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
     @ModifyReturnValue(method = "mayPickup", at = @At("RETURN"))
     private boolean canAlwaysTakeOutput(boolean value) {
-        return true;
+        return ascendant_arcana$testEnchantmentCost();
     }
 
     @ModifyExpressionValue(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/Enchantment;isCompatibleWith(Lnet/minecraft/world/item/enchantment/Enchantment;)Z"))
     private boolean enchantmentCapacity(boolean value) {
+        if (!ascendant_arcana$testEnchantmentCost()) return false;
+        return value;
+    }
+
+    @Unique
+    private boolean ascendant_arcana$testEnchantmentCost() {
         ItemStack stack = inputSlots.getItem(0);
         ItemStack book = inputSlots.getItem(1);
-        Map<Enchantment, Integer> bookEnchants = EnchantmentHelper.getEnchantments(book);
-        int cost = 0;
-        for (Enchantment enchantment : bookEnchants.keySet()) {
-            if (enchantment.canEnchant(stack) && EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(stack).keySet(), enchantment)) {
-                cost += bookEnchants.get(enchantment) * AArcanaEnchantmentHelper.getEnchantmentCost(enchantment);
-            }
-        }
-        if (AArcanaEnchantmentHelper.getEnchantmentUsage(stack) + cost > AArcanaEnchantmentHelper.getEnchantmentCapacity(stack)) {
-            return false;
-        }
-        return value;
+        return AArcanaEnchantmentHelper.testAnvilItems(stack, book);
     }
 }

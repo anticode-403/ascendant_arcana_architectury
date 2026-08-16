@@ -371,6 +371,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerSoundEvent(translationBuilder, AArcanaSoundEvents.BLAZEBOLT_SHOT.get(), "Blazebolt Crossbow fires");
             // Other
             translationBuilder.add("category.ascendant_arcana", "Ascendant Arcana");
+            translationBuilder.add("gui.anvil.max_capacity", "No Capacity!");
         }
     }
 

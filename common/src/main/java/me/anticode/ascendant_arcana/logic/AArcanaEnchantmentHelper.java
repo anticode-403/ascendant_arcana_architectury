@@ -44,6 +44,19 @@ public class AArcanaEnchantmentHelper {
         return enchantments;
     }
 
+    public static boolean testAnvilItems(ItemStack itemStack, ItemStack bookStack) {
+        Map<Enchantment, Integer> bookEnchants;
+        if (bookStack.getItem() instanceof EnchantedBookItem) bookEnchants = EnchantmentHelper.deserializeEnchantments(EnchantedBookItem.getEnchantments(bookStack));
+        else bookEnchants = EnchantmentHelper.getEnchantments(bookStack);
+        int cost = 0;
+        for (Enchantment enchantment : bookEnchants.keySet()) {
+            if (enchantment.canEnchant(itemStack) && EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(itemStack).keySet(), enchantment)) {
+                cost += bookEnchants.get(enchantment) * AArcanaEnchantmentHelper.getEnchantmentCost(enchantment);
+            }
+        }
+        return AArcanaEnchantmentHelper.testEnchantmentCost(itemStack, cost);
+    }
+
     public static int getTier(Enchantment enchantment) {
         return switch (enchantment.getRarity()) {
             case COMMON -> 1;
