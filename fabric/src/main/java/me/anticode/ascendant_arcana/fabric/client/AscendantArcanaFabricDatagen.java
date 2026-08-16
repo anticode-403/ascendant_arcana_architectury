@@ -1176,7 +1176,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SUREFOOT.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 6),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
                             IngredientStack.of(Items.ANVIL),
                             null,
                             6)));
