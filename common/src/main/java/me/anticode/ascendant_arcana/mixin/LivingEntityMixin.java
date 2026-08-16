@@ -183,6 +183,7 @@ public abstract class LivingEntityMixin {
 
     @ModifyReturnValue(method = "getDamageAfterMagicAbsorb", at = @At("TAIL"))
     private float injectDamageModifiers(float damage, @Local(argsOnly = true) DamageSource source) {
+        LivingEntity livingEntity = (LivingEntity)(Object)this;
         if (heartAttackers == null) {
             heartAttackers = new EnumMap<>(AArcanaEnchantments.IndirectHeartDamageTypes.class);
         }
@@ -202,7 +203,7 @@ public abstract class LivingEntityMixin {
                     && (source.is(DamageTypeTags.IS_PROJECTILE) || source.is(DamageTypes.PLAYER_ATTACK)))
                 damage *= 1.2F;
             if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PINCUSHION.get(), attacker) > 0) {
-                damage *= 0.9F + (0.1F * ((LivingEntity)(Object)this).getArrowCount());
+                damage *= 0.9F + (0.1F * livingEntity.getArrowCount());
             } else if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.STOPPING_POWER.get(), attacker) > 0 && getHealth() / getMaxHealth() <= 0.3) {
                 damage *= 1.3F;
             }
@@ -214,7 +215,7 @@ public abstract class LivingEntityMixin {
         damage *= (float) damage_taken;
 
         if (source.is(DamageTypes.FLY_INTO_WALL)) {
-            int cushioning = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.CUSHIONING.get(), ((LivingEntity)(Object)this));
+            int cushioning = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.CUSHIONING.get(), livingEntity);
             damage *= 1 - (0.2F * cushioning);
         }
 
@@ -227,6 +228,16 @@ public abstract class LivingEntityMixin {
             damage *= 2;
         if (source.is(DamageTypeTags.IS_FREEZING) && heartAttackers.containsKey(AArcanaEnchantments.IndirectHeartDamageTypes.COLD))
             damage *= 2;
+        if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SURROUNDED.get(), livingEntity) > 0) {
+            if (livingEntity.level().getEntities(livingEntity, AABB.unitCubeFromLowerCorner(livingEntity.position().subtract(0.5, 0.5, 0.5)).inflate(5), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(EntitySelector.NO_CREATIVE_OR_SPECTATOR).and((entity) -> {
+                if (entity instanceof OwnableEntity ownableEntity) {
+                    return ownableEntity.getOwner() != livingEntity;
+                }
+                return true;
+            })).size() >= 3) {
+                damage *= 0.7F;
+            }
+        }
         return damage;
     }
 

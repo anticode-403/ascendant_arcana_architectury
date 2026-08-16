@@ -320,6 +320,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerEnchantment(translationBuilder, AArcanaEnchantments.STRAFE.get(), "Strafe", "Allows you to sprint in any direction and reduces movement speed penalties while using an item.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SUNDERING.get(), "Sundering", "On hit, sticks into the target and deals damage over time, reducing their armor.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SUREFOOT.get(), "Surefoot", "Significantly increases knockback resistance and reduces the strength of most slowing effects.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.SURROUNDED.get(), "Surrounded", "Grants damage resistance while surrounded by enemies.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.TURTLE_HEART.get(), "Heart of the Turtle", "Decreases all incoming and outgoing damage.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.WITCH_HEART.get(), "Witch's Heart", "Slightly increases damage dealt by all magic attacks.");
 
@@ -1180,6 +1181,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(Items.ANVIL),
                             null,
                             6)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SURROUNDED.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.SHULKER_SHELL),
+                            IngredientStack.of(Items.SCUTE, 2),
+                            3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.TURTLE_HEART.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 12),

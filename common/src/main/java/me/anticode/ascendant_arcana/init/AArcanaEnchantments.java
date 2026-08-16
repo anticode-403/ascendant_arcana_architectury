@@ -51,6 +51,7 @@ public class AArcanaEnchantments {
     public static RegistrySupplier<Enchantment> STOPPING_POWER = register(new StoppingPower(), "stopping_power");
     public static RegistrySupplier<Enchantment> STRAFE = register(new Strafe(), "strafe");
     public static RegistrySupplier<Enchantment> SUNDERING = register(new Sundering(), "sundering");
+    public static RegistrySupplier<Enchantment> SURROUNDED = register(new Surrounded(), "surrounded");
     public static RegistrySupplier<Enchantment> SUREFOOT = register(new Surefoot(), "surefoot");
 
     public static RegistrySupplier<Enchantment> ALCHEMISTS_HEART = register(new HeartEnchantment(), "alchemists_heart");
