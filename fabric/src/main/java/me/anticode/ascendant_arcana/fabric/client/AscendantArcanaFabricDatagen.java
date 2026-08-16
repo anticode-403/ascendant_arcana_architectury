@@ -618,6 +618,10 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                     .requires(Items.AMETHYST_SHARD, 2)
                     .unlockedBy("obtain_lapis", InventoryChangeTrigger.TriggerInstance.hasItems(Items.LAPIS_LAZULI))
                     .save(exporter);
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, AArcanaItems.RESTORINE.get(), 4)
+                    .requires(AArcanaBlocks.RESTORINE_BLOCK.get())
+                    .unlockedBy("obtain_restorine_block", InventoryChangeTrigger.TriggerInstance.hasItems(AArcanaBlocks.RESTORINE_BLOCK.get()))
+                    .save(exporter);
 
             // DAMAGE RELICS
             RelicRecipeJsonBuilder.create(RecipeCategory.MISC, 1, RelicTypes.DAMAGE)
