@@ -80,11 +80,10 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
 
     @ModifyReturnValue(method = "getAttackStrengthScale", at = @At("RETURN"))
     private float modifyAttackCooldownProgress(float original) {
-        LivingEntity livingEntity = (LivingEntity)(Object)this;
-        ItemStack mainStack = livingEntity.getMainHandItem();
+        ItemStack mainStack = getMainHandItem();
         if (mainStack.getItem() instanceof TieredItem && mainStack.hasTag()) {
             if (RelicHelper.containsAnyOfType(RelicTypes.HASTE, mainStack.getTag())) {
-                float hasteMultiplier = (float) RelicHelper.applyAllRelicsOfType(RelicTypes.HASTE, 1, mainStack.getTag()) / 2;
+                float hasteMultiplier = 1 + ((float) RelicHelper.getAllRawBonusesOfType(RelicTypes.HASTE, mainStack.getTag()) / 2);
                 if (original * hasteMultiplier > 1) return 1;
                 return original * hasteMultiplier;
             }
@@ -126,11 +125,11 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
     @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"), cancellable = true)
     private void protectiveEcho(DamageSource source, float amount, CallbackInfo ci) {
         if (amount < 5) return;
-        if (((LivingEntity)(Object)this).getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get()) != null) return;
+        if (getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get()) != null) return;
         if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PROTECTIVE_ECHO.get(), (LivingEntity) (Object) this) == 0) return;
         int duration = 100 * Math.max((int)amount / 10, 1);
         int strength = Math.max((int)amount / (duration / 20), 1);
-        ((LivingEntity)(Object)this).forceAddEffect(new MobEffectInstance(AArcanaMobEffects.ECHOING_DAMAGE.get(), duration + 20, strength), (LivingEntity)(Object)this);
+        forceAddEffect(new MobEffectInstance(AArcanaMobEffects.ECHOING_DAMAGE.get(), duration + 20, strength), (LivingEntity)(Object)this);
         ci.cancel();
     }
 
