@@ -5,7 +5,6 @@ import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Config(name = "server")
 public class ServerConfig implements ConfigData {
@@ -69,7 +68,7 @@ public class ServerConfig implements ConfigData {
             
             Do note that most enchantments on this list by default DO NOT come with recipes, so in order to see them in
             the Enchanting Table you must create your own enchantment recipes for them with a datapack.""")
-    public Set<String> disabled_enchantments;
+    public List<String> disabled_enchantments;
 
     @Comment("Items which have their base relic capacity value overwritten.")
     public Map<String, Integer> base_relic_capacity_overrides = new HashMap<>(Map.of(
@@ -120,7 +119,7 @@ public class ServerConfig implements ConfigData {
     public void validatePostLoad() throws ValidationException {
         ConfigData.super.validatePostLoad();
         if (disabled_enchantments == null) {
-            disabled_enchantments = new LinkedHashSet<>();
+            disabled_enchantments = new LinkedList<>();
             disabled_enchantments.add("minecraft:protection");
             disabled_enchantments.add("minecraft:sharpness");
             disabled_enchantments.add("minecraft:efficiency");
