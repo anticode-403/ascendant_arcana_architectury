@@ -270,7 +270,7 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         }
         boolean didHurt = original.call(instance, damageSource, amount);
         if (didHurt && instance instanceof LivingEntity livingEntity) {
-            if (livingEntity.isDeadOrDying()) {
+            if (livingEntity.isDeadOrDying() && ascendant_arcana$preparedLevel >= 1) {
                 livingEntity.level().explode(((AbstractArrow)(Object)this).getOwner(), livingEntity.getX(), livingEntity.getRandomY(), livingEntity.getZ(), 1.4F + (ascendant_arcana$preparedLevel * 0.1F), Level.ExplosionInteraction.NONE);
             }
         }

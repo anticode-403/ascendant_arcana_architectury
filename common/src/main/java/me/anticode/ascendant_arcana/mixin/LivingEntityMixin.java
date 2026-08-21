@@ -256,7 +256,7 @@ public abstract class LivingEntityMixin {
         if (damageSource.getEntity() instanceof LivingEntity attackingEntity) {
             LivingEntity livingEntity = (LivingEntity) (Object) this;
 
-            if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SLAYING_TEMPO.get(), attackingEntity) != 0) {
+            if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SLAYING_TEMPO.get(), attackingEntity) != 0 && attackingEntity.hasEffect(AArcanaMobEffects.MEGANEURA.get())) {
                 int meganeuraLevel = attackingEntity.getEffect(AArcanaMobEffects.MEGANEURA.get()).getAmplifier() + 1;
                 livingEntity.level().explode(attackingEntity, livingEntity.getX(), (livingEntity.getY() + livingEntity.getEyeY()) / 2, livingEntity.getZ(), 1F + (0.4F * meganeuraLevel), Level.ExplosionInteraction.NONE);
                 attackingEntity.removeEffect(AArcanaMobEffects.MEGANEURA.get());

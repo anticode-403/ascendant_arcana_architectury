@@ -34,9 +34,10 @@ public class BowItemMixin {
         int piercing = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, stack);
         projectile.setPierceLevel((byte) piercing);
 
-        if (user.hasEffect(AArcanaMobEffects.PREPARED.get())) {
-            int prepared = user.getEffect(AArcanaMobEffects.PREPARED.get()).getAmplifier();
+        if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.PREPARED_SHOT.get(), stack) >= 1 && user.hasEffect(AArcanaMobEffects.PREPARED.get())) {
+            int prepared = user.getEffect(AArcanaMobEffects.PREPARED.get()).getAmplifier() + 1;
             ((EnchantedArrow) projectile).ascendant_arcana$setPreparedLevel(prepared);
+            user.removeEffect(AArcanaMobEffects.PREPARED.get());
         }
 
         RandomSource random = RandomSource.createNewThreadLocalInstance();
