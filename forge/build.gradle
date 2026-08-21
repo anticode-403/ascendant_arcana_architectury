@@ -57,6 +57,11 @@ processResources {
     filesMatching('META-INF/mods.toml') {
         expand version: project.version
     }
+
+    from(rootProject.file("common/src/main/resources")) {
+        include("**/**")
+        duplicatesStrategy = DuplicatesStrategy.WARN
+    }
 }
 
 shadowJar {

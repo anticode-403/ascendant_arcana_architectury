@@ -20,3 +20,7 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
 }
+
+processResources {
+    exclude("*")
+}

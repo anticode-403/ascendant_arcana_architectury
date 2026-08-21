@@ -19,7 +19,12 @@ import me.anticode.ascendant_arcana.relics.RelicRegistry;
 import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.EnchantTableRenderer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -37,15 +42,19 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +79,24 @@ public final class AscendantArcanaForge {
                 event.add(entityType, AArcanaAttributes.DRAW_SPEED.get());
                 event.add(entityType, AArcanaAttributes.DAMAGE_TAKEN.get());
             }
+        }
+
+        @SubscribeEvent
+        public static void addPackFinders(AddPackFindersEvent event) {
+            if (event.getPackType() != PackType.CLIENT_RESOURCES) return;
+            Path packPath = ModList.get().getModFileById(AscendantArcana.MOD_ID).getFile().findResource("resourcepacks", "ascendant_arcana_classic");
+            event.addRepositorySource(consumer -> consumer.accept(Pack.readMetaAndCreate(
+                    "builtin/ascendant_arcana_classic",
+                    Component.translatable("pack.ascendant_arcana.ascendant_arcana_classic"),
+                    false,
+                    (path) -> new PathPackResources(
+                            path,
+                            packPath,
+                            false),
+                    PackType.CLIENT_RESOURCES,
+                    Pack.Position.BOTTOM,
+                    PackSource.BUILT_IN
+            )));
         }
     }
 
