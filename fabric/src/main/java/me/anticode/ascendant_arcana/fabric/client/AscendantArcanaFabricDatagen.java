@@ -234,7 +234,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add(AArcanaItems.WARDEN_HEART.get(), "Warden Heart");
             description(translationBuilder, AArcanaItems.WARDEN_HEART.get(), "One of the Warden's many hearts, salvaged in whole and useful for enchanting.");
             // Relics
-            translationBuilder.add(AArcanaItems.RELIC.get(), "%1$s Relic of %2$s");
+            translationBuilder.add(AArcanaItems.RELIC.get(), "%1$s %2$s");
             description(translationBuilder, AArcanaItems.RELIC.get(), "An item that can be infused into tools or armor at a Smithing Table, increasing their potential.");
             translationBuilder.add("item.relics.empty", "Empty Relic");
             translationBuilder.add("item.relics.unknown", "Unknown Relic");
@@ -251,11 +251,11 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add("item.ascendant_arcana.relics.type.haste", "Swiftness");
             translationBuilder.add("item.ascendant_arcana.relics.type.enchantment_capacity", "Enchantment Capacity");
 
-            translationBuilder.add("item.ascendant_arcana.relics.name.damage", "Violence");
-            translationBuilder.add("item.ascendant_arcana.relics.name.durability", "Immutability");
-            translationBuilder.add("item.ascendant_arcana.relics.name.protection", "Shielding");
-            translationBuilder.add("item.ascendant_arcana.relics.name.haste", "Haste");
-            translationBuilder.add("item.ascendant_arcana.relics.name.enchantment_capacity", "Magic");
+            translationBuilder.add("item.ascendant_arcana.relics.name.damage", "Whetstone");
+            translationBuilder.add("item.ascendant_arcana.relics.name.durability", "Restorine Powder");
+            translationBuilder.add("item.ascendant_arcana.relics.name.protection", "Plating");
+            translationBuilder.add("item.ascendant_arcana.relics.name.haste", "Haste Oil");
+            translationBuilder.add("item.ascendant_arcana.relics.name.enchantment_capacity", "Relic");
 
             translationBuilder.add("item.relics.tooltip", "+%1$s%3$s %2$s");
             translationBuilder.add("item.relics.tooltip.applied_any", "When Applied to Item:");
