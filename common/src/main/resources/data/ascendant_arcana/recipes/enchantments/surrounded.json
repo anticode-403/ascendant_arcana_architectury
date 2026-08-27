@@ -1,25 +1,25 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
-  "enchantment": "ascendant_arcana:heart_of_the_nether",
+  "enchantment": "ascendant_arcana:surrounded",
   "levels": [
     {
-      "level_cost": 6,
+      "level_cost": 3,
       "primary_ingredient": {
         "count": 1,
         "ingredient": {
-          "tag": "ascendant_arcana:heart_items"
+          "item": "minecraft:shulker_shell"
         }
       },
       "scrap_stack": {
-        "count": 12,
+        "count": 3,
         "ingredient": {
           "item": "ascendant_arcana:enchanted_scrap"
         }
       },
       "secondary_ingredient": {
-        "count": 1,
+        "count": 2,
         "ingredient": {
-          "item": "minecraft:netherite_scrap"
+          "item": "minecraft:scute"
         }
       }
     }

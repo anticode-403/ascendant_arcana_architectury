@@ -17,7 +17,7 @@
         }
       },
       "secondary_ingredient": {
-        "count": 6,
+        "count": 2,
         "ingredient": {
           "item": "minecraft:lightning_rod"
         }

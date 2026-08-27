@@ -26,7 +26,7 @@
     {
       "level_cost": 4,
       "primary_ingredient": {
-        "count": 3,
+        "count": 2,
         "ingredient": {
           "item": "minecraft:gold_ingot"
         }
@@ -47,7 +47,7 @@
     {
       "level_cost": 4,
       "primary_ingredient": {
-        "count": 4,
+        "count": 2,
         "ingredient": {
           "item": "minecraft:gold_ingot"
         }

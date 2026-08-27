@@ -20,7 +20,7 @@
     {
       "level_cost": 3,
       "primary_ingredient": {
-        "count": 2,
+        "count": 1,
         "ingredient": {
           "item": "minecraft:nautilus_shell"
         }
@@ -34,7 +34,7 @@
       "secondary_ingredient": {
         "count": 2,
         "ingredient": {
-          "item": "minecraft:sugar"
+          "item": "minecraft:phantom_membrane"
         }
       }
     },
@@ -53,7 +53,7 @@
         }
       },
       "secondary_ingredient": {
-        "count": 3,
+        "count": 2,
         "ingredient": {
           "item": "minecraft:phantom_membrane"
         }

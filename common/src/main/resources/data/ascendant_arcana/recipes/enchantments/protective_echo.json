@@ -5,13 +5,13 @@
     {
       "level_cost": 6,
       "primary_ingredient": {
-        "count": 3,
+        "count": 2,
         "ingredient": {
           "item": "minecraft:echo_shard"
         }
       },
       "scrap_stack": {
-        "count": 9,
+        "count": 6,
         "ingredient": {
           "item": "ascendant_arcana:enchanted_scrap"
         }

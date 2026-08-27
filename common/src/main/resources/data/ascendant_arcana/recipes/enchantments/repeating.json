@@ -5,19 +5,19 @@
     {
       "level_cost": 4,
       "primary_ingredient": {
-        "count": 2,
+        "count": 1,
         "ingredient": {
           "item": "minecraft:pitcher_plant"
         }
       },
       "scrap_stack": {
-        "count": 4,
+        "count": 3,
         "ingredient": {
           "item": "ascendant_arcana:enchanted_scrap"
         }
       },
       "secondary_ingredient": {
-        "count": 2,
+        "count": 1,
         "ingredient": {
           "item": "minecraft:tripwire_hook"
         }
@@ -26,7 +26,7 @@
     {
       "level_cost": 4,
       "primary_ingredient": {
-        "count": 2,
+        "count": 1,
         "ingredient": {
           "item": "minecraft:pitcher_plant"
         }
@@ -38,7 +38,7 @@
         }
       },
       "secondary_ingredient": {
-        "count": 2,
+        "count": 1,
         "ingredient": {
           "item": "minecraft:redstone"
         }

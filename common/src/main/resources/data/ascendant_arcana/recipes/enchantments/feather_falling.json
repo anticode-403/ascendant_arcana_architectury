@@ -5,22 +5,7 @@
     {
       "level_cost": 3,
       "primary_ingredient": {
-        "count": 5,
-        "ingredient": {
-          "item": "minecraft:feather"
-        }
-      },
-      "scrap_stack": {
-        "count": 2,
-        "ingredient": {
-          "item": "minecraft:lapis_lazuli"
-        }
-      }
-    },
-    {
-      "level_cost": 3,
-      "primary_ingredient": {
-        "count": 6,
+        "count": 4,
         "ingredient": {
           "item": "minecraft:feather"
         }
@@ -35,7 +20,22 @@
     {
       "level_cost": 3,
       "primary_ingredient": {
-        "count": 5,
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:feather"
+        }
+      },
+      "scrap_stack": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      }
+    },
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 4,
         "ingredient": {
           "item": "minecraft:feather"
         }

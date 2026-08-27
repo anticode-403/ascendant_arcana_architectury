@@ -5,7 +5,7 @@
     {
       "level_cost": 3,
       "primary_ingredient": {
-        "count": 9,
+        "count": 6,
         "ingredient": {
           "item": "minecraft:amethyst_shard"
         }

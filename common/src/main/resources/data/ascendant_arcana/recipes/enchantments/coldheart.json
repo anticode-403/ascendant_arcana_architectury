@@ -17,7 +17,7 @@
         }
       },
       "secondary_ingredient": {
-        "count": 32,
+        "count": 4,
         "ingredient": {
           "item": "minecraft:blue_ice"
         }

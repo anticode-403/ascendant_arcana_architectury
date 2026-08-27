@@ -11,7 +11,7 @@
         }
       },
       "scrap_stack": {
-        "count": 6,
+        "count": 3,
         "ingredient": {
           "item": "ascendant_arcana:enchanted_scrap"
         }

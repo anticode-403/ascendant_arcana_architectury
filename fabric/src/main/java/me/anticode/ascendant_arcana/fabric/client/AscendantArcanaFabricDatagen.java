@@ -804,23 +804,23 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 12),
                             IngredientStack.of(AArcanaTags.Items.HEARTS),
-                            IngredientStack.of(Items.GLISTERING_MELON_SLICE, 12),
+                            IngredientStack.of(Items.GLISTERING_MELON_SLICE, 3),
                             3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.ALLEGRO.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 6),
-                            IngredientStack.of(Items.GOLD_INGOT, 6),
-                            IngredientStack.of(Items.MAGMA_CREAM, 3),
+                            IngredientStack.of(Items.GOLD_INGOT, 3),
+                            IngredientStack.of(Items.MAGMA_CREAM, 2),
                             6))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
-                            IngredientStack.of(Items.GOLD_INGOT, 6),
+                            IngredientStack.of(Items.GOLD_INGOT, 2),
                             null,
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.AMBUSH.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
-                            IngredientStack.of(Items.ENDER_PEARL, 6),
+                            IngredientStack.of(Items.ENDER_PEARL, 4),
                             IngredientStack.of(Items.AMETHYST_SHARD, 3),
                             3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.ARCHERS_GAMBIT.get())
@@ -831,12 +831,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             6))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(Items.LAPIS_LAZULI, 3),
-                            IngredientStack.of(Items.GOLD_INGOT, 3),
+                            IngredientStack.of(Items.GOLD_INGOT, 2),
                             IngredientStack.of(Items.STRING, 2),
                             4))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(Items.LAPIS_LAZULI, 3),
-                            IngredientStack.of(Items.GOLD_INGOT, 4),
+                            IngredientStack.of(Items.GOLD_INGOT, 2),
                             IngredientStack.of(Items.FEATHER, 2),
                             4
                     )));
@@ -847,7 +847,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(Items.PISTON),
                             3))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(Items.LAPIS_LAZULI, 4),
+                            IngredientStack.of(Items.LAPIS_LAZULI, 3),
                             IngredientStack.of(Items.RABBIT_FOOT, 2),
                             IngredientStack.of(Items.SLIME_BALL, 2),
                             3))
@@ -869,14 +869,14 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(Items.GHAST_TEAR, 2),
                             6))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 6),
-                            IngredientStack.of(Items.QUARTZ, 18),
-                            IngredientStack.of(Items.MAGMA_CREAM, 2),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.QUARTZ, 4),
+                            IngredientStack.of(Items.MAGMA_CREAM),
                             6))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 6),
-                            IngredientStack.of(Items.QUARTZ, 32),
-                            IngredientStack.of(Items.MAGMA_CREAM, 12),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.QUARTZ, 8),
+                            IngredientStack.of(Items.MAGMA_CREAM, 4),
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.CLEANSE.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
@@ -888,7 +888,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 12),
                             IngredientStack.of(AArcanaTags.Items.HEARTS),
-                            IngredientStack.of(Items.BLUE_ICE, 32),
+                            IngredientStack.of(Items.BLUE_ICE, 4),
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.CROSS_COUNTER.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
@@ -897,29 +897,29 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(Items.ECHO_SHARD, 4),
                             6))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 6),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
                             IngredientStack.of(Items.COPPER_INGOT, 6),
-                            IngredientStack.of(Items.ECHO_SHARD, 1),
+                            IngredientStack.of(Items.ECHO_SHARD, 2),
                             6))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 6),
-                            IngredientStack.of(Items.COPPER_INGOT, 12),
-                            IngredientStack.of(Items.ECHO_SHARD, 2),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.COPPER_INGOT, 6),
+                            IngredientStack.of(Items.ECHO_SHARD, 1),
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.CUSHIONING.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(Items.LAPIS_LAZULI, 6),
-                            IngredientStack.of(Items.PHANTOM_MEMBRANE, 4),
+                            IngredientStack.of(Items.PHANTOM_MEMBRANE, 2),
                             IngredientStack.of(ItemTags.WOOL, 2),
                             6))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(Items.LAPIS_LAZULI, 3),
-                            IngredientStack.of(Items.PHANTOM_MEMBRANE),
-                            IngredientStack.of(Items.FEATHER, 4),
+                            IngredientStack.of(Items.PHANTOM_MEMBRANE, 2),
+                            IngredientStack.of(Items.FEATHER, 2),
                             2)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.DEBILITATING_CHAIN.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(Items.LAPIS_LAZULI, 4),
+                            IngredientStack.of(Items.LAPIS_LAZULI, 3),
                             IngredientStack.of(Items.FERMENTED_SPIDER_EYE, 2),
                             IngredientStack.of(Items.REDSTONE, 2),
                             4))
@@ -930,20 +930,20 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.DEFLECT.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 4),
-                            IngredientStack.of(Items.SCUTE, 3),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.SCUTE, 2),
                             IngredientStack.of(Items.SLIME_BALL, 3),
                             4)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.EVOKERS_WRATH.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 4),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
                             IngredientStack.of(Items.EMERALD, 4),
                             IngredientStack.of(Items.BONE, 4),
                             4)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.EXCAVATING.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
-                            IngredientStack.of(Items.AMETHYST_SHARD, 9),
+                            IngredientStack.of(Items.AMETHYST_SHARD, 6),
                             IngredientStack.of(Items.COPPER_INGOT, 3),
                             3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.GUIDING.get())
@@ -954,13 +954,13 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.HELLWALKER.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 6),
-                            IngredientStack.of(Items.MAGMA_CREAM, 5),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.MAGMA_CREAM, 4),
                             IngredientStack.of(Items.FEATHER, 2),
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.HOBBLING_SHOT.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 4),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
                             IngredientStack.of(Items.VINE),
                             IngredientStack.of(Items.BONE_MEAL, 6),
                             4))
@@ -983,19 +983,19 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.MIASMA.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 12),
-                            IngredientStack.of(Items.DRAGON_BREATH, 4),
+                            IngredientStack.of(Items.DRAGON_BREATH, 2),
                             IngredientStack.of(Items.SPORE_BLOSSOM),
                             6))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 4),
-                            IngredientStack.of(Items.ECHO_SHARD, 2),
+                            IngredientStack.of(Items.ECHO_SHARD),
                             IngredientStack.of(Items.SPORE_BLOSSOM),
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.NETHER_HEART.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 12),
                             IngredientStack.of(AArcanaTags.Items.HEARTS),
-                            IngredientStack.of(Items.NETHERITE_INGOT),
+                            IngredientStack.of(Items.NETHERITE_SCRAP),
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.PINCUSHION.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
@@ -1011,36 +1011,36 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.PROTECTIVE_ECHO.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 9),
-                            IngredientStack.of(Items.ECHO_SHARD, 3),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 6),
+                            IngredientStack.of(Items.ECHO_SHARD, 2),
                             IngredientStack.of(Items.POPPED_CHORUS_FRUIT, 3),
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.REJUVENATING_SHOT.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 4),
-                            IngredientStack.of(Items.GHAST_TEAR, 4),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.GHAST_TEAR, 2),
                             null,
                             4)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.REPEATING.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 4),
-                            IngredientStack.of(Items.PITCHER_PLANT, 2),
-                            IngredientStack.of(Items.TRIPWIRE_HOOK, 2),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.PITCHER_PLANT),
+                            IngredientStack.of(Items.TRIPWIRE_HOOK),
                             4))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
-                            IngredientStack.of(Items.PITCHER_PLANT, 2),
-                            IngredientStack.of(Items.REDSTONE, 2),
+                            IngredientStack.of(Items.PITCHER_PLANT),
+                            IngredientStack.of(Items.REDSTONE),
                             4)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.RICOCHET.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(Items.LAPIS_LAZULI, 3),
-                            IngredientStack.of(Items.SLIME_BALL, 4),
+                            IngredientStack.of(Items.SLIME_BALL, 2),
                             IngredientStack.of(Items.AMETHYST_SHARD, 2),
                             4))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(Items.LAPIS_LAZULI, 3),
-                            IngredientStack.of(Items.SLIME_BALL, 4),
+                            IngredientStack.of(Items.SLIME_BALL, 2),
                             IngredientStack.of(Items.FEATHER, 1),
                             4)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.ROCKETRY.get())
@@ -1051,37 +1051,37 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             4)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SALVO.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 4),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
                             IngredientStack.of(Items.PITCHER_PLANT, 4),
                             IngredientStack.of(Items.AMETHYST_CLUSTER),
                             4))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 4),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
                             IngredientStack.of(Items.PITCHER_PLANT, 2),
                             IngredientStack.of(Items.GLOWSTONE_DUST, 2),
                             4)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SHATTERSHOT.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 6),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
                             IngredientStack.of(Items.HONEY_BOTTLE, 4),
                             IngredientStack.of(Items.DIAMOND, 2),
                             4)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SINGULARITY.get())
                     .level(new  EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 6),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
                             IngredientStack.of(Items.ENDER_PEARL, 2),
                             IngredientStack.of(Items.ECHO_SHARD, 3),
                             6))
                     .level(new  EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 4),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
                             IngredientStack.of(Items.ENDER_PEARL, 2),
                             IngredientStack.of(Items.ECHO_SHARD, 2),
                             4)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SLAYING_TEMPO.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 6),
-                            IngredientStack.of(Items.GUNPOWDER, 6),
-                            IngredientStack.of(Items.MAGMA_CREAM, 3),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.GUNPOWDER, 4),
+                            IngredientStack.of(Items.MAGMA_CREAM, 2),
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SMELTING.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
@@ -1093,7 +1093,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 12),
                             IngredientStack.of(AArcanaTags.Items.HEARTS),
-                            IngredientStack.of(Items.ECHO_SHARD, 6),
+                            IngredientStack.of(Items.ECHO_SHARD, 3),
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SOUL_BURST.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
@@ -1111,7 +1111,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                     .level(new  EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 12),
                             IngredientStack.of(AArcanaTags.Items.HEARTS),
-                            IngredientStack.of(Items.LIGHTNING_ROD, 6),
+                            IngredientStack.of(Items.LIGHTNING_ROD, 2),
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.STRAFE.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
@@ -1141,7 +1141,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 12),
                             IngredientStack.of(AArcanaTags.Items.HEARTS),
-                            IngredientStack.of(Items.SCUTE, 6),
+                            IngredientStack.of(Items.SCUTE, 4),
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.WITCH_HEART.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
@@ -1166,12 +1166,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             exporter.accept(new EnchantmentRecipeProvider(Enchantments.DEPTH_STRIDER)
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
-                            IngredientStack.of(Items.SCUTE, 4),
+                            IngredientStack.of(Items.SCUTE, 2),
                             null,
                             2))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
-                            IngredientStack.of(Items.SCUTE, 4),
+                            IngredientStack.of(Items.SCUTE, 2),
                             null,
                             2))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
@@ -1188,19 +1188,19 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             exporter.accept(new EnchantmentRecipeProvider(Enchantments.FLAMING_ARROWS)
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
-                            IngredientStack.of(Items.BLAZE_POWDER, 6),
-                            IngredientStack.of(Items.FLINT, 2),
+                            IngredientStack.of(Items.BLAZE_POWDER, 4),
+                            IngredientStack.of(Items.FLINT, 1),
                             2)));
             exporter.accept(new EnchantmentRecipeProvider(Enchantments.BLOCK_FORTUNE)
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(Items.LAPIS_LAZULI, 3),
-                            IngredientStack.of(Items.COPPER_INGOT, 6),
-                            IngredientStack.of(Items.IRON_INGOT, 3),
+                            IngredientStack.of(Items.COPPER_INGOT, 3),
+                            IngredientStack.of(Items.IRON_INGOT, 2),
                             3))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
-                            IngredientStack.of(Items.QUARTZ, 6),
-                            IngredientStack.of(Items.GOLD_INGOT, 3),
+                            IngredientStack.of(Items.QUARTZ, 4),
+                            IngredientStack.of(Items.GOLD_INGOT, 2),
                             3))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
@@ -1210,34 +1210,34 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             exporter.accept(new EnchantmentRecipeProvider(Enchantments.FROST_WALKER)
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(Items.LAPIS_LAZULI, 3),
-                            IngredientStack.of(Items.ICE, 4),
-                            null,
-                            3))
-                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get()),
-                            IngredientStack.of(Items.BLUE_ICE, 4),
-                            null,
-                            3)));
-            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FALL_PROTECTION)
-                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(Items.LAPIS_LAZULI, 2),
-                            IngredientStack.of(Items.FEATHER, 5),
+                            IngredientStack.of(Items.ICE, 2),
                             null,
                             3))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(Items.LAPIS_LAZULI, 3),
-                            IngredientStack.of(Items.FEATHER, 6),
+                            IngredientStack.of(Items.BLUE_ICE, 2),
+                            null,
+                            3)));
+            exporter.accept(new EnchantmentRecipeProvider(Enchantments.FALL_PROTECTION)
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 3),
+                            IngredientStack.of(Items.FEATHER, 4),
                             null,
                             3))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(Items.LAPIS_LAZULI, 2),
-                            IngredientStack.of(Items.FEATHER, 5),
+                            IngredientStack.of(Items.FEATHER, 4),
+                            null,
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(Items.LAPIS_LAZULI, 2),
+                            IngredientStack.of(Items.FEATHER, 4),
                             IngredientStack.of(Items.PHANTOM_MEMBRANE, 2),
                             3)));
             exporter.accept(new EnchantmentRecipeProvider(Enchantments.INFINITY_ARROWS)
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
-                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 4),
-                            IngredientStack.of(Items.ECHO_SHARD, 2),
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.ECHO_SHARD),
                             IngredientStack.of(Items.ARROW),
                             4)));
             exporter.accept(new EnchantmentRecipeProvider(Enchantments.THORNS)
@@ -1304,18 +1304,18 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             exporter.accept(new EnchantmentRecipeProvider(Enchantments.RIPTIDE)
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
-                            IngredientStack.of(Items.NAUTILUS_SHELL, 1),
+                            IngredientStack.of(Items.NAUTILUS_SHELL),
                             null,
                             3))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
-                            IngredientStack.of(Items.NAUTILUS_SHELL, 2),
-                            IngredientStack.of(Items.SUGAR, 2),
+                            IngredientStack.of(Items.NAUTILUS_SHELL),
+                            IngredientStack.of(Items.PHANTOM_MEMBRANE, 2),
                             3))
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
-                            IngredientStack.of(Items.NAUTILUS_SHELL, 1),
-                            IngredientStack.of(Items.PHANTOM_MEMBRANE, 3),
+                            IngredientStack.of(Items.NAUTILUS_SHELL),
+                            IngredientStack.of(Items.PHANTOM_MEMBRANE, 2),
                             3)));
             exporter.accept(new EnchantmentRecipeProvider(Enchantments.LOYALTY)
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(

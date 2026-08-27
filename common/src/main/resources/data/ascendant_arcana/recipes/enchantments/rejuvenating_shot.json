@@ -5,13 +5,13 @@
     {
       "level_cost": 4,
       "primary_ingredient": {
-        "count": 4,
+        "count": 2,
         "ingredient": {
           "item": "minecraft:ghast_tear"
         }
       },
       "scrap_stack": {
-        "count": 4,
+        "count": 3,
         "ingredient": {
           "item": "ascendant_arcana:enchanted_scrap"
         }

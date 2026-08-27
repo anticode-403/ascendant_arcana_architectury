@@ -17,7 +17,7 @@
         }
       },
       "secondary_ingredient": {
-        "count": 12,
+        "count": 3,
         "ingredient": {
           "item": "minecraft:glistering_melon_slice"
         }

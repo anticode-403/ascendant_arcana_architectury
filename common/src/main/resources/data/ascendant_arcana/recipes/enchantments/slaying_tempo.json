@@ -5,19 +5,19 @@
     {
       "level_cost": 6,
       "primary_ingredient": {
-        "count": 6,
+        "count": 4,
         "ingredient": {
           "item": "minecraft:gunpowder"
         }
       },
       "scrap_stack": {
-        "count": 6,
+        "count": 3,
         "ingredient": {
           "item": "ascendant_arcana:enchanted_scrap"
         }
       },
       "secondary_ingredient": {
-        "count": 3,
+        "count": 2,
         "ingredient": {
           "item": "minecraft:magma_cream"
         }

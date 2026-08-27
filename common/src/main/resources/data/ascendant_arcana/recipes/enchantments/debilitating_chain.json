@@ -11,7 +11,7 @@
         }
       },
       "scrap_stack": {
-        "count": 4,
+        "count": 3,
         "ingredient": {
           "item": "minecraft:lapis_lazuli"
         }

@@ -32,13 +32,13 @@
         }
       },
       "scrap_stack": {
-        "count": 6,
+        "count": 2,
         "ingredient": {
           "item": "ascendant_arcana:enchanted_scrap"
         }
       },
       "secondary_ingredient": {
-        "count": 1,
+        "count": 2,
         "ingredient": {
           "item": "minecraft:echo_shard"
         }
@@ -47,19 +47,19 @@
     {
       "level_cost": 6,
       "primary_ingredient": {
-        "count": 12,
+        "count": 6,
         "ingredient": {
           "item": "minecraft:copper_ingot"
         }
       },
       "scrap_stack": {
-        "count": 6,
+        "count": 2,
         "ingredient": {
           "item": "ascendant_arcana:enchanted_scrap"
         }
       },
       "secondary_ingredient": {
-        "count": 2,
+        "count": 1,
         "ingredient": {
           "item": "minecraft:echo_shard"
         }

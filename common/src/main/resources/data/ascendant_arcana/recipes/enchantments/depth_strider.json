@@ -5,7 +5,7 @@
     {
       "level_cost": 2,
       "primary_ingredient": {
-        "count": 4,
+        "count": 2,
         "ingredient": {
           "item": "minecraft:scute"
         }
@@ -20,7 +20,7 @@
     {
       "level_cost": 2,
       "primary_ingredient": {
-        "count": 4,
+        "count": 2,
         "ingredient": {
           "item": "minecraft:scute"
         }
