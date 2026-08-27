@@ -1,17 +1,23 @@
 {
   "type": "ascendant_arcana:relic_crafting_recipe",
-  "category": "misc",
+  "category": "equipment",
   "ingredients": [
     {
-      "item": "ascendant_arcana:relic"
+      "item": "minecraft:honeycomb"
     },
     {
-      "item": "minecraft:gold_ingot"
+      "item": "minecraft:honeycomb"
     },
     {
-      "item": "minecraft:gold_ingot"
+      "item": "minecraft:gold_nugget"
+    },
+    {
+      "item": "minecraft:gold_nugget"
+    },
+    {
+      "item": "minecraft:glass_bottle"
     }
   ],
-  "relic": 3,
+  "relic": "ascendant_arcana:haste",
   "strength": 2
 }

@@ -1,9 +1,9 @@
 {
   "type": "ascendant_arcana:relic_crafting_recipe",
-  "category": "misc",
+  "category": "equipment",
   "ingredients": [
     {
-      "item": "ascendant_arcana:relic"
+      "item": "minecraft:amethyst_shard"
     },
     {
       "item": "ascendant_arcana:enchanted_scrap"
@@ -21,6 +21,6 @@
       "item": "ascendant_arcana:enchanted_scrap"
     }
   ],
-  "relic": 4,
+  "relic": "ascendant_arcana:enchantment_capacity",
   "strength": 3
 }

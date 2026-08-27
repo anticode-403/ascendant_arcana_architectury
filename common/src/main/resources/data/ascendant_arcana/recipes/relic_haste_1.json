@@ -1,14 +1,23 @@
 {
   "type": "ascendant_arcana:relic_crafting_recipe",
-  "category": "misc",
+  "category": "equipment",
   "ingredients": [
     {
-      "item": "minecraft:amethyst_shard"
+      "item": "minecraft:beef"
     },
     {
-      "item": "minecraft:gold_nugget"
+      "item": "minecraft:beef"
+    },
+    {
+      "item": "minecraft:porkchop"
+    },
+    {
+      "item": "minecraft:porkchop"
+    },
+    {
+      "item": "minecraft:glass_bottle"
     }
   ],
-  "relic": 3,
+  "relic": "ascendant_arcana:haste",
   "strength": 1
 }

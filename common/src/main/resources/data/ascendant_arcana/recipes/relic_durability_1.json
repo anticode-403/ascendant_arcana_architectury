@@ -1,14 +1,14 @@
 {
   "type": "ascendant_arcana:relic_crafting_recipe",
-  "category": "misc",
+  "category": "equipment",
   "ingredients": [
     {
       "item": "ascendant_arcana:restorine"
     },
     {
-      "item": "minecraft:amethyst_shard"
+      "item": "ascendant_arcana:restorine"
     }
   ],
-  "relic": 1,
+  "relic": "ascendant_arcana:durability",
   "strength": 1
 }

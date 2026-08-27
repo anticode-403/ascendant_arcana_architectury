@@ -1,6 +1,6 @@
 {
   "type": "ascendant_arcana:relic_crafting_recipe",
-  "category": "misc",
+  "category": "equipment",
   "ingredients": [
     {
       "item": "minecraft:lapis_lazuli"
@@ -9,6 +9,6 @@
       "item": "minecraft:amethyst_shard"
     }
   ],
-  "relic": 4,
+  "relic": "ascendant_arcana:enchantment_capacity",
   "strength": 1
 }
