@@ -1,5 +1,6 @@
 package me.anticode.ascendant_arcana.effect;
 
+import me.anticode.ascendant_arcana.init.AArcanaAttributes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -10,5 +11,6 @@ public class SunderedEffect extends MobEffect {
         super(MobEffectCategory.HARMFUL, 0x7e14b3);
         addAttributeModifier(Attributes.ARMOR, "c44105f3-3f95-4372-86ab-a5acfbffc710", -0.25D, AttributeModifier.Operation.MULTIPLY_TOTAL);
         addAttributeModifier(Attributes.ARMOR_TOUGHNESS, "c44105f3-3f95-4372-86ab-a5acfbffc710", -0.25D, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        addAttributeModifier(AArcanaAttributes.DAMAGE_TAKEN.get(), "c44105f3-3f95-4372-86ab-a5acfbffc710", 0.15D, AttributeModifier.Operation.MULTIPLY_TOTAL);
     }
 }
