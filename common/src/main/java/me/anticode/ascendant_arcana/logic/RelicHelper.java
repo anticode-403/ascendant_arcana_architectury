@@ -1,6 +1,8 @@
 package me.anticode.ascendant_arcana.logic;
 
 import me.anticode.ascendant_arcana.AscendantArcana;
+import me.anticode.ascendant_arcana.init.AArcanaTags;
+import me.anticode.ascendant_arcana.item.RelicItem;
 import me.anticode.ascendant_arcana.relics.RelicEntry;
 import me.anticode.ascendant_arcana.relics.RelicRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -10,7 +12,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -110,6 +114,24 @@ public class RelicHelper {
         return nbtList;
     }
 
+    public static boolean canApplyRelic(ItemStack baseStack, ItemStack relicStack) {
+        if (baseStack.is(AArcanaTags.Items.INFUSION_BLACKLIST)) return false;
+        Map<RelicEntry, Integer> relicMap = RelicHelper.fromNbt(baseStack.getTag());
+        RelicEntry relicType = RelicItem.getRelicType(relicStack);
+        if (relicMap.size() < RelicHelper.getRelicCapacity(baseStack)) {
+            if (relicType.getTarget() == RelicEntry.Target.durability && baseStack.isDamageableItem()) return true;
+            if (relicType.getTarget() == RelicEntry.Target.enchantable && (baseStack.isEnchantable() || baseStack.isEnchanted())) return true;
+            else if (relicType.getTarget() == RelicEntry.Target.tool && (baseStack.getItem() instanceof TieredItem || baseStack.getItem() instanceof BowItem || baseStack.getItem() instanceof CrossbowItem || baseStack.getItem() instanceof TridentItem || !baseStack.getItem().getDefaultInstance().getAttributeModifiers(EquipmentSlot.MAINHAND).get(Attributes.ATTACK_DAMAGE).isEmpty())) return true;
+            else return relicType.getTarget() == RelicEntry.Target.armor && baseStack.getItem() instanceof ArmorItem;
+        }
+        else if (relicStack.getItem() instanceof  RelicItem) {
+            if (relicMap.containsKey(relicType)) {
+                return RelicItem.getRelicStrength(relicStack) > relicMap.get(relicType);
+            }
+        }
+        return false;
+    }
+
     public static boolean canApplyRelic (ItemStack stack, RelicEntry relic, int strength) {
         if (!stack.hasTag() && getRelicCapacity(stack) > 0) return true;
         Map<RelicEntry, Integer> relics = fromNbt(stack.getTag());
@@ -120,7 +142,7 @@ public class RelicHelper {
     public static void infuseRelic(ItemStack stack, RelicEntry relicType, int strength) {
         Map<RelicEntry, Integer> relics = fromNbt(stack.getTag());
         relics.put(relicType, strength);
-        stack.getOrCreateTag().putInt(RELICS_KEY, relics.size());
+        stack.getOrCreateTag().put(RELICS_KEY, RelicHelper.toNbt(relics));
     }
 
     public static int getValueFromNbt(CompoundTag nbt, RelicEntry key) {

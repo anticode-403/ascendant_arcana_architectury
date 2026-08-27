@@ -30,7 +30,7 @@ public class AArcanaItems {
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(AscendantArcana.MOD_ID, Registries.ITEM);
 
-    public static final RegistrySupplier<Item> INFUSION_SMITHING_TEMPLATE = register(() -> new SmithingTemplateItem(
+    public static final RegistrySupplier<Item> INFUSION_SMITHING_TEMPLATE = AscendantArcana.config.anvil_relics ? null : register(() -> new SmithingTemplateItem(
             Component.translatable("item.ascendant_arcana.smithing_template.infusion.applies_to").withStyle(ChatFormatting.BLUE),
             Component.translatable("item.ascendant_arcana.smithing_template.infusion.ingredients").withStyle(ChatFormatting.BLUE),
             Component.translatable("item.ascendant_arcana.smithing_template.infusion.title").withStyle(ChatFormatting.GRAY),
@@ -64,7 +64,7 @@ public class AArcanaItems {
     public static void initialize() {
         ITEMS.register();
 
-        CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, ENCHANTED_SCRAP, RESTORINE, WARDEN_HEART, INFUSION_SMITHING_TEMPLATE);
-
+        CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, ENCHANTED_SCRAP, RESTORINE, WARDEN_HEART);
+        if (!AscendantArcana.config.anvil_relics) CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, INFUSION_SMITHING_TEMPLATE);
     }
 }

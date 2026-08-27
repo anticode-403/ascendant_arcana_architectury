@@ -1,6 +1,7 @@
 package me.anticode.ascendant_arcana.recipe;
 
 import com.google.gson.JsonObject;
+import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.init.AArcanaRecipes;
 import me.anticode.ascendant_arcana.init.AArcanaTags;
 import me.anticode.ascendant_arcana.item.RelicItem;
@@ -33,11 +34,13 @@ public class InfusionRecipe implements SmithingRecipe {
 
     @Override
     public boolean isTemplateIngredient(ItemStack stack) {
+        if (AscendantArcana.config.anvil_relics) return false;
         return stack.getItem().arch$registryName().equals(templateId);
     }
 
     @Override
     public boolean isBaseIngredient(ItemStack stack) {
+        if (AscendantArcana.config.anvil_relics) return false;
         if (stack.is(AArcanaTags.Items.INFUSION_BLACKLIST)) return false;
         if (stack.isEnchantable() || stack.isDamageableItem() || stack.getItem() instanceof ArmorItem || stack.getItem() instanceof TieredItem || stack.getItem() instanceof BowItem || stack.getItem() instanceof CrossbowItem || stack.getItem() instanceof TridentItem) {
             if (!stack.hasTag()) return true;
@@ -48,11 +51,13 @@ public class InfusionRecipe implements SmithingRecipe {
 
     @Override
     public boolean isAdditionIngredient(ItemStack stack) {
+        if (AscendantArcana.config.anvil_relics) return false;
         return stack.is(AArcanaTags.Items.RELICS) && RelicItem.getRelicStrength(stack) <= maxTier;
     }
 
     @Override
     public boolean matches(Container inventory, Level level) {
+        if (AscendantArcana.config.anvil_relics) return false;
         if (!(this.isTemplateIngredient(inventory.getItem(0)) && this.isBaseIngredient(inventory.getItem(1)) && this.isAdditionIngredient(inventory.getItem(2)))) return false;
         ItemStack baseStack = inventory.getItem(1);
         ItemStack relicStack = inventory.getItem(2);
@@ -60,21 +65,8 @@ public class InfusionRecipe implements SmithingRecipe {
     }
 
     public boolean matches (ItemStack baseStack, ItemStack relicStack) {
-        if (baseStack.is(AArcanaTags.Items.INFUSION_BLACKLIST)) return false;
-        Map<RelicEntry, Integer> relicMap = RelicHelper.fromNbt(baseStack.getTag());
-        RelicEntry relicType = RelicItem.getRelicType(relicStack);
-        if (relicMap.size() < RelicHelper.getRelicCapacity(baseStack)) {
-            if (relicType.getTarget() == RelicEntry.Target.durability && baseStack.isDamageableItem()) return true;
-            if (relicType.getTarget() == RelicEntry.Target.enchantable && (baseStack.isEnchantable() || baseStack.isEnchanted())) return true;
-            else if (relicType.getTarget() == RelicEntry.Target.tool && (baseStack.getItem() instanceof TieredItem || baseStack.getItem() instanceof BowItem || baseStack.getItem() instanceof CrossbowItem || baseStack.getItem() instanceof TridentItem || !baseStack.getItem().getDefaultInstance().getAttributeModifiers(EquipmentSlot.MAINHAND).get(Attributes.ATTACK_DAMAGE).isEmpty())) return true;
-            else return relicType.getTarget() == RelicEntry.Target.armor && baseStack.getItem() instanceof ArmorItem;
-        }
-        else if (relicStack.getItem() instanceof  RelicItem) {
-            if (relicMap.containsKey(relicType)) {
-                return RelicItem.getRelicStrength(relicStack) > relicMap.get(relicType);
-            }
-        }
-        return false;
+        if (AscendantArcana.config.anvil_relics) return false;
+        return RelicHelper.canApplyRelic(baseStack, relicStack);
     }
 
     @Override
@@ -86,9 +78,7 @@ public class InfusionRecipe implements SmithingRecipe {
         ItemStack newStack = baseStack.copy();
         int relicStrength = RelicItem.getRelicStrength(relicStack);
         RelicEntry relicType = RelicItem.getRelicType(relicStack);
-        Map<RelicEntry, Integer> relicsMap = RelicHelper.fromNbt(newStack.getTag());
-        relicsMap.put(relicType, relicStrength);
-        newStack.getOrCreateTag().put(RelicHelper.RELICS_KEY, RelicHelper.toNbt(relicsMap));
+        RelicHelper.infuseRelic(newStack, relicType, relicStrength);
         return newStack;
     }
 

@@ -7,8 +7,11 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.init.AArcanaRecipes;
 import me.anticode.ascendant_arcana.init.AArcanaTags;
+import me.anticode.ascendant_arcana.item.RelicItem;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
+import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.recipe.UniversalRepairRecipe;
+import me.anticode.ascendant_arcana.relics.RelicEntry;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.*;
@@ -19,7 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +60,21 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
         }
         if (!repairIngredient.is(AArcanaItems.RESTORINE.get())) return Math.min(a, b*2); // Base material repairs 50% instead of 25%
         return original.call(a, b/2); // Restorine repairs 12.5%
+    }
+
+    @Inject(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z", ordinal = 0), cancellable = true)
+    private void anvilRelics(CallbackInfo ci) {
+        ItemStack relicStack = this.inputSlots.getItem(1);
+        if (!relicStack.is(AArcanaItems.RELIC.get())) return;
+        ItemStack itemStack = this.inputSlots.getItem(0);
+        if (!RelicHelper.canApplyRelic(itemStack, relicStack)) return;
+        ItemStack outputStack = itemStack.copy();
+        int relicStrength = RelicItem.getRelicStrength(relicStack);
+        RelicEntry relicType = RelicItem.getRelicType(relicStack);
+        RelicHelper.infuseRelic(outputStack, relicType, relicStrength);
+        this.resultSlots.setItem(0, outputStack);
+        broadcastChanges();
+        ci.cancel();
     }
 
     @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;set(I)V"))

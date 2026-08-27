@@ -35,6 +35,11 @@ public class ServerConfig implements ConfigData {
     @Comment("Add unique boss drops, like the Warden Heart. Disabling this will make some enchantments unobtainable.")
     public boolean add_boss_drops = true;
 
+    @Comment("""
+            While this is enabled all infusion type recipes will be ignored, relic infusion cannot be done at the
+            Smithing Table, and the Infusion Smithing Template item will not be registered.""")
+    public boolean anvil_relics = false;
+
     @Comment("The minimum amount of power (bookshelves and enchanted books within range of an enchanting table) to enchant.")
     public int minimum_enchanting_power = 0;
 
