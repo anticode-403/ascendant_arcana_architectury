@@ -48,6 +48,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Mixin(AbstractArrow.class)
@@ -369,32 +371,52 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
     @Unique
     private void ascendant_arcana$summonEvokersWrathFangs(LivingEntity owner, Projectile projectile, Vec3 pos, Level level) {
         if (ascendant_arcana$evokersWrathLevel >= 1) {
-            BlockPos blockPos = BlockPos.containing(pos);
-            boolean bl = false;
-            double d = 0.0D;
+            List<BlockPos> blockPositions = new ArrayList<>();
+            BlockPos source = BlockPos.containing(pos);
+            blockPositions.add(source);
+            if (ascendant_arcana$evokersWrathLevel >= 2) {
+                blockPositions.add(source.relative(Direction.NORTH));
+                blockPositions.add(source.relative(Direction.EAST));
+                blockPositions.add(source.relative(Direction.SOUTH));
+                blockPositions.add(source.relative(Direction.WEST));
+            }
+            if (ascendant_arcana$evokersWrathLevel >= 3) {
+                blockPositions.add(source.relative(Direction.NORTH, 2));
+                blockPositions.add(source.relative(Direction.EAST, 2));
+                blockPositions.add(source.relative(Direction.SOUTH, 2));
+                blockPositions.add(source.relative(Direction.WEST, 2));
+                blockPositions.add(source.relative(Direction.NORTH).relative(Direction.EAST));
+                blockPositions.add(source.relative(Direction.NORTH).relative(Direction.WEST));
+                blockPositions.add(source.relative(Direction.SOUTH).relative(Direction.EAST));
+                blockPositions.add(source.relative(Direction.SOUTH).relative(Direction.WEST));
+            }
+            for (BlockPos blockPos : blockPositions) {
+                boolean bl = false;
+                double d = 0.0D;
 
-            do {
-                BlockPos blockPos2 = blockPos.below();
-                BlockState blockState = level.getBlockState(blockPos2);
-                if (blockState.isFaceSturdy(level, blockPos2, Direction.UP)) {
-                    if (!level.isEmptyBlock(blockPos)) {
-                        BlockState blockState2 = level.getBlockState(blockPos);
-                        VoxelShape voxelShape = blockState2.getCollisionShape(level, blockPos);
-                        if (!voxelShape.isEmpty()) {
-                            d = voxelShape.max(Direction.Axis.Y);
+                do {
+                    BlockPos blockPos2 = blockPos.below();
+                    BlockState blockState = level.getBlockState(blockPos2);
+                    if (blockState.isFaceSturdy(level, blockPos2, Direction.UP)) {
+                        if (!level.isEmptyBlock(blockPos)) {
+                            BlockState blockState2 = level.getBlockState(blockPos);
+                            VoxelShape voxelShape = blockState2.getCollisionShape(level, blockPos);
+                            if (!voxelShape.isEmpty()) {
+                                d = voxelShape.max(Direction.Axis.Y);
+                            }
                         }
+
+                        bl = true;
+                        break;
                     }
 
-                    bl = true;
-                    break;
+                    blockPos = blockPos.below();
+                } while(blockPos.getY() >= level.getMinBuildHeight());
+
+                if (bl) {
+                    Vec3 Vec3 = blockPos.getCenter();
+                    level.addFreshEntity(new EvokerFangs(level, Vec3.x(), blockPos.getY() + d, Vec3.z(), projectile.getYRot(), 0, owner));
                 }
-
-                blockPos = blockPos.below();
-            } while(blockPos.getY() >= level.getMinBuildHeight());
-
-            if (bl) {
-                Vec3 Vec3 = blockPos.getCenter();
-                level.addFreshEntity(new EvokerFangs(level, Vec3.x(), blockPos.getY() + d, Vec3.z(), projectile.getYRot(), 0, owner));
             }
         }
     }
