@@ -940,6 +940,11 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
                             IngredientStack.of(Items.EMERALD, 4),
                             IngredientStack.of(Items.BONE, 4),
+                            4))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.EMERALD, 2),
+                            IngredientStack.of(Items.BONE, 2),
                             4)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.EXCAVATING.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
