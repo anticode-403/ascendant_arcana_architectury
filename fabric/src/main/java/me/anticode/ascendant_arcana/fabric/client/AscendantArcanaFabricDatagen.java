@@ -307,6 +307,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerEnchantment(translationBuilder, AArcanaEnchantments.REJUVENATING_SHOT.get(), "Rejuvenating Shot", "Instead of doing damage, arrows heal for half the damage they would have done.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.REPEATING.get(), "Repeating", "Crouch to load multiple arrows at once, allowing you to rapidly fire them in sequence later.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.RICOCHET.get(), "Ricochet", "Arrows ricochet, dealing reduced initial damage but increasing with each bounce.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.ROCKET_RIDING.get(), "Rocket Riding", "Firework Rockets can be used while flying for a boost.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.ROCKETRY.get(), "Rocketry", "Changes ammo type to Firework Rockets, also granting knockback and reduced self damage.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SALVO.get(), "Salvo", "Crouch to load multiple arrows at once, firing them in a wide blast. Arrows deal reduced base damage.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SHATTERSHOT.get(), "Shattershot", "Changes ammo type to Amethyst Shards, firing a short-ranged blast of shrapnel that knocks enemies back and applies Sundered.");
@@ -1043,6 +1044,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(Items.SLIME_BALL, 2),
                             IngredientStack.of(Items.FEATHER, 1),
                             4)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.ROCKET_RIDING.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.SLIME_BALL),
+                            IngredientStack.of(Items.FLINT),
+                            3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.ROCKETRY.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(Items.LAPIS_LAZULI, 4),

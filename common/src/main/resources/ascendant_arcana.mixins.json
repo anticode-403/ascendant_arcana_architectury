@@ -26,6 +26,7 @@
     "EntityMixin",
     "ExperienceOrbMixin",
     "FireworkRocketEntityMixin",
+    "FireworkRocketItemMixin",
     "GrindstoneMenuMixin",
     "HolderReferenceMixin",
     "ItemMixin",
