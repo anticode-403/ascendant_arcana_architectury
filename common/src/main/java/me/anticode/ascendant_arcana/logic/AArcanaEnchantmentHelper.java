@@ -44,17 +44,31 @@ public class AArcanaEnchantmentHelper {
         return enchantments;
     }
 
-    public static boolean testAnvilItems(ItemStack itemStack, ItemStack bookStack) {
-        Map<Enchantment, Integer> bookEnchants;
-        if (bookStack.getItem() instanceof EnchantedBookItem) bookEnchants = EnchantmentHelper.deserializeEnchantments(EnchantedBookItem.getEnchantments(bookStack));
-        else bookEnchants = EnchantmentHelper.getEnchantments(bookStack);
+    public static Map<Enchantment, Integer> getEnchantments(ItemStack itemStack) {
+        Map<Enchantment, Integer> enchantments;
+        if (itemStack.getItem() instanceof EnchantedBookItem) enchantments = EnchantmentHelper.deserializeEnchantments(EnchantedBookItem.getEnchantments(itemStack));
+        else enchantments = EnchantmentHelper.getEnchantments(itemStack);
+        return enchantments;
+    }
+
+    public static boolean testAnvilItems(ItemStack leftStack, ItemStack rightStack) {
+        Map<Enchantment, Integer> rightEnchantments = getEnchantments(rightStack);
         int cost = 0;
-        for (Enchantment enchantment : bookEnchants.keySet()) {
-            if (enchantment.canEnchant(itemStack) && EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(itemStack).keySet(), enchantment)) {
-                cost += bookEnchants.get(enchantment) * AArcanaEnchantmentHelper.getEnchantmentCost(enchantment);
+        Map<Enchantment, Integer> leftEnchantments = getEnchantments(leftStack);
+        for (Enchantment enchantment : rightEnchantments.keySet()) {
+            if (leftStack.getItem() instanceof EnchantedBookItem) {
+                if (EnchantmentHelper.isEnchantmentCompatible(leftEnchantments.keySet(), enchantment)) {
+                    if (leftEnchantments.containsKey(enchantment)) cost += Math.max(0, (leftEnchantments.get(enchantment) * getEnchantmentCost(enchantment)) - (rightEnchantments.get(enchantment) * getEnchantmentCost(enchantment)));
+                    else cost += Math.max(0, rightEnchantments.get(enchantment) * getEnchantmentCost(enchantment));
+                }
+            } else {
+                if (enchantment.canEnchant(leftStack) && EnchantmentHelper.isEnchantmentCompatible(leftEnchantments.keySet(), enchantment)) {
+                    if (leftEnchantments.containsKey(enchantment)) cost += Math.max(0, (leftEnchantments.get(enchantment) * getEnchantmentCost(enchantment)) - (rightEnchantments.get(enchantment) * getEnchantmentCost(enchantment)));
+                    else cost += Math.max(0, rightEnchantments.get(enchantment) * getEnchantmentCost(enchantment));
+                }
             }
         }
-        return AArcanaEnchantmentHelper.testEnchantmentCost(itemStack, cost);
+        return testEnchantmentCost(leftStack, cost);
     }
 
     public static int getTier(Enchantment enchantment) {
@@ -91,7 +105,7 @@ public class AArcanaEnchantmentHelper {
     public static int getEnchantmentUsage(ItemStack stack) {
         if (!stack.isEnchanted() && !(stack.getItem() instanceof EnchantedBookItem)) return 0;
         int cost = 0;
-        for (Map.Entry<Enchantment, Integer> enchantInstance : EnchantmentHelper.getEnchantments(stack).entrySet()) {
+        for (Map.Entry<Enchantment, Integer> enchantInstance : getEnchantments(stack).entrySet()) {
             cost += getEnchantmentCost(enchantInstance.getKey()) * enchantInstance.getValue();
         }
         return cost;
