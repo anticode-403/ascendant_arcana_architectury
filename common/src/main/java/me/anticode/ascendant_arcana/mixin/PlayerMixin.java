@@ -55,13 +55,13 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
     public abstract float getCurrentItemAttackStrengthDelay();
 
     @Unique
-    private int shieldBashTicks = 0;
+    private int ascendant_arcana$shieldBashTicks = 0;
 
     @Unique
-    private boolean shieldBashing = false;
+    private boolean ascendant_arcana$shieldBashing = false;
 
     @Unique
-    private Vec3 shieldBashDirection = Vec3.ZERO;
+    private Vec3 ascendant_arcana$shieldBashDirection = Vec3.ZERO;
 
     protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
@@ -187,7 +187,7 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;tick()V"))
     private void shieldBash(CallbackInfo ci) {
         Player player = (Player)(Object)this;
-        if (shieldBashing) {
+        if (ascendant_arcana$shieldBashing) {
             int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BASHING.get(), player.getUseItem());
             if (shieldBashLevel < 0) {
                 if (player.level() instanceof ServerLevel serverLevel) {
@@ -197,15 +197,15 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
                     NetworkManager.sendToServer(ServerboundShieldBashPacket.Id, new ServerboundShieldBashPacket(false).write());
                 }
             } else {
-                AABB shieldbashBox = player.getBoundingBox().move(shieldBashDirection.scale(player.getBoundingBox().getXsize())).inflate(0.75);
-                int stepLength = shieldBashTicks >= 3 ? 2 : 1;
+                AABB shieldbashBox = player.getBoundingBox().move(ascendant_arcana$shieldBashDirection.scale(player.getBoundingBox().getXsize())).inflate(0.75);
+                int stepLength = ascendant_arcana$shieldBashTicks >= 3 ? 2 : 1;
                 for (int i = 0; i < stepLength; i++) {
                     boolean doBreak = false;
-                    for (Entity entity : player.level().getEntities(player, shieldbashBox.move(shieldBashDirection.scale(i)))) {
+                    for (Entity entity : player.level().getEntities(player, shieldbashBox.move(ascendant_arcana$shieldBashDirection.scale(i)))) {
                         if (entity == player) continue;
                         if (entity instanceof LivingEntity livingEntity) {
                             livingEntity.hurt(player.damageSources().playerAttack(player), 4);
-                            livingEntity.knockback(0.8 * shieldBashLevel, -shieldBashDirection.x, -shieldBashDirection.z);
+                            livingEntity.knockback(0.8 * shieldBashLevel, -ascendant_arcana$shieldBashDirection.x, -ascendant_arcana$shieldBashDirection.z);
                         }
                         if (player.level() instanceof ServerLevel serverLevel) {
                             NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), false).write());
@@ -225,10 +225,10 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
                         break;
                     }
                 }
-                player.move(MoverType.SELF, shieldBashDirection.scale(stepLength));
+                player.move(MoverType.SELF, ascendant_arcana$shieldBashDirection.scale(stepLength));
                 player.hasImpulse = true;
-                shieldBashTicks--;
-                if (shieldBashTicks == 0) {
+                ascendant_arcana$shieldBashTicks--;
+                if (ascendant_arcana$shieldBashTicks == 0) {
                     if (player.level() instanceof ServerLevel serverLevel) {
                         NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), false).write());
                         ascendant_arcana$setShieldBashStatus(false);
@@ -245,17 +245,17 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
 
     @Override
     public void ascendant_arcana$setShieldBashStatus(boolean status) {
-        if (shieldBashing == status) return;
+        if (ascendant_arcana$shieldBashing == status) return;
         Player player = (Player)(Object)this;
-        shieldBashing = status;
-        if (shieldBashing) {
+        ascendant_arcana$shieldBashing = status;
+        if (ascendant_arcana$shieldBashing) {
             if (!(player.getUseItem().getItem() instanceof ShieldItem)) {
-                shieldBashing = false;
+                ascendant_arcana$shieldBashing = false;
                 return;
             }
             int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BASHING.get(), player.getUseItem());
-            shieldBashTicks = 1 + (shieldBashLevel < 3 ? shieldBashLevel * 2 : 5);
-            shieldBashDirection = player.getLookAngle().with(Direction.Axis.Y, 0).normalize();
+            ascendant_arcana$shieldBashTicks = 1 + (shieldBashLevel < 3 ? shieldBashLevel * 2 : 5);
+            ascendant_arcana$shieldBashDirection = player.getLookAngle().with(Direction.Axis.Y, 0).normalize();
             if (!player.level().isClientSide()) {
                 player.level().playSound(null, player, AArcanaSoundEvents.SHIELD_BASH_START.get(), SoundSource.PLAYERS, 1f, 2f);
                 player.getUseItem().hurtAndBreak(3, player, (livingEntity) -> livingEntity.broadcastBreakEvent(player.getUsedItemHand()));
@@ -263,27 +263,27 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
         } else {
             player.getCooldowns().addCooldown(Items.SHIELD, 400);
             player.stopUsingItem();
-            if (shieldBashTicks != 0) {
-                player.move(MoverType.SELF, shieldBashDirection);
+            if (ascendant_arcana$shieldBashTicks != 0) {
+                player.move(MoverType.SELF, ascendant_arcana$shieldBashDirection);
             }
-            shieldBashTicks = 0;
-            shieldBashDirection = Vec3.ZERO;
+            ascendant_arcana$shieldBashTicks = 0;
+            ascendant_arcana$shieldBashDirection = Vec3.ZERO;
             player.setDeltaMovement(player.getDeltaMovement().multiply(0, 1, 0));
         }
     }
 
     @Override
     public boolean ascendant_arcana$getShieldBashStatus() {
-        return shieldBashing;
+        return ascendant_arcana$shieldBashing;
     }
 
     @Override
     public int ascendant_arcana$getShieldBashTicks() {
-        return shieldBashTicks;
+        return ascendant_arcana$shieldBashTicks;
     }
 
     @Override
     public Vec3 ascendant_arcana$getShieldBashDirection() {
-        return shieldBashDirection;
+        return ascendant_arcana$shieldBashDirection;
     }
 }
