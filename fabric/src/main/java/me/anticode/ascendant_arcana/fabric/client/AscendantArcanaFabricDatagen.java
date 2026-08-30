@@ -287,6 +287,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerEnchantment(translationBuilder, AArcanaEnchantments.BASHING.get(), "Bashing", "While blocking press attack to charge forward and knock an enemy back.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.BLADEHEART.get(), "Bladeheart", "Slightly increases all damage dealt by physical attacks.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.BLAZEBOLT.get(), "Blazebolt", "Changes ammo type to Blaze Rods which fire a piercing, incinerating beam.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.CHARGING.get(), "Charging", "While being ridden the horse gets progressively faster. At max speed, damage and knockback enemies you impact.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.CLEANSE.get(), "Cleanse", "Holding the shield up cleanses you of all status effects after a short time.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.COLDHEART.get(), "Coldheart", "Increases damage dealt by all cold attacks.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.CROSS_COUNTER.get(), "Cross Counter", "Blocking an attack immediately after raising the shield grants a brief damage bonus for the next attack.");
@@ -878,6 +879,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
                             IngredientStack.of(Items.QUARTZ, 8),
                             IngredientStack.of(Items.MAGMA_CREAM, 4),
+                            6)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.CHARGING.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.SUGAR, 3),
+                            IngredientStack.of(Items.BLAZE_POWDER),
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.CLEANSE.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(

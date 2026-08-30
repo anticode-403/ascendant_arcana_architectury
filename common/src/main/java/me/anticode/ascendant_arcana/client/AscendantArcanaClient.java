@@ -4,6 +4,7 @@ import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.item.ItemPropertiesRegistry;
+import me.anticode.ascendant_arcana.api.AArcanaHorse;
 import me.anticode.ascendant_arcana.api.AArcanaPlayer;
 import me.anticode.ascendant_arcana.client.model.entity.SingularityModel;
 import me.anticode.ascendant_arcana.client.render.entity.BlazeboltEntityRenderer;
@@ -22,6 +23,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.CrossbowItem;
@@ -71,6 +73,12 @@ public class AscendantArcanaClient {
         });
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, RelicRegistrySync.Id, (buf, context) -> {
             RelicRegistry.fromNetwork(buf);
+        });
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ChargingSync.Id, (buf, context) -> {
+            ChargingSync packet = ChargingSync.read(buf);
+            Entity entity = context.getPlayer().level().getEntity(packet.horseId());
+            if (entity == null) return;
+            if (entity instanceof AArcanaHorse horse) horse.ascendant_arcana$setCharging(packet.status());
         });
 
         EntityRendererRegistry.register(AArcanaEntities.BLAZEBOLT_ENTITY, BlazeboltEntityRenderer::new);
