@@ -36,7 +36,9 @@ public class SpinAttackEffectLayerMixin<T extends LivingEntity> {
         } else if (livingEntity instanceof AArcanaHorse horse && horse.ascendant_arcana$getCharging()) {
             AbstractHorse abstractHorse = (AbstractHorse) horse;
             instance.translate(0, 0.5F, -2F);
-            instance.mulPose(Axis.YP.rotationDegrees((float)Math.atan2(abstractHorse.getControllingPassenger().getDeltaMovement().normalize().x, abstractHorse.getControllingPassenger().getDeltaMovement().normalize().z)));
+            LivingEntity rider = abstractHorse.getControllingPassenger();
+            if (rider == null) return;
+            instance.mulPose(Axis.YP.rotationDegrees((float)Math.atan2(rider.getDeltaMovement().normalize().x, rider.getDeltaMovement().normalize().z)));
             instance.mulPose(Axis.XP.rotationDegrees(90));
             original.call(instance, Axis.YP.rotationDegrees(n * 0.5F));
             instance.scale(2F, 2F, 2F);
