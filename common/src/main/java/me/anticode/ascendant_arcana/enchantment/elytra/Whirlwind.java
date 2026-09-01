@@ -23,7 +23,12 @@ public class Whirlwind extends Enchantment {
 
     @Override
     public int getMaxLevel() {
-        return 3;
+        return 1;
+    }
+
+    @Override
+    protected boolean checkCompatibility(Enchantment other) {
+        return super.checkCompatibility(other) && !(other instanceof RocketRiding);
     }
 
     @Override
