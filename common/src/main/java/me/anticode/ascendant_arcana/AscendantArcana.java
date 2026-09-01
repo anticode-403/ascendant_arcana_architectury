@@ -10,10 +10,7 @@ import me.anticode.ascendant_arcana.config.ServerConfig;
 import me.anticode.ascendant_arcana.config.ServerConfigWrapper;
 import me.anticode.ascendant_arcana.init.*;
 import me.anticode.ascendant_arcana.loot.PopulateRelicLootFunction;
-import me.anticode.ascendant_arcana.networking.ClientboundShieldBashPacket;
-import me.anticode.ascendant_arcana.networking.EnchantingScreenRemoveRecipe;
-import me.anticode.ascendant_arcana.networking.EnchantingScreenSendRecipe;
-import me.anticode.ascendant_arcana.networking.ServerboundShieldBashPacket;
+import me.anticode.ascendant_arcana.networking.*;
 import me.anticode.ascendant_arcana.relics.RelicTypes;
 import me.anticode.ascendant_arcana.screenhandler.AArcanaEnchantingMenu;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -88,6 +85,17 @@ public final class AscendantArcana {
             aPlayer.ascendant_arcana$setShieldBashStatus(packet.status());
             ServerLevel serverLevel = (ServerLevel) packetContext.getPlayer().level();
             NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), packet.status()).write());
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.C2S, ServerboundWhirlwindSync.Id, (buf, packetContext) -> {
+            ServerboundWhirlwindSync packet = ServerboundWhirlwindSync.read(buf);
+            Player player = packetContext.getPlayer();
+            if (player == null) return;
+            AArcanaPlayer aPlayer = (AArcanaPlayer) player;
+            aPlayer.ascendant_arcana$setWhirlwindCharge(packet.charging());
+            aPlayer.ascendant_arcana$setWhirlwinding(packet.whirlwinding());
+            ServerLevel serverLevel = (ServerLevel) player.level();
+            NetworkManager.sendToPlayers(serverLevel.players(), ClientboundWhirlwindSync.Id, new ClientboundWhirlwindSync(player.getUUID(), packet.charging(), packet.whirlwinding()).write());
         });
 
         LootEvent.MODIFY_LOOT_TABLE.register((dataManager, identifier, context, builtin) -> {

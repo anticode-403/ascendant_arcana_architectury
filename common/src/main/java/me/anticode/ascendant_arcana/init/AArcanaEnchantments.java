@@ -55,6 +55,7 @@ public class AArcanaEnchantments {
     public static RegistrySupplier<Enchantment> SUNDERING = register(new Sundering(), "sundering");
     public static RegistrySupplier<Enchantment> SUREFOOT = register(new Surefoot(), "surefoot");
     public static RegistrySupplier<Enchantment> SURROUNDED = register(new Surrounded(), "surrounded");
+    public static RegistrySupplier<Enchantment> WHIRLWIND = register(new Whirlwind(), "whirlwind");
 
     public static RegistrySupplier<Enchantment> ALCHEMISTS_HEART = register(new HeartEnchantment(), "alchemists_heart");
     public static RegistrySupplier<Enchantment> NETHER_HEART = register(new HeartEnchantment(), "heart_of_the_nether");

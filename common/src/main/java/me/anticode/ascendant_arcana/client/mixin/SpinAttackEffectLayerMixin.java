@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class SpinAttackEffectLayerMixin<T extends LivingEntity> {
     @WrapOperation(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isAutoSpinAttack()Z"))
     public boolean isAutoSpinAttackOrShieldBash(LivingEntity instance, Operation<Boolean> original) {
-        if (instance instanceof AArcanaPlayer player) return original.call(instance) || player.ascendant_arcana$getShieldBashStatus();
+        if (instance instanceof AArcanaPlayer player) return original.call(instance) || player.ascendant_arcana$getShieldBashStatus() || player.ascendant_arcana$isWhirlwinding() || player.ascendant_arcana$isWhirlwindCharging();
         else if (instance instanceof AArcanaHorse horse) return horse.ascendant_arcana$getCharging();
         return original.call(instance);
     }

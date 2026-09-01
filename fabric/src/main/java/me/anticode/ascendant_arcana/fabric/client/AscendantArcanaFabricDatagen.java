@@ -324,6 +324,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerEnchantment(translationBuilder, AArcanaEnchantments.SUREFOOT.get(), "Surefoot", "Significantly increases knockback resistance and reduces the strength of most slowing effects.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SURROUNDED.get(), "Surrounded", "Grants damage resistance while surrounded by enemies.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.TURTLE_HEART.get(), "Heart of the Turtle", "Decreases all incoming and outgoing damage.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.WHIRLWIND.get(), "Whirlwind", "While flying, crouch to stop and charge up a burst of speed.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.WITCH_HEART.get(), "Witch's Heart", "Slightly increases damage dealt by all magic attacks.");
 
             registerEnchantment(translationBuilder, AArcanaEnchantments.DEPTHS_CURSE.get(), "Curse of the Depths", "Drags you to the bottom of a body of water.");
@@ -1161,6 +1162,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 12),
                             IngredientStack.of(AArcanaTags.Items.HEARTS),
                             IngredientStack.of(Items.SCUTE, 4),
+                            6)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.WHIRLWIND.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.FEATHER, 5),
+                            IngredientStack.of(Items.ENDER_PEARL, 3),
                             6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.WITCH_HEART.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(

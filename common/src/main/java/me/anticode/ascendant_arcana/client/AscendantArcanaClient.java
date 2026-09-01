@@ -80,6 +80,14 @@ public class AscendantArcanaClient {
             if (entity == null) return;
             if (entity instanceof AArcanaHorse horse) horse.ascendant_arcana$setCharging(packet.status());
         });
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClientboundWhirlwindSync.Id, (buf, context) -> {
+            ClientboundWhirlwindSync packet = ClientboundWhirlwindSync.read(buf);
+            Player player = context.getPlayer().level().getPlayerByUUID(packet.playerId());
+            if (player == null) return;
+            AArcanaPlayer aPlayer = (AArcanaPlayer) player;
+            aPlayer.ascendant_arcana$setWhirlwindCharge(packet.charging());
+            aPlayer.ascendant_arcana$setWhirlwinding(packet.whirlwinding());
+        });
 
         EntityRendererRegistry.register(AArcanaEntities.BLAZEBOLT_ENTITY, BlazeboltEntityRenderer::new);
         EntityModelLayerRegistry.register(SingularityModel.LAYER_LOCATION, SingularityModel::createBodyLayer);

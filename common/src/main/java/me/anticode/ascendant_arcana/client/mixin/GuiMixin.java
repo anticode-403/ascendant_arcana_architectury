@@ -3,6 +3,7 @@ package me.anticode.ascendant_arcana.client.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import me.anticode.ascendant_arcana.AscendantArcana;
+import me.anticode.ascendant_arcana.api.AArcanaPlayer;
 import me.anticode.ascendant_arcana.api.CrossbowAccess;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import net.minecraft.client.Minecraft;
@@ -10,11 +11,13 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -32,6 +35,9 @@ public abstract class GuiMixin {
 
     @Shadow
     private int screenHeight;
+
+    @Unique
+    private final ResourceLocation CROSSHAIR_INDICATORS = new ResourceLocation(AscendantArcana.MOD_ID, "textures/gui/hud/crosshair_indicators.png");
 
     @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;hasExperience()Z"))
     private boolean doesNotHaveXpBar(MultiPlayerGameMode instance, Operation<Boolean> original) {
@@ -80,14 +86,40 @@ public abstract class GuiMixin {
         else if (minecraft.player.getOffhandItem().getItem() instanceof CrossbowItem) {
             crossbowItem = minecraft.player.getOffhandItem();
         }
-        if (crossbowItem.isEmpty()) return;
-        int maxProjectiles = ItemHelper.getCrossbowMaxArrows(crossbowItem);
-        int loadedProjectiles = ((CrossbowAccess) crossbowItem.getItem()).ascendant_arcana$getChargedProjectilesCount(crossbowItem);
-        int x = (screenWidth / 2) - (3 * maxProjectiles);
-        int y = (screenHeight / 2) + 16;
-        for (int i = 0; i < maxProjectiles; i++) {
-            boolean projectileLoaded = i < loadedProjectiles;
-            guiGraphics.blit(new ResourceLocation(AscendantArcana.MOD_ID, "textures/gui/hud/crossbow_indicator.png"), x + (i * 6), y, 0, projectileLoaded ? 4 : 0, 0, 4, 4, 16, 16);
+        if (!crossbowItem.isEmpty()) {
+            int maxProjectiles = ItemHelper.getCrossbowMaxArrows(crossbowItem);
+            int loadedProjectiles = ((CrossbowAccess) crossbowItem.getItem()).ascendant_arcana$getChargedProjectilesCount(crossbowItem);
+            int x = (screenWidth / 2) - (3 * maxProjectiles);
+            int y = (screenHeight / 2) + 16;
+            for (int i = 0; i < maxProjectiles; i++) {
+                boolean projectileLoaded = i < loadedProjectiles;
+                guiGraphics.blit(CROSSHAIR_INDICATORS, x + (i * 6), y, 0, projectileLoaded ? 4 : 0, 0, 4, 4, 16, 16);
+            }
+        }
+        boolean isChargingMovement;
+        int progress;
+        AArcanaPlayer aPlayer = (AArcanaPlayer) minecraft.player;
+        if (minecraft.player.isFallFlying() && aPlayer.ascendant_arcana$isWhirlwindCharging()) {
+            isChargingMovement = true;
+            progress = aPlayer.ascendant_arcana$getWhirlwindCharge();
+        } else {
+            isChargingMovement = false;
+            progress = 0;
+        }
+        if (isChargingMovement) {
+            int x = (screenWidth / 2) - 20;
+            int y = (screenHeight / 2) - 9;
+            for (int i = 0; i < 3; i++) {
+                guiGraphics.blit(CROSSHAIR_INDICATORS, x, y + (i * 7), 0, progress > (2 - i) ? 6 : 0, 4, 6, 5, 16, 16);
+            }
+        }
+        float whirlwindCooldown = aPlayer.ascendant_arcana$getWhirlwindCooldown();
+        if (whirlwindCooldown > 0) {
+            int x = (screenWidth / 2) + 13;
+            int y = (screenHeight / 2) - 2;
+            int pixelCooldown = Mth.floor(whirlwindCooldown * 5);
+            guiGraphics.blit(CROSSHAIR_INDICATORS, x, y, 0, 0, 9, 5, pixelCooldown, 16, 16);
+            guiGraphics.blit(CROSSHAIR_INDICATORS, x, y + pixelCooldown, 0, 5, 9 + pixelCooldown, 5, 5 - pixelCooldown, 16, 16);
         }
     }
 }

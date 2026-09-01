@@ -10,11 +10,13 @@ import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.networking.ClientboundShieldBashPacket;
 import me.anticode.ascendant_arcana.networking.ServerboundShieldBashPacket;
+import me.anticode.ascendant_arcana.networking.ServerboundWhirlwindSync;
 import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -59,6 +61,21 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
 
     @Unique
     private boolean ascendant_arcana$shieldBashing = false;
+
+    @Unique
+    private boolean ascendant_arcana$isWhirlwindCharging = false;
+
+    @Unique
+    private float ascendant_arcana$whirlwindCharge = 0;
+
+    @Unique
+    private boolean ascendant_arcana$isWhirlwinding = false;
+
+    @Unique
+    private int ascendant_arcana$whirlwindDuration = 0;
+
+    @Unique
+    private int ascendant_arcana$whirlwindCooldown = 0;
 
     @Unique
     private Vec3 ascendant_arcana$shieldBashDirection = Vec3.ZERO;
@@ -243,6 +260,44 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
         }
     }
 
+    @Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;travel(Lnet/minecraft/world/phys/Vec3;)V", shift = At.Shift.AFTER))
+    private void whirlwindInject(Vec3 vec3, CallbackInfo ci) {
+        Player player = (Player)(Object)this;
+        ascendant_arcana$whirlwindCooldown--;
+        if (ascendant_arcana$isWhirlwinding) {
+            ascendant_arcana$whirlwindDuration--;
+            if (ascendant_arcana$whirlwindDuration <= 0) {
+                ascendant_arcana$isWhirlwinding = false;
+                NetworkManager.sendToServer(ServerboundWhirlwindSync.Id, new ServerboundWhirlwindSync(false, false).write());
+            }
+            player.setDeltaMovement(player.getDeltaMovement().add(player.getLookAngle().scale(-0.3)));
+        }
+        if (!player.isFallFlying() || !player.isCrouching() || EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.WHIRLWIND.get(), player) <= 0) {
+            if (player.isFallFlying() && ascendant_arcana$isWhirlwindCharging && EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.WHIRLWIND.get(), player) > 0) {
+                ascendant_arcana$isWhirlwindCharging = false;
+                ascendant_arcana$isWhirlwinding = true;
+                ascendant_arcana$whirlwindDuration = Mth.floor(ascendant_arcana$whirlwindCharge) * 4;
+                ascendant_arcana$whirlwindCooldown = ascendant_arcana$whirlwindDuration + 100;
+                player.setDeltaMovement(player.getLookAngle().scale(Mth.floor(ascendant_arcana$whirlwindCharge) * 2));
+                NetworkManager.sendToServer(ServerboundWhirlwindSync.Id, new ServerboundWhirlwindSync(false, true).write());
+            }
+            ascendant_arcana$whirlwindCharge = 0;
+            return;
+        }
+        if (ascendant_arcana$whirlwindCooldown > 0) return;
+        ascendant_arcana$isWhirlwinding = false;
+        ascendant_arcana$whirlwindDuration = 0;
+        Vec3 oldMovement = player.getDeltaMovement();
+        player.setDeltaMovement(oldMovement.x * 0.9, oldMovement.y * 0.5, oldMovement.z * 0.9);
+        if (!ascendant_arcana$isWhirlwindCharging) {
+            ascendant_arcana$isWhirlwindCharging = true;
+            NetworkManager.sendToServer(ServerboundWhirlwindSync.Id, new ServerboundWhirlwindSync(true, false).write());
+        }
+        ascendant_arcana$whirlwindCharge += 0.05F;
+        if (ascendant_arcana$whirlwindCharge >= 3) ascendant_arcana$whirlwindCharge = 3;
+
+    }
+
     @Override
     public void ascendant_arcana$setShieldBashStatus(boolean status) {
         if (ascendant_arcana$shieldBashing == status) return;
@@ -270,6 +325,33 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
             ascendant_arcana$shieldBashDirection = Vec3.ZERO;
             player.setDeltaMovement(player.getDeltaMovement().multiply(0, 1, 0));
         }
+    }
+
+    @Override
+    public void ascendant_arcana$setWhirlwindCharge(boolean status) {
+        ascendant_arcana$isWhirlwindCharging = status;
+    }
+
+    @Override
+    public boolean ascendant_arcana$isWhirlwindCharging() {
+        return ascendant_arcana$isWhirlwindCharging;
+    }
+
+    @Override
+    public int ascendant_arcana$getWhirlwindCharge() {
+        return Mth.floor(ascendant_arcana$whirlwindCharge);
+    }
+
+    public void ascendant_arcana$setWhirlwinding(boolean status) {
+        ascendant_arcana$isWhirlwinding = status;
+    }
+
+    public boolean ascendant_arcana$isWhirlwinding() {
+        return ascendant_arcana$isWhirlwinding;
+    }
+
+    public float ascendant_arcana$getWhirlwindCooldown() {
+        return Math.min(1F, ((float)ascendant_arcana$whirlwindCooldown / 100F));
     }
 
     @Override
