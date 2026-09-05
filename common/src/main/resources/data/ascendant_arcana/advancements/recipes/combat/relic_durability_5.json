@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ascendant_arcana:relic_durability_5"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "obtain_restorine": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "ascendant_arcana:restorine"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_restorine",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ascendant_arcana:relic_durability_5"
+    ]
+  },
+  "sends_telemetry_event": false
+}

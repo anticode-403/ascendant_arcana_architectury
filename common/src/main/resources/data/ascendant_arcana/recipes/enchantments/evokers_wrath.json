@@ -22,6 +22,27 @@
           "item": "minecraft:bone"
         }
       }
+    },
+    {
+      "level_cost": 4,
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:emerald"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:bone"
+        }
+      }
     }
   ]
 }

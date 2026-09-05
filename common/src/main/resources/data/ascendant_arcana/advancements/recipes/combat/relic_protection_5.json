@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ascendant_arcana:relic_protection_5"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "obtain_netherite": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:netherite_scrap"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_netherite",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ascendant_arcana:relic_protection_5"
+    ]
+  },
+  "sends_telemetry_event": false
+}

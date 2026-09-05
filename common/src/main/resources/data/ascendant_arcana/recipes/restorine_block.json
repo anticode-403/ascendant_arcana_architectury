@@ -1,15 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "##",
-    "##"
-  ],
+  "category": "building",
   "key": {
-    "#": {
+    "r": {
       "item": "ascendant_arcana:restorine"
     }
   },
+  "pattern": [
+    "rr",
+    "rr"
+  ],
   "result": {
     "item": "ascendant_arcana:restorine_block"
-  }
+  },
+  "show_notification": true
 }

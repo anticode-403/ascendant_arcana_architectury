@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ascendant_arcana:relic_damage_3"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "obtain_deepslate": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:deepslate"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_deepslate",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ascendant_arcana:relic_damage_3"
+    ]
+  },
+  "sends_telemetry_event": false
+}

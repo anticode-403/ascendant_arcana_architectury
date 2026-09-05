@@ -1,0 +1,27 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:whirlwind",
+  "levels": [
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 5,
+        "ingredient": {
+          "item": "minecraft:feather"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:ender_pearl"
+        }
+      }
+    }
+  ]
+}
