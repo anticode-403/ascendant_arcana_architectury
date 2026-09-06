@@ -102,6 +102,9 @@ public abstract class GuiMixin {
         if (minecraft.player.isFallFlying() && aPlayer.ascendant_arcana$isWhirlwindCharging()) {
             isChargingMovement = true;
             progress = aPlayer.ascendant_arcana$getWhirlwindCharge();
+        } else if (minecraft.player.isCrouching() && minecraft.player.onGround() && aPlayer.ascendant_arcana$isLaunching()) {
+            isChargingMovement = true;
+            progress = aPlayer.ascendant_arcana$getLaunchingCharge();
         } else {
             isChargingMovement = false;
             progress = 0;

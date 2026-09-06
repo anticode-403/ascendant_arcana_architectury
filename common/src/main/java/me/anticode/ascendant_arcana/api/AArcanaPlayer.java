@@ -22,4 +22,8 @@ public interface AArcanaPlayer {
     boolean ascendant_arcana$isWhirlwinding();
 
     float ascendant_arcana$getWhirlwindCooldown();
+
+    int ascendant_arcana$getLaunchingCharge();
+
+    boolean ascendant_arcana$isLaunching();
 }

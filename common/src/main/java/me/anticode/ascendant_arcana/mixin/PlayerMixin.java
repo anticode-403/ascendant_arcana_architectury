@@ -23,6 +23,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -41,6 +43,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.UUID;
 import java.util.function.Predicate;
 
 @Mixin(Player.class)
@@ -63,6 +66,9 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
     private boolean ascendant_arcana$shieldBashing = false;
 
     @Unique
+    private Vec3 ascendant_arcana$shieldBashDirection = Vec3.ZERO;
+
+    @Unique
     private boolean ascendant_arcana$isWhirlwindCharging = false;
 
     @Unique
@@ -78,7 +84,10 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
     private int ascendant_arcana$whirlwindCooldown = 0;
 
     @Unique
-    private Vec3 ascendant_arcana$shieldBashDirection = Vec3.ZERO;
+    private float ascendant_arcana$launchingCharge = 0;
+
+    @Unique
+    private static UUID LAUNCHING_BOOST = UUID.fromString("b85134d2-a828-4ec2-95ef-a044c8b12a6b");
 
     protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
@@ -258,12 +267,25 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
         if (hasEffect(AArcanaMobEffects.PREPARED.get()) && (!isUsingItem() || EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.PREPARED_SHOT.get(), getUseItem()) == 0)) {
             removeEffect(AArcanaMobEffects.PREPARED.get());
         }
+        if (player.isCrouching() && player.onGround() && !player.isFallFlying() && !player.isSwimming() && EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.LAUNCHING.get(), player) > 0) {
+            ascendant_arcana$launchingCharge += 0.025F + (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.LAUNCHING.get(), player) * 0.25F);
+            if (ascendant_arcana$launchingCharge >= 3) ascendant_arcana$launchingCharge = 3;
+        } else if (ascendant_arcana$launchingCharge != 0) ascendant_arcana$launchingCharge = 0;
+    }
+
+    @Inject(method = "jumpFromGround", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;jumpFromGround()V", shift = At.Shift.AFTER))
+    private void applyLaunchingJumpBoost(CallbackInfo ci) {
+        double multiplier = 1 + (Mth.floor(ascendant_arcana$launchingCharge) * 0.5);
+        if (multiplier > 1) {
+            Player player = (Player)(Object)this;
+            player.setDeltaMovement(player.getDeltaMovement().x, player.getDeltaMovement().y * multiplier, player.getDeltaMovement().z);
+        }
     }
 
     @Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;travel(Lnet/minecraft/world/phys/Vec3;)V", shift = At.Shift.AFTER))
     private void whirlwindInject(Vec3 vec3, CallbackInfo ci) {
         Player player = (Player)(Object)this;
-        ascendant_arcana$whirlwindCooldown--;
+        if (ascendant_arcana$whirlwindCooldown > 0) ascendant_arcana$whirlwindCooldown--;
         if (ascendant_arcana$isWhirlwinding) {
             ascendant_arcana$whirlwindDuration--;
             if (ascendant_arcana$whirlwindDuration <= 0) {
@@ -342,16 +364,29 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
         return Mth.floor(ascendant_arcana$whirlwindCharge);
     }
 
+    @Override
     public void ascendant_arcana$setWhirlwinding(boolean status) {
         ascendant_arcana$isWhirlwinding = status;
     }
 
+    @Override
     public boolean ascendant_arcana$isWhirlwinding() {
         return ascendant_arcana$isWhirlwinding;
     }
 
+    @Override
     public float ascendant_arcana$getWhirlwindCooldown() {
         return Math.min(1F, ((float)ascendant_arcana$whirlwindCooldown / 100F));
+    }
+
+    @Override
+    public int ascendant_arcana$getLaunchingCharge() {
+        return Mth.floor(ascendant_arcana$launchingCharge);
+    }
+
+    @Override
+    public boolean ascendant_arcana$isLaunching() {
+        return ascendant_arcana$launchingCharge != 0;
     }
 
     @Override
