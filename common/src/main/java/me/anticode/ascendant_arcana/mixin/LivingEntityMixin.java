@@ -37,9 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -109,7 +107,7 @@ public abstract class LivingEntityMixin {
         if (level <= 0) return;
         int useTime = getTicksUsingItem();
         if (useTime <= 0) return;
-        if (useTime > 5 + 5 * level) return;
+        if (useTime > 5 * level) return;
         MobEffectInstance crossCounter = new MobEffectInstance(AArcanaMobEffects.CROSS_COUNTER.get(), 15 * level, 0, false, false, true);
         addEffect(crossCounter, (LivingEntity)(Object)this);
     }
@@ -378,6 +376,11 @@ public abstract class LivingEntityMixin {
                 hurt(livingEntity.level().damageSources().magic(), damage);
             }
         }
+    }
+
+    @ModifyConstant(method = "isBlocking", constant = @Constant(intValue = 5))
+    private int noShieldDelay(int value) {
+        return 0;
     }
 
     @Unique
