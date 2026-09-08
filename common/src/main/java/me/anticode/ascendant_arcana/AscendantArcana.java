@@ -91,9 +91,6 @@ public final class AscendantArcana {
             ServerboundWhirlwindSync packet = ServerboundWhirlwindSync.read(buf);
             Player player = packetContext.getPlayer();
             if (player == null) return;
-            AArcanaPlayer aPlayer = (AArcanaPlayer) player;
-            aPlayer.ascendant_arcana$setWhirlwindCharge(packet.charging());
-            aPlayer.ascendant_arcana$setWhirlwinding(packet.whirlwinding());
             ServerLevel serverLevel = (ServerLevel) player.level();
             NetworkManager.sendToPlayers(serverLevel.players(), ClientboundWhirlwindSync.Id, new ClientboundWhirlwindSync(player.getUUID(), packet.charging(), packet.whirlwinding()).write());
         });
