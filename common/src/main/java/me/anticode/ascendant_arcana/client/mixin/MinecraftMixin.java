@@ -7,8 +7,6 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.N
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,7 +28,7 @@ public class MinecraftMixin {
     @Inject(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z", ordinal = 0, shift = At.Shift.AFTER))
     private void injectShieldBashAction(CallbackInfo ci) {
         assert player != null;
-        if (!player.isUsingItem() || player.getUseItemRemainingTicks() > Items.SHIELD.getUseDuration(Items.SHIELD.getDefaultInstance()) - ShieldItem.EFFECTIVE_BLOCK_DELAY) return;
+        if (!player.isUsingItem()) return;
         int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BASHING.get(), player.getUseItem());
         if (shieldBashLevel > 0 && !player.isFallFlying()) {
             while (options.keyAttack.consumeClick()) {
