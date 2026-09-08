@@ -1,5 +1,6 @@
 package me.anticode.ascendant_arcana.entity;
 
+import me.anticode.ascendant_arcana.init.AArcanaDamage;
 import me.anticode.ascendant_arcana.init.AArcanaEntities;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
@@ -31,7 +32,6 @@ public class SingularityEntity extends OwnedEntity {
         this.noPhysics = true;
         this.noCulling = true;
         setOwner(livingEntity);
-
     }
 
     @Override
@@ -59,7 +59,7 @@ public class SingularityEntity extends OwnedEntity {
                 level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(0.05F), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(this::notOwnerAlly)).forEach(entity -> {
                     LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.addEffect(new MobEffectInstance(AArcanaMobEffects.HOBBLED.get(), 40, 2, false, false, true));
-                    livingEntity.hurt(damageSources().indirectMagic(this, getOwner()), 1F);
+                    livingEntity.hurt(AArcanaDamage.source(livingEntity.level(), AArcanaDamage.SINGULARITY), 1F);
                 });
             }
         }
