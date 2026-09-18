@@ -299,6 +299,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerEnchantment(translationBuilder, AArcanaEnchantments.GUIDING.get(), "Guiding", "While holding this bow, fired arrows follow the direction you're looking.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.HELLWALKER.get(), "Hellwalker", "Crystalizes nearby lava so it can be walked on.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.HOBBLING_SHOT.get(), "Hobbling Shot", "Reduces movement speed and jump height, stacking 5 times.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.JOLTING.get(), "Jolting", "Attacking an enemy Jolts them. Critically striking a Jolted enemy chains lightning to nearby enemies.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.LAUNCHING.get(), "Launching", "Crouch to charge up a massive jump boost!");
             registerEnchantment(translationBuilder, AArcanaEnchantments.LIFETIDE.get(), "Lifetide", "On hit, sticks into the target and heals them for a short duration. You heal half as much.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.MIASMA.get(), "Miasma", "Tipped Arrows create a temporary effect cloud where they land.");
@@ -352,6 +353,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerStatusEffect(translationBuilder, AArcanaMobEffects.CROSS_COUNTER.get(), "Cross Counter", "Increases attack damage for the next attack.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.ECHOING_DAMAGE.get(), "Echoing Damage", "Deals damage every second based on amplification.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.HOBBLED.get(), "Hobbled", "Slightly reduces movement speed and jump height.");
+            registerStatusEffect(translationBuilder, AArcanaMobEffects.JOLTED.get(), "Jolted", "Being critically hit makes damaging lightning attack nearby entities.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.MEGANEURA.get(), "Meganeura", "Next slain enemy explodes.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.PREPARED.get(), "Prepared", "Increased arrow damage, the next arrow explodes slain enemies.");
             registerStatusEffect(translationBuilder, AArcanaMobEffects.SUNDERED.get(), "Sundered", "Significantly reduces armor and armor toughness.");
@@ -991,6 +993,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(Items.COBWEB, 4),
                             null,
                             4)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.JOLTING.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.COPPER_INGOT, 7),
+                            IngredientStack.of(Items.REDSTONE, 3),
+                            3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.LAUNCHING.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
