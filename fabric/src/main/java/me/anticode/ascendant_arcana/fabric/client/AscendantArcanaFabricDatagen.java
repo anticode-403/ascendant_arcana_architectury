@@ -378,6 +378,8 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add("pack.ascendant_arcana.ascendant_arcana_classic", "Ascendant Arcana Classic");
             translationBuilder.add("category.ascendant_arcana", "Ascendant Arcana");
             translationBuilder.add("gui.anvil.max_capacity", "No Capacity!");
+            translationBuilder.add("death.attack.jolted", "%1$s was electrocuted");
+            translationBuilder.add("death.attack.jolted.item", "%1$s was electrocuted");
         }
     }
 
