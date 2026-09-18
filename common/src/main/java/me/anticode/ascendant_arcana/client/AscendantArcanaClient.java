@@ -3,16 +3,19 @@ package me.anticode.ascendant_arcana.client;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
+import dev.architectury.registry.client.particle.ParticleProviderRegistry;
 import dev.architectury.registry.item.ItemPropertiesRegistry;
 import me.anticode.ascendant_arcana.api.AArcanaHorse;
 import me.anticode.ascendant_arcana.api.AArcanaPlayer;
 import me.anticode.ascendant_arcana.client.model.entity.SingularityModel;
+import me.anticode.ascendant_arcana.client.particle.ChainingLightningParticle;
 import me.anticode.ascendant_arcana.client.render.entity.BlazeboltEntityRenderer;
 import me.anticode.ascendant_arcana.client.render.entity.SingularityEntityRenderer;
 import me.anticode.ascendant_arcana.init.AArcanaEntities;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.api.EnchantedTrident;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
+import me.anticode.ascendant_arcana.init.AArcanaParticles;
 import me.anticode.ascendant_arcana.item.RelicItem;
 import me.anticode.ascendant_arcana.networking.*;
 import me.anticode.ascendant_arcana.relics.RelicRegistry;
@@ -88,6 +91,8 @@ public class AscendantArcanaClient {
             aPlayer.ascendant_arcana$setWhirlwindCharge(packet.charging());
             aPlayer.ascendant_arcana$setWhirlwinding(packet.whirlwinding());
         });
+
+        ParticleProviderRegistry.register(AArcanaParticles.CHAINING_LIGHTNING.get(), ChainingLightningParticle.Provider::new);
 
         EntityRendererRegistry.register(AArcanaEntities.BLAZEBOLT_ENTITY, BlazeboltEntityRenderer::new);
         EntityModelLayerRegistry.register(SingularityModel.LAYER_LOCATION, SingularityModel::createBodyLayer);

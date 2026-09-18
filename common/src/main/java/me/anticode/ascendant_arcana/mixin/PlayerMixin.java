@@ -7,6 +7,7 @@ import me.anticode.ascendant_arcana.api.AArcanaPlayer;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
+import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
 import me.anticode.ascendant_arcana.networking.ClientboundShieldBashPacket;
 import me.anticode.ascendant_arcana.networking.ServerboundShieldBashPacket;
@@ -23,8 +24,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -271,6 +270,15 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
             ascendant_arcana$launchingCharge += 0.025F + (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.LAUNCHING.get(), player) * 0.25F);
             if (ascendant_arcana$launchingCharge >= 3) ascendant_arcana$launchingCharge = 3;
         } else if (ascendant_arcana$launchingCharge != 0) ascendant_arcana$launchingCharge = 0;
+    }
+
+    @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;crit(Lnet/minecraft/world/entity/Entity;)V"))
+    private void applyJoltedEffectOnCrit(Entity entity, CallbackInfo ci) {
+        if (entity instanceof LivingEntity livingEntity) {
+            if (livingEntity.hasEffect(AArcanaMobEffects.JOLTED.get())) {
+                AArcanaEnchantmentHelper.joltTargets(livingEntity, this, livingEntity.getEffect(AArcanaMobEffects.JOLTED.get()).getAmplifier() + 3);
+            }
+        }
     }
 
     @Inject(method = "jumpFromGround", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;jumpFromGround()V", shift = At.Shift.AFTER))

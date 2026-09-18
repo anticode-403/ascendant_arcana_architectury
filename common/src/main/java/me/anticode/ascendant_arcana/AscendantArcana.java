@@ -20,11 +20,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -58,6 +56,7 @@ public final class AscendantArcana {
         AArcanaFeatures.initialize();
         AArcanaEntities.initialize();
         AArcanaSoundEvents.initialize();
+        AArcanaParticles.initialize();
         TABS.register();
 
         NetworkManager.registerReceiver(NetworkManager.Side.C2S, EnchantingScreenRemoveRecipe.Id, (buf, packetContext) -> {

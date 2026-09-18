@@ -1,5 +1,6 @@
 package me.anticode.ascendant_arcana.entity;
 
+import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -37,11 +38,7 @@ public abstract class OwnedEntity extends Entity implements TraceableEntity {
     }
 
     public boolean notOwnerAlly(Entity entity) {
-        if (getOwner() == null) return true;
-        if (entity == getOwner()) return false;
-        else if (entity instanceof TraceableEntity traceableEntity && traceableEntity.getOwner() == getOwner()) return false;
-        else if (getOwner().getTeam() != null && !getOwner().getTeam().isAllowFriendlyFire() && getOwner().getTeam() == entity.getTeam()) return false;
-        else return true;
+        return AArcanaEnchantmentHelper.notAllyToEntity(this.getOwner(), entity);
     }
 
     @Override

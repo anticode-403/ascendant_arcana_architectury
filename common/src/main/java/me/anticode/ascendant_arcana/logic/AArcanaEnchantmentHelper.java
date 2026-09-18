@@ -1,23 +1,29 @@
 package me.anticode.ascendant_arcana.logic;
 
 import me.anticode.ascendant_arcana.AscendantArcana;
+import me.anticode.ascendant_arcana.codecs.EntityListSource;
+import me.anticode.ascendant_arcana.init.AArcanaDamage;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
+import me.anticode.ascendant_arcana.particle.ChainingLightningParticleOption;
 import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.gameevent.EntityPositionSource;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 
 import java.util.*;
@@ -252,6 +258,32 @@ public class AArcanaEnchantmentHelper {
         itemStack.setCount(runningTotal);
         if (itemStack.getCount() > itemStack.getMaxStackSize()) itemStack.setCount(itemStack.getMaxStackSize());
         return itemStack;
+    }
+
+    public static void joltTargets(LivingEntity victim, LivingEntity attacker, int chainLength) {
+        ServerLevel serverLevel = (ServerLevel) victim.level();
+        Entity lastLink = victim;
+        List<EntityPositionSource> chain = new LinkedList<>();
+        chain.add(new EntityPositionSource(victim, (float)victim.getRandomY() - (float)victim.getY()));
+        for (int i = 0; i < chainLength; i++) {
+            List<Entity> linkTargets = lastLink.level().getEntities(lastLink, AABB.unitCubeFromLowerCorner(lastLink.position().subtract(0.5, 0.5, 0.5)).inflate(5), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and((entity) -> notAllyToEntity(attacker, entity)));
+            if (linkTargets.isEmpty()) break;
+            Entity nextLink = linkTargets.get(serverLevel.getRandom().nextIntBetweenInclusive(0, linkTargets.size() - 1));
+            nextLink.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED), 4);
+            chain.add(new EntityPositionSource(nextLink, (float)nextLink.getRandomY() - (float)nextLink.getY()));
+            lastLink = nextLink;
+        }
+        serverLevel.sendParticles(new ChainingLightningParticleOption(new EntityListSource(chain)), victim.getX(), victim.getY(), victim.getZ(), 0, 0, 0, 0, 0);
+    }
+
+    public static boolean notAllyToEntity(Entity entity, Entity potentialAlly) {
+        if (entity == null) return true;
+        if (potentialAlly == entity) return false;
+        else if (entity instanceof TraceableEntity traceableEntity && traceableEntity.getOwner() == potentialAlly) return false;
+        else if (potentialAlly instanceof TraceableEntity traceableEntity && traceableEntity.getOwner() == entity) return false;
+        else if (entity instanceof OwnableEntity ownableEntity && ownableEntity.getOwner() == potentialAlly) return false;
+        else if (potentialAlly instanceof OwnableEntity ownableEntity && ownableEntity.getOwner() == entity) return false;
+        else return entity.getTeam() == null || entity.getTeam().isAllowFriendlyFire() || entity.getTeam() != potentialAlly.getTeam();
     }
 
     public static UUID getUUID(String slotID) {
