@@ -276,7 +276,7 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
     private void applyJoltedEffectOnCrit(Entity entity, CallbackInfo ci) {
         if (entity instanceof LivingEntity livingEntity) {
             if (livingEntity.hasEffect(AArcanaMobEffects.JOLTED.get())) {
-                AArcanaEnchantmentHelper.joltTargets(livingEntity, this, livingEntity.getEffect(AArcanaMobEffects.JOLTED.get()).getAmplifier() + 3);
+                AArcanaEnchantmentHelper.joltTargets(livingEntity, this, livingEntity.getEffect(AArcanaMobEffects.JOLTED.get()).getAmplifier() + 2);
             }
         }
     }
