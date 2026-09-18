@@ -261,15 +261,21 @@ public class AArcanaEnchantmentHelper {
     }
 
     public static void joltTargets(LivingEntity victim, LivingEntity attacker, int chainLength) {
+        joltTargets(victim, attacker, null, chainLength);
+    }
+
+    public static void joltTargets(LivingEntity victim, LivingEntity attacker, Entity indirectEntity, int chainLength) {
         ServerLevel serverLevel = (ServerLevel) victim.level();
         Entity lastLink = victim;
         List<EntityPositionSource> chain = new LinkedList<>();
+        if (indirectEntity != null) chain.add(new EntityPositionSource(indirectEntity, indirectEntity.getEyeHeight()));
         chain.add(new EntityPositionSource(victim, (float)victim.getRandomY() - (float)victim.getY()));
         for (int i = 0; i < chainLength; i++) {
             List<Entity> linkTargets = lastLink.level().getEntities(lastLink, AABB.unitCubeFromLowerCorner(lastLink.position().subtract(0.5, 0.5, 0.5)).inflate(5), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and((entity) -> notAllyToEntity(attacker, entity)));
             if (linkTargets.isEmpty()) break;
             Entity nextLink = linkTargets.get(serverLevel.getRandom().nextIntBetweenInclusive(0, linkTargets.size() - 1));
-            nextLink.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED), 4);
+            if (indirectEntity != null) nextLink.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, indirectEntity, attacker), 4);
+            else nextLink.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, attacker), 4);
             chain.add(new EntityPositionSource(nextLink, (float)nextLink.getRandomY() - (float)nextLink.getY()));
             lastLink = nextLink;
         }
