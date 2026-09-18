@@ -146,6 +146,13 @@ public abstract class LivingEntityMixin {
         else return original.call(instance, tag);
     }
 
+    @WrapOperation(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))
+    private void doNotKnockbackNoImpacts(LivingEntity instance, double d, double e, double f, Operation<Void> original, @Local(argsOnly = true) DamageSource damageSource) {
+        if (!damageSource.is(DamageTypeTags.NO_IMPACT)) {
+            original.call(instance, d, e, f);
+        }
+    }
+
     @ModifyReturnValue(method = "getDamageAfterMagicAbsorb", at = @At("RETURN"))
     private float applyProtectionStat(float original, @Local(argsOnly = true) DamageSource source) {
         if (source.is(DamageTypeTags.BYPASSES_ENCHANTMENTS)) return original;
