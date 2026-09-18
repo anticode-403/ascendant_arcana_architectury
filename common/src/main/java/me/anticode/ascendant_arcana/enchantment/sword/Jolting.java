@@ -29,7 +29,7 @@ public class Jolting extends Enchantment {
 
     @Override
     public int getMaxLevel() {
-        return 1;
+        return 3;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class Jolting extends Enchantment {
     @Override
     public void doPostAttack(LivingEntity livingEntity, Entity entity, int i) {
         if (entity instanceof LivingEntity victim) {
-            victim.addEffect(new MobEffectInstance(AArcanaMobEffects.JOLTED.get(), 100, 0, false, false, true));
+            victim.addEffect(new MobEffectInstance(AArcanaMobEffects.JOLTED.get(), 100, i - 1, false, false, true));
         }
     }
 }

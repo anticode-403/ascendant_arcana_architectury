@@ -271,7 +271,7 @@ public class AArcanaEnchantmentHelper {
         if (indirectEntity != null) chain.add(new EntityPositionSource(indirectEntity, indirectEntity.getEyeHeight()));
         chain.add(new EntityPositionSource(victim, (float)victim.getRandomY() - (float)victim.getY()));
         for (int i = 0; i < chainLength; i++) {
-            List<Entity> linkTargets = lastLink.level().getEntities(lastLink, AABB.unitCubeFromLowerCorner(lastLink.position().subtract(0.5, 0.5, 0.5)).inflate(5), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and((entity) -> notAllyToEntity(attacker, entity)));
+            List<Entity> linkTargets = lastLink.level().getEntities(lastLink, AABB.unitCubeFromLowerCorner(lastLink.position().subtract(0.5, 0.5, 0.5)).inflate(3 + chainLength), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and((entity) -> notAllyToEntity(attacker, entity)));
             if (linkTargets.isEmpty()) break;
             Entity nextLink = linkTargets.get(serverLevel.getRandom().nextIntBetweenInclusive(0, linkTargets.size() - 1));
             if (indirectEntity != null) nextLink.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, indirectEntity, attacker), 4);
