@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import me.anticode.ascendant_arcana.api.EnchantedArrow;
 import me.anticode.ascendant_arcana.api.EnchantedTrident;
 import me.anticode.ascendant_arcana.api.PotionArrow;
+import me.anticode.ascendant_arcana.entity.LightningTurretEntity;
 import me.anticode.ascendant_arcana.entity.SingularityEntity;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
@@ -350,6 +351,11 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
                 Vec3 averagePosition = projectile.position().add(blockHitResult.getLocation()).multiply(0.5, 0.5, 0.5);
                 singularity.setPos(averagePosition);
                 projectile.level().addFreshEntity(singularity);
+            }
+            if (enchantedTrident.ascendant_arcana$getSingularityLevel() >= 1) {
+                LightningTurretEntity lightningTurret = new LightningTurretEntity(projectile.level(), (LivingEntity) projectile.getOwner(), blockHitResult.getDirection().getOpposite());
+                if (blockHitResult.getDirection() != Direction.DOWN) lightningTurret.setPos(blockHitResult.getLocation().relative(blockHitResult.getDirection(), 0.9));
+                projectile.level().addFreshEntity(lightningTurret);
             }
         } else {
             if (ascendant_arcana$evokersWrathLevel >= 1) {

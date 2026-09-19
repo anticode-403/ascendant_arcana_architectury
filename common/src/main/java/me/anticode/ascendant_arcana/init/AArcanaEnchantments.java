@@ -53,6 +53,7 @@ public class AArcanaEnchantments {
     public static RegistrySupplier<Enchantment> SONIC_BLAST = register(new SonicBlast(), "sonic_blast");
     public static RegistrySupplier<Enchantment> SOUL_BURST = register(new SoulBurst(), "soul_burst");
     public static RegistrySupplier<Enchantment> STOPPING_POWER = register(new StoppingPower(), "stopping_power");
+    public static RegistrySupplier<Enchantment> STORM_ANCHOR = register(new StormAnchor(), "storm_anchor");
     public static RegistrySupplier<Enchantment> STRAFE = register(new Strafe(), "strafe");
     public static RegistrySupplier<Enchantment> SUNDERING = register(new Sundering(), "sundering");
     public static RegistrySupplier<Enchantment> SUREFOOT = register(new Surefoot(), "surefoot");

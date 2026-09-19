@@ -268,15 +268,23 @@ public class AArcanaEnchantmentHelper {
         ServerLevel serverLevel = (ServerLevel) victim.level();
         Entity lastLink = victim;
         List<EntityPositionSource> chain = new LinkedList<>();
-        if (indirectEntity != null) chain.add(new EntityPositionSource(indirectEntity, indirectEntity.getEyeHeight()));
+        List<Entity> chainEntity = new LinkedList<>();
+        if (indirectEntity != null) {
+            chain.add(new EntityPositionSource(indirectEntity, indirectEntity.getEyeHeight()));
+            chainEntity.add(indirectEntity);
+        }
         chain.add(new EntityPositionSource(victim, (float)victim.getRandomY() - (float)victim.getY()));
+        chainEntity.add(victim);
+        if (indirectEntity != null) victim.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, indirectEntity, attacker), 4);
+        else victim.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, attacker), 4);
         for (int i = 0; i < chainLength; i++) {
-            List<Entity> linkTargets = lastLink.level().getEntities(lastLink, AABB.unitCubeFromLowerCorner(lastLink.position().subtract(0.5, 0.5, 0.5)).inflate(3 + chainLength), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and((entity) -> notAllyToEntity(attacker, entity)));
+            List<Entity> linkTargets = lastLink.level().getEntities(lastLink, AABB.unitCubeFromLowerCorner(lastLink.position().subtract(0.5, 0.5, 0.5)).inflate(3 + chainLength), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and((entity) -> notAllyToEntity(attacker, entity)).and((entity) -> !chainEntity.contains(entity)));
             if (linkTargets.isEmpty()) break;
             Entity nextLink = linkTargets.get(serverLevel.getRandom().nextIntBetweenInclusive(0, linkTargets.size() - 1));
             if (indirectEntity != null) nextLink.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, indirectEntity, attacker), 4);
             else nextLink.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, attacker), 4);
             chain.add(new EntityPositionSource(nextLink, (float)nextLink.getRandomY() - (float)nextLink.getY()));
+            chainEntity.add(nextLink);
             lastLink = nextLink;
         }
         serverLevel.sendParticles(new ChainingLightningParticleOption(new EntityListSource(chain)), victim.getX(), victim.getY(), victim.getZ(), 0, 0, 0, 0, 0);

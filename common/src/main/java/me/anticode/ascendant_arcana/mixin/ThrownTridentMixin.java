@@ -74,6 +74,9 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
     @Unique
     private float ascendant_arcana$relicDamageMultiplier = 1;
 
+    @Unique
+    private int ascendant_arcana$stormAnchorLevel = 0;
+
     @Override
     public LivingEntity ascendant_arcana$getStuckEntity() {
         return ascendant_arcana$stuckEntity;
@@ -127,17 +130,29 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
         this.ascendant_arcana$stuckEntityId = value;
     }
 
+    @Override
+    public int ascendant_arcana$getStormAnchorLevel() {
+        return this.ascendant_arcana$stormAnchorLevel;
+    }
+
+    @Override
+    public void ascendant_arcana$setStormAnchorLevel(int value) {
+        this.ascendant_arcana$stormAnchorLevel = value;
+    }
+
     @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V", at = @At("RETURN"))
     private void addEnchantmentsToTrident(Level level, LivingEntity livingEntity, ItemStack itemStack, CallbackInfo ci) {
         int ambushLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.AMBUSH.get(), itemStack);
         int lifetideLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.LIFETIDE.get(), itemStack);
         int sunderingLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SUNDERING.get(), itemStack);
         int singularityLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.SINGULARITY.get(), itemStack);
+        int stormAnchorLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.STORM_ANCHOR.get(), itemStack);
 
         ascendant_arcana$setAmbushLevel(ambushLevel);
         ascendant_arcana$setLifetideLevel(lifetideLevel);
         ascendant_arcana$setSunderingLevel(sunderingLevel);
         ascendant_arcana$setSingularityLevel(singularityLevel);
+        ascendant_arcana$setStormAnchorLevel(stormAnchorLevel);
         this.ascendant_arcana$relicDamageMultiplier = (float) RelicHelper.applyAllRelicsOfType(RelicTypes.DAMAGE, 1, itemStack.getTag());
     }
 
@@ -151,6 +166,7 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
         nbt.putFloat("renderTicks", ascendant_arcana$renderTicks);
         nbt.putFloat("stabTicks", ascendant_arcana$stabTicks);
         nbt.putFloat("relicDamageMultiplier", ascendant_arcana$relicDamageMultiplier);
+        nbt.putInt("stormAnchorLevel", ascendant_arcana$stormAnchorLevel);
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
@@ -163,6 +179,7 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
         this.ascendant_arcana$renderTicks = nbt.getFloat("renderTicks");
         this.ascendant_arcana$stabTicks = nbt.getFloat("stabTicks");
         this.ascendant_arcana$relicDamageMultiplier = nbt.getFloat("relicDamageMultiplier");
+        this.ascendant_arcana$stormAnchorLevel = nbt.getInt("stormAnchorLevel");
     }
 
     @Inject(method = "onHitEntity", at = @At("HEAD"), cancellable = true)

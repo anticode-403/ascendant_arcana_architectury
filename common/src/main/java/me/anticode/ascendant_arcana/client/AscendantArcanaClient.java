@@ -7,9 +7,11 @@ import dev.architectury.registry.client.particle.ParticleProviderRegistry;
 import dev.architectury.registry.item.ItemPropertiesRegistry;
 import me.anticode.ascendant_arcana.api.AArcanaHorse;
 import me.anticode.ascendant_arcana.api.AArcanaPlayer;
+import me.anticode.ascendant_arcana.client.model.entity.LightningTurretModel;
 import me.anticode.ascendant_arcana.client.model.entity.SingularityModel;
 import me.anticode.ascendant_arcana.client.particle.ChainingLightningParticle;
 import me.anticode.ascendant_arcana.client.render.entity.BlazeboltEntityRenderer;
+import me.anticode.ascendant_arcana.client.render.entity.LightningTurretEntityRenderer;
 import me.anticode.ascendant_arcana.client.render.entity.SingularityEntityRenderer;
 import me.anticode.ascendant_arcana.init.AArcanaEntities;
 import me.anticode.ascendant_arcana.AscendantArcana;
@@ -97,6 +99,8 @@ public class AscendantArcanaClient {
         EntityRendererRegistry.register(AArcanaEntities.BLAZEBOLT_ENTITY, BlazeboltEntityRenderer::new);
         EntityModelLayerRegistry.register(SingularityModel.LAYER_LOCATION, SingularityModel::createBodyLayer);
         EntityRendererRegistry.register(AArcanaEntities.SINGULARITY_ENTITY, SingularityEntityRenderer::new);
+        EntityModelLayerRegistry.register(LightningTurretModel.LAYER_LOCATION, LightningTurretModel::createBodyLayer);
+        EntityRendererRegistry.register(AArcanaEntities.LIGHTNING_TURRET_ENTITY, LightningTurretEntityRenderer::new);
 
         ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "damage_relic"), ((itemStack, clientLevel, livingEntity, i) -> RelicItem.getRelicType(itemStack).getType().equals(RelicTypes.DAMAGE) ? 1 : 0));
         ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "durability_relic"), ((itemStack, clientLevel, livingEntity, i) -> RelicItem.getRelicType(itemStack).getType().equals(RelicTypes.DURABILITY) ? 1 : 0));

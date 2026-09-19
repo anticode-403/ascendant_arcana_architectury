@@ -22,4 +22,8 @@ public interface EnchantedTrident {
     int ascendant_arcana$getLoyaltyLevel();
 
     void ascendant_arcana$setClientStuckEntity(int stuck);
+
+    int ascendant_arcana$getStormAnchorLevel();
+
+    void ascendant_arcana$setStormAnchorLevel(int stormAnchorLevel);
 }
