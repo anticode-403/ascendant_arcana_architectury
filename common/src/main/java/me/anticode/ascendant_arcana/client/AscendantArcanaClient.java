@@ -44,17 +44,20 @@ public class AscendantArcanaClient {
             AArcanaEnchantingMenu menu = (AArcanaEnchantingMenu) player.containerMenu;
             menu.unlockedTreasures = packet.treasures();
         });
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ForgeTridentSync.Id, (buf, context) -> {
-            ForgeTridentSync packet = ForgeTridentSync.read(buf);
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, TridentSync.Id, (buf, context) -> {
+            TridentSync packet = TridentSync.read(buf);
             ThrownTrident trident;
             try {
                 trident = (ThrownTrident) context.getPlayer().level().getEntity(packet.tridentEntityId());
+                EnchantedTrident enchantedTrident = (EnchantedTrident) trident;
+                enchantedTrident.ascendant_arcana$setClientStuckEntity(packet.stuckEntityId());
             } catch (ClassCastException e) {
                 AscendantArcana.LOGGER.warn("Thrown Trident ID not recognized!");
-                return;
+            } catch (NullPointerException e) {
+                AscendantArcana.LOGGER.warn("We expected a trident or player to exist and it doesn't!");
+            } catch (Exception e) {
+                AscendantArcana.LOGGER.warn("Something went wrong while updating a trident!");
             }
-            EnchantedTrident enchantedTrident = (EnchantedTrident) trident;
-            enchantedTrident.ascendant_arcana$setClientStuckEntity(packet.stuckEntityId());
         });
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, AddParticlesPacket.Id, (buf, context) -> {
             AddParticlesPacket packet = AddParticlesPacket.read(buf);

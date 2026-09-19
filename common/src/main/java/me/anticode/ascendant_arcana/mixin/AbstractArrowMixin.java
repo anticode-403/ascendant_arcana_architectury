@@ -352,18 +352,20 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         Level level = projectile.level();
         if (projectile instanceof ThrownTrident trident) {
             EnchantedTrident enchantedTrident = (EnchantedTrident)trident;
-            if (enchantedTrident.ascendant_arcana$getSingularityLevel() >= 1) {
+            if (enchantedTrident.ascendant_arcana$getSingularityLevel() >= 1 && !enchantedTrident.ascendant_arcana$wasStuck()) {
                 SingularityEntity singularity = new SingularityEntity(level, (LivingEntity) projectile.getOwner(), enchantedTrident.ascendant_arcana$getSingularityLevel());
                 Vec3 averagePosition = projectile.position().add(blockHitResult.getLocation()).multiply(0.5, 0.5, 0.5);
                 singularity.setPos(averagePosition);
                 level.addFreshEntity(singularity);
+                enchantedTrident.ascendant_arcana$stickEntity(singularity);
             }
-            if (enchantedTrident.ascendant_arcana$getStormAnchorLevel() >= 1) {
+            if (enchantedTrident.ascendant_arcana$getStormAnchorLevel() >= 1 && !enchantedTrident.ascendant_arcana$wasStuck()) {
                 BlockState blockState = level.getBlockState(blockHitResult.getBlockPos());
                 if (blockState.isSolidRender(level, blockHitResult.getBlockPos())) {
                     LightningTurretEntity lightningTurret = new LightningTurretEntity(level, (LivingEntity) projectile.getOwner(), blockHitResult.getDirection().getOpposite());
                     lightningTurret.setPos(blockHitResult.getLocation().relative(blockHitResult.getDirection(), 0.9));
                     level.addFreshEntity(lightningTurret);
+                    enchantedTrident.ascendant_arcana$stickEntity(lightningTurret);
                 }
             }
         } else {

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.ThrownTridentRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import org.jetbrains.annotations.NotNull;
@@ -38,12 +39,11 @@ public abstract class ThrownTridentRendererMixin extends EntityRenderer<ThrownTr
     @Inject(method = "render(Lnet/minecraft/world/entity/projectile/ThrownTrident;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At("HEAD"), cancellable = true)
     private void stuckTridents(ThrownTrident thrownTrident, float yaw, float tickDelta, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, CallbackInfo ci) {
         EnchantedTrident enchantedTrident = (EnchantedTrident) thrownTrident;
-        LivingEntity stuckEntity = enchantedTrident.ascendant_arcana$getStuckEntity();
+        Entity stuckEntity = enchantedTrident.ascendant_arcana$getStuckEntity();
         if (stuckEntity != null) {
-            float offsetX = Mth.sin(enchantedTrident.ascendant_arcana$getRenderTicks()), offsetZ = Mth.cos(enchantedTrident.ascendant_arcana$getRenderTicks());
             poseStack.pushPose();
-            poseStack.translate(offsetX, 0, offsetZ);
-            poseStack.mulPose(Axis.YP.rotationDegrees((float) -Mth.wrapDegrees((Mth.atan2(stuckEntity.getZ() - thrownTrident.getZ() + offsetZ, stuckEntity.getX() - thrownTrident.getX() + offsetX) * 57.2957763671875) - 90) + 90));
+            poseStack.translate(-(thrownTrident.getX() - stuckEntity.getX()), -(thrownTrident.getY() - stuckEntity.getEyeY()), -(thrownTrident.getZ() - stuckEntity.getZ()));
+            poseStack.mulPose(Axis.YP.rotationDegrees((thrownTrident.tickCount + tickDelta) * 3));
             poseStack.mulPose(Axis.ZP.rotationDegrees(60));
             poseStack.translate(0, -enchantedTrident.ascendant_arcana$getStabTicks(), 0);
             model.renderToBuffer(poseStack, ItemRenderer.getFoilBufferDirect(multiBufferSource, model.renderType(getTextureLocation(thrownTrident)), false, thrownTrident.isFoil()), light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
