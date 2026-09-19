@@ -85,6 +85,9 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
 
     @Override
     public Entity ascendant_arcana$getStuckEntity() {
+        if (ascendant_arcana$stuckEntityId >= 0 && ascendant_arcana$stuckEntity == null) {
+            ascendant_arcana$stuckEntity = ((ThrownTrident)(Object)this).level().getEntity(ascendant_arcana$stuckEntityId);
+        }
         return ascendant_arcana$stuckEntity;
     }
 

@@ -44,7 +44,9 @@ public abstract class ThrownTridentRendererMixin extends EntityRenderer<ThrownTr
             poseStack.pushPose();
             poseStack.translate(-(thrownTrident.getX() - stuckEntity.getX()), -(thrownTrident.getY() - stuckEntity.getEyeY()), -(thrownTrident.getZ() - stuckEntity.getZ()));
             poseStack.mulPose(Axis.YP.rotationDegrees((thrownTrident.tickCount + tickDelta) * 3));
-            poseStack.mulPose(Axis.ZP.rotationDegrees(60));
+            if (stuckEntity instanceof LivingEntity) {
+                poseStack.mulPose(Axis.ZP.rotationDegrees(60));
+            }
             poseStack.translate(0, -enchantedTrident.ascendant_arcana$getStabTicks(), 0);
             model.renderToBuffer(poseStack, ItemRenderer.getFoilBufferDirect(multiBufferSource, model.renderType(getTextureLocation(thrownTrident)), false, thrownTrident.isFoil()), light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
             poseStack.popPose();
