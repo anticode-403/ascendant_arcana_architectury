@@ -347,15 +347,18 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         if (projectile instanceof ThrownTrident trident) {
             EnchantedTrident enchantedTrident = (EnchantedTrident)trident;
             if (enchantedTrident.ascendant_arcana$getSingularityLevel() >= 1) {
-                SingularityEntity singularity = new SingularityEntity(projectile.level(), (LivingEntity) projectile.getOwner(), enchantedTrident.ascendant_arcana$getSingularityLevel());
+                SingularityEntity singularity = new SingularityEntity(level, (LivingEntity) projectile.getOwner(), enchantedTrident.ascendant_arcana$getSingularityLevel());
                 Vec3 averagePosition = projectile.position().add(blockHitResult.getLocation()).multiply(0.5, 0.5, 0.5);
                 singularity.setPos(averagePosition);
-                projectile.level().addFreshEntity(singularity);
+                level.addFreshEntity(singularity);
             }
             if (enchantedTrident.ascendant_arcana$getStormAnchorLevel() >= 1) {
-                LightningTurretEntity lightningTurret = new LightningTurretEntity(projectile.level(), (LivingEntity) projectile.getOwner(), blockHitResult.getDirection().getOpposite());
-                if (blockHitResult.getDirection() != Direction.DOWN) lightningTurret.setPos(blockHitResult.getLocation().relative(blockHitResult.getDirection(), 0.9));
-                projectile.level().addFreshEntity(lightningTurret);
+                BlockState blockState = level.getBlockState(blockHitResult.getBlockPos());
+                if (blockState.isSolidRender(level, blockHitResult.getBlockPos())) {
+                    LightningTurretEntity lightningTurret = new LightningTurretEntity(level, (LivingEntity) projectile.getOwner(), blockHitResult.getDirection().getOpposite());
+                    lightningTurret.setPos(blockHitResult.getLocation().relative(blockHitResult.getDirection(), 0.9));
+                    level.addFreshEntity(lightningTurret);
+                }
             }
         } else {
             if (ascendant_arcana$evokersWrathLevel >= 1) {
