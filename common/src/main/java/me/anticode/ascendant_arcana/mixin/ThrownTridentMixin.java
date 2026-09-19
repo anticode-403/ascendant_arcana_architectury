@@ -212,22 +212,12 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
                 if (projectile.getOwner() != null) soundCategory = projectile.getOwner().getSoundSource();
                 projectile.level().playSound(null, projectile.blockPosition(), SoundEvents.TRIDENT_HIT, soundCategory);
                 if (ascendant_arcana$lifetideLevel >= 1) {
-                    if (projectile.level() instanceof ServerLevel serverLevel) {
-                        for(int i = 0; i < 5; ++i) {
-                            double offset = livingEntity.getRandom().nextGaussian() * 0.02;
-                            serverLevel.sendParticles(ParticleTypes.HEART, livingEntity.getX(2 * livingEntity.getRandom().nextDouble() - 1), livingEntity.getRandomY(), livingEntity.getZ(2 * livingEntity.getRandom().nextDouble() - 1), 5, offset, offset, offset, 1);
-                        }
-                    }
+                    ascendant_arcana$stuckParticleSpray((ThrownTrident) projectile, livingEntity, true);
                     projectile.level().playSound(null, projectile.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, soundCategory, 1, 2);
                     if (livingEntity.getMobType() == MobType.UNDEAD) livingEntity.hurt(projectile.damageSources().trident(projectile, projectile.getOwner()), (float) 4 * ascendant_arcana$relicDamageMultiplier);
                     else livingEntity.heal((float) 4 * ascendant_arcana$relicDamageMultiplier);
                 } else if (ascendant_arcana$sunderingLevel >= 1) {
-                    if (projectile.level() instanceof ServerLevel serverLevel) {
-                        for(int i = 0; i < 5; ++i) {
-                            double offset = livingEntity.getRandom().nextGaussian() * 0.02;
-                            serverLevel.sendParticles(ParticleTypes.DAMAGE_INDICATOR, livingEntity.getX(2 * livingEntity.getRandom().nextDouble() - 1), livingEntity.getRandomY(), livingEntity.getZ(2 * livingEntity.getRandom().nextDouble() - 1), 5, offset, offset, offset, 1);
-                        }
-                    }
+                    ascendant_arcana$stuckParticleSpray((ThrownTrident) projectile, livingEntity, false);
                     projectile.level().playSound(null, projectile.blockPosition(), SoundEvents.ITEM_BREAK, soundCategory, 1, 0.5F);
                     livingEntity.addEffect(new MobEffectInstance(AArcanaMobEffects.SUNDERED.get(), 60, 0, true, false, true));
                     livingEntity.hurt(projectile.damageSources().trident(projectile, projectile.getOwner()), 2);
@@ -309,24 +299,14 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
                     if (ascendant_arcana$ticksStuck % 20 == 0) {
                         if (ascendant_arcana$lifetideLevel >= 1) {
                             LivingEntity stuckEntity = (LivingEntity)ascendant_arcana$stuckEntity;
-                            if (trident.level() instanceof ServerLevel serverWorld) {
-                                for(int i = 0; i < 5; ++i) {
-                                    double offset = stuckEntity.getRandom().nextGaussian() * 0.02;
-                                    serverWorld.sendParticles(ParticleTypes.HEART, stuckEntity.getX(2 * stuckEntity.getRandom().nextDouble() - 1), stuckEntity.getRandomY(), stuckEntity.getZ(2 * stuckEntity.getRandom().nextDouble() - 1), 5, offset, offset, offset, 1);
-                                }
-                            }
+                            ascendant_arcana$stuckParticleSpray(trident, stuckEntity, true);
                             trident.level().playSound(null, trident.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, stuckEntity.getSoundSource(), 1, 2);
                             if (stuckEntity.getMobType() == MobType.UNDEAD) stuckEntity.hurt(trident.damageSources().trident(trident, trident.getOwner()), (float) 2 * ascendant_arcana$relicDamageMultiplier);
                             else stuckEntity.heal((float) 2 * ascendant_arcana$relicDamageMultiplier);
                             living.heal(1);
                         } else if (ascendant_arcana$sunderingLevel >= 1) {
                             LivingEntity stuckEntity = (LivingEntity)ascendant_arcana$stuckEntity;
-                            if (trident.level() instanceof ServerLevel serverWorld) {
-                                for(int i = 0; i < 5; ++i) {
-                                    double offset = stuckEntity.getRandom().nextGaussian() * 0.02;
-                                    serverWorld.sendParticles(ParticleTypes.DAMAGE_INDICATOR, stuckEntity.getX(2 * stuckEntity.getRandom().nextDouble() - 1), stuckEntity.getRandomY(), stuckEntity.getZ(2 * stuckEntity.getRandom().nextDouble() - 1), 5, offset, offset, offset, 1);
-                                }
-                            }
+                            ascendant_arcana$stuckParticleSpray(trident, stuckEntity, false);
                             trident.level().playSound(null, trident.blockPosition(), SoundEvents.ITEM_BREAK, stuckEntity.getSoundSource(), 1, 0.5F);
                             stuckEntity.addEffect(new MobEffectInstance(AArcanaMobEffects.SUNDERED.get(), 60, 0, true, false, true));
                             stuckEntity.hurt(trident.damageSources().trident(trident, trident.getOwner()), 1 * ascendant_arcana$relicDamageMultiplier);
@@ -345,6 +325,16 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
     @WrapOperation(method = "playerTouch", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/AbstractArrow;playerTouch(Lnet/minecraft/world/entity/player/Player;)V"))
     private void cannotPickupWhileStuck(ThrownTrident instance, Player arg, Operation<Void> original) {
         if (ascendant_arcana$stuckEntityId < 0) original.call(instance, arg);
+    }
+
+    @Unique
+    private void ascendant_arcana$stuckParticleSpray(ThrownTrident projectile, LivingEntity livingEntity, boolean lifetide) {
+        if (projectile.level() instanceof ServerLevel serverLevel) {
+            for(int i = 0; i < 5; ++i) {
+                double offset = livingEntity.getRandom().nextGaussian() * 0.02;
+                serverLevel.sendParticles(lifetide ? ParticleTypes.HEART : ParticleTypes.DAMAGE_INDICATOR, livingEntity.getX(2 * livingEntity.getRandom().nextDouble() - 1), livingEntity.getRandomY(), livingEntity.getZ(2 * livingEntity.getRandom().nextDouble() - 1), 5, offset, offset, offset, 1);
+            }
+        }
     }
 
     @Unique
