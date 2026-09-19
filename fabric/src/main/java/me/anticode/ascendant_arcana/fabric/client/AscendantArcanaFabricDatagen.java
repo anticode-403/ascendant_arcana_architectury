@@ -198,6 +198,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
 
         private void registerStatusEffect(TranslationBuilder translationBuilder, MobEffect statusEffect, String name, String description) {
             translationBuilder.add(statusEffect, name);
+            translationBuilder.add(statusEffect.getDescriptionId() + ".desc", description);
             translationBuilder.add(statusEffect.getDescriptionId() + ".description", description);
         }
 
@@ -210,10 +211,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
         }
 
         private void description(TranslationBuilder translationBuilder, ItemLike item, String description) {
+            translationBuilder.add(item.asItem().getDescriptionId() + ".desc", description);
             translationBuilder.add(item.asItem().getDescriptionId() + ".description", description);
         }
 
         private void description(TranslationBuilder translationBuilder, Enchantment enchantment, String description) {
+            translationBuilder.add(enchantment.getDescriptionId() + ".desc", description);
             translationBuilder.add(enchantment.getDescriptionId() + ".description", description);
         }
 
