@@ -323,6 +323,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerEnchantment(translationBuilder, AArcanaEnchantments.SONIC_BLAST.get(), "Sonic Blast", "Holding up the shield charges a powerful sonic blast that ignores most forms of protection.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SOUL_BURST.get(), "Soul Burst", "Slain enemies deal damage to nearby entities based on their maximum health.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.STOPPING_POWER.get(), "Stopping Power", "Deal increased damage to enemies with low health.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.STORM_ANCHOR.get(), "Storm Anchor", "When this hits a wall, spawn a lightning rod that shocks nearby entities.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.STORM_HEART.get(), "Heart of the Storm", "Increases the damage dealt by all lightning attacks.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.STRAFE.get(), "Strafe", "Allows you to sprint in any direction and reduces movement speed penalties while using an item.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SUNDERING.get(), "Sundering", "On hit, sticks into the target and deals damage over time, reducing their armor.");
@@ -372,6 +373,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             // Entities
             translationBuilder.add(AArcanaEntities.BLAZEBOLT_ENTITY.get(), "Blazebolt");
             translationBuilder.add(AArcanaEntities.SINGULARITY_ENTITY.get(), "Singularity");
+            translationBuilder.add(AArcanaEntities.LIGHTNING_TURRET_ENTITY.get(), "Storm Anchor");
             // Sounds
             registerSoundEvent(translationBuilder, AArcanaSoundEvents.SHATTERSHOT.get(), "Shattershot Crossbow fires");
             registerSoundEvent(translationBuilder, AArcanaSoundEvents.SHIELD_BASH_START.get(), "Shield bashes");
@@ -1147,6 +1149,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(Items.TORCHFLOWER),
                             null,
                             3)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.STORM_ANCHOR.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.LIGHTNING_ROD),
+                            IngredientStack.of(Items.LAPIS_LAZULI, 6),
+                            6)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.STORM_HEART.get())
                     .level(new  EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 12),
