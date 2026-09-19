@@ -17,9 +17,9 @@ public abstract class AArcanaRenderTypes {
             256,
             false,
             false,
-            RenderType.CompositeState.builder().setShaderState(RenderStateShard.ShaderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
+            RenderType.CompositeState.builder().setShaderState(RenderStateShard.ShaderStateShard.RENDERTYPE_ENERGY_SWIRL_SHADER)
                     .setTextureState(new RenderStateShard.TextureStateShard(TEXTURE, false, false))
-                    .setTransparencyState(RenderStateShard.GLINT_TRANSPARENCY)
+                    .setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
                     .setLightmapState(RenderStateShard.NO_LIGHTMAP)
                     .setOverlayState(RenderStateShard.NO_OVERLAY)
                     .setCullState(RenderStateShard.CULL)
@@ -34,12 +34,12 @@ public abstract class AArcanaRenderTypes {
             256,
             false,
             false,
-            RenderType.CompositeState.builder().setShaderState(RenderStateShard.ShaderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
+            RenderType.CompositeState.builder().setShaderState(RenderStateShard.ShaderStateShard.RENDERTYPE_ENERGY_SWIRL_SHADER)
                     .setTextureState(new RenderStateShard.TextureStateShard(TEXTURE, false, false))
                     .setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
                     .setLightmapState(RenderStateShard.NO_LIGHTMAP)
                     .setOverlayState(RenderStateShard.NO_OVERLAY)
-                    .setCullState(RenderStateShard.CULL)
+                    .setCullState(RenderStateShard.NO_CULL)
                     .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
                     .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
                     .createCompositeState(true));

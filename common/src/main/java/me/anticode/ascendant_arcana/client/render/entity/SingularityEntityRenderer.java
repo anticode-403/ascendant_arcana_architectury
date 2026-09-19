@@ -4,10 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.client.model.entity.SingularityModel;
+import me.anticode.ascendant_arcana.client.render.types.AArcanaRenderTypes;
 import me.anticode.ascendant_arcana.entity.SingularityEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -22,7 +22,7 @@ public class SingularityEntityRenderer extends EntityRenderer<SingularityEntity>
 
     public SingularityEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.shadowRadius = 0.3F;
+        this.shadowRadius = 0.0F;
         singularity = new SingularityModel(context.bakeLayer(SingularityModel.LAYER_LOCATION));
     }
 
@@ -54,13 +54,13 @@ public class SingularityEntityRenderer extends EntityRenderer<SingularityEntity>
         }
         poseStack.scale(ringScale, 1, ringScale);
         poseStack.mulPose(Axis.YP.rotation((Minecraft.getInstance().getFrameTime() - entity.getEntityData().get(SingularityEntity.life)) * 0.2F));
-        singularity.ring.render(poseStack, multiBufferSource.getBuffer(RenderType.dragonExplosionAlpha(TEXTURE)), i, OverlayTexture.NO_OVERLAY);
+        singularity.ring.render(poseStack, multiBufferSource.getBuffer(AArcanaRenderTypes.emissive(TEXTURE)), i, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
         poseStack.pushPose();
         poseStack.scale(scale, scale, scale);
         poseStack.mulPose(Axis.YP.rotation((Minecraft.getInstance().getFrameTime() - entity.getEntityData().get(SingularityEntity.life)) * -0.1F));
-        singularity.outline.render(poseStack, multiBufferSource.getBuffer(RenderType.eyes(TEXTURE)), i, OverlayTexture.NO_OVERLAY);
-        singularity.singularity.render(poseStack, multiBufferSource.getBuffer(RenderType.dragonExplosionAlpha(TEXTURE)), i, OverlayTexture.NO_OVERLAY);
+        singularity.outline.render(poseStack, multiBufferSource.getBuffer(AArcanaRenderTypes.emissiveBackfaceCull(TEXTURE)), i, OverlayTexture.NO_OVERLAY);
+        singularity.singularity.render(poseStack, multiBufferSource.getBuffer(AArcanaRenderTypes.emissive(TEXTURE)), i, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
         super.render(entity, f, g, poseStack, multiBufferSource, i);
     }
