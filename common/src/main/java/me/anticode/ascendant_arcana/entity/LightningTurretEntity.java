@@ -4,6 +4,7 @@ import me.anticode.ascendant_arcana.init.AArcanaEntities;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -54,9 +55,23 @@ public class LightningTurretEntity extends OwnedEntity {
             }
         }
         life--;
-//        if (life <= 0) {
-//            discard();
-//        }
+        if (life <= 0) {
+            discard();
+        }
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag compoundTag) {
+        super.addAdditionalSaveData(compoundTag);
+        compoundTag.putInt("life", life);
+        compoundTag.putInt("direction", entityData.get(direction).get3DDataValue());
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag compoundTag) {
+        super.readAdditionalSaveData(compoundTag);
+        this.life = compoundTag.getInt("life");
+        entityData.set(direction, Direction.from3DDataValue(compoundTag.getInt("direction")));
     }
 
     @Override
