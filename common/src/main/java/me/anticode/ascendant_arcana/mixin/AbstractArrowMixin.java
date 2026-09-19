@@ -352,7 +352,7 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
                 singularity.setPos(averagePosition);
                 projectile.level().addFreshEntity(singularity);
             }
-            if (enchantedTrident.ascendant_arcana$getSingularityLevel() >= 1) {
+            if (enchantedTrident.ascendant_arcana$getStormAnchorLevel() >= 1) {
                 LightningTurretEntity lightningTurret = new LightningTurretEntity(projectile.level(), (LivingEntity) projectile.getOwner(), blockHitResult.getDirection().getOpposite());
                 if (blockHitResult.getDirection() != Direction.DOWN) lightningTurret.setPos(blockHitResult.getLocation().relative(blockHitResult.getDirection(), 0.9));
                 projectile.level().addFreshEntity(lightningTurret);
