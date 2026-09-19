@@ -260,11 +260,11 @@ public class AArcanaEnchantmentHelper {
         return itemStack;
     }
 
-    public static void joltTargets(LivingEntity victim, LivingEntity attacker, int chainLength) {
+    public static void joltTargets(LivingEntity victim, Entity attacker, int chainLength) {
         joltTargets(victim, attacker, null, chainLength);
     }
 
-    public static void joltTargets(LivingEntity victim, LivingEntity attacker, Entity indirectEntity, int chainLength) {
+    public static void joltTargets(LivingEntity victim, Entity attacker, Entity indirectEntity, int chainLength) {
         ServerLevel serverLevel = (ServerLevel) victim.level();
         Entity lastLink = victim;
         List<EntityPositionSource> chain = new LinkedList<>();

@@ -76,6 +76,9 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
     @Nullable
     private IntOpenHashSet piercingIgnoreEntityIds;
 
+    @Shadow
+    public abstract boolean isCritArrow();
+
     @Unique
     private int ascendant_arcana$archersGambitLevel;
 
@@ -229,12 +232,15 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
     private void healInsteadOfDamage(EntityHitResult entityHitResult, CallbackInfo ci) {
         if (ascendant_arcana$rejuvenatingShotLevel < 1) return;
         AbstractArrow projectile = (AbstractArrow) (Object) this;
-        Entity entity2 = projectile.getOwner();
-        Entity attacker = entityHitResult.getEntity();
+        Entity owner = projectile.getOwner();
+        Entity target = entityHitResult.getEntity();
         int damage = Mth.ceil(Mth.clamp((double)projectile.getDeltaMovement().length() * projectile.getBaseDamage(), (double)0.0F, (double)Integer.MAX_VALUE));;
-        if (attacker instanceof LivingEntity livingTarget) {
-            if (attacker == entity2) return;
-            if (livingTarget.getMobType() == MobType.UNDEAD) livingTarget.hurt(projectile.damageSources().arrow(projectile, entity2), (float) damage / 2);
+        if (target instanceof LivingEntity livingTarget) {
+            if (isCritArrow() && livingTarget.hasEffect(AArcanaMobEffects.JOLTED.get())) {
+                AArcanaEnchantmentHelper.joltTargets(livingTarget, owner, livingTarget.getEffect(AArcanaMobEffects.JOLTED.get()).getAmplifier() + 2);
+            }
+            if (target == owner) return;
+            if (livingTarget.getMobType() == MobType.UNDEAD) livingTarget.hurt(projectile.damageSources().arrow(projectile, owner), (float) damage / 2);
             livingTarget.heal((float) damage / 2);
             doPostHurtEffects(livingTarget);
             if (!projectile.level().isClientSide()) {
@@ -247,8 +253,8 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
                 if (projectile.getOwner() != null) soundCategory = projectile.getOwner().getSoundSource();
                 livingTarget.level().playSound(null, livingTarget.getX(), livingTarget.getY(), livingTarget.getZ(), SoundEvents.ARROW_HIT_PLAYER, soundCategory, 1.0F, 1.0F);
             }
-            if (livingTarget instanceof Player && entity2 instanceof ServerPlayer && !projectile.isSilent()) {
-                ((ServerPlayer) entity2).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
+            if (livingTarget instanceof Player && owner instanceof ServerPlayer && !projectile.isSilent()) {
+                ((ServerPlayer) owner).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
             }
         }
         if (getPierceLevel() <= 0) {
