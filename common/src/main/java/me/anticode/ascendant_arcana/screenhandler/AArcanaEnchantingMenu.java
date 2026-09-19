@@ -184,7 +184,7 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
         EnchantmentRecipe.EnchantmentLevelRecipe levelRecipe;
         if (itemEnchants.containsKey(recipe.enchantment)) {
             int appliedLevel = itemEnchants.get(recipe.enchantment);
-            if (recipe.getLevels().size() < appliedLevel) levelRecipe = recipe.getLevels().get(appliedLevel);
+            if (recipe.getLevels().size() > appliedLevel) levelRecipe = recipe.getLevels().get(appliedLevel);
             else levelRecipe = recipe.getLevels().get(recipe.getLevels().size() - 1);
         } else levelRecipe = recipe.getLevels().get(0);
         if (!recipe.enchantment.canEnchant(itemStack) && !(itemStack.is(Items.BOOK) || itemStack.is(Items.ENCHANTED_BOOK))) return false;
@@ -316,7 +316,7 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
             EnchantmentRecipe.EnchantmentLevelRecipe levelRecipe;
             if (itemEnchants.containsKey(recipe.enchantment)) {
                 int appliedLevel = itemEnchants.get(recipe.enchantment);
-                if (recipe.getLevels().size() < appliedLevel) levelRecipe = recipe.getLevels().get(appliedLevel);
+                if (recipe.getLevels().size() > appliedLevel) levelRecipe = recipe.getLevels().get(appliedLevel);
                 else levelRecipe = recipe.getLevels().get(recipe.getLevels().size() - 1);
             } else levelRecipe = recipe.getLevels().get(0);
             int index = getContainerSlot();
