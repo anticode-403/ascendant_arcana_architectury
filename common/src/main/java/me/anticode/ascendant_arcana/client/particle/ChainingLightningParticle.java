@@ -3,6 +3,7 @@ package me.anticode.ascendant_arcana.client.particle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import me.anticode.ascendant_arcana.client.render.types.AArcanaRenderTypes;
 import me.anticode.ascendant_arcana.particle.ChainingLightningParticleOption;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -28,7 +29,7 @@ public class ChainingLightningParticle extends Particle {
         this.gravity = 0.0F;
         this.lifetime = 7;
         this.targets = targets;
-        this.renderType = RenderType.lightning();
+        this.renderType = AArcanaRenderTypes.lightning();
     }
 
     @Override

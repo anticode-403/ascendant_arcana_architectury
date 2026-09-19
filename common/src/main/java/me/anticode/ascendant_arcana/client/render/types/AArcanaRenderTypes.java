@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public abstract class AArcanaRenderTypes {
     public static final Function<ResourceLocation, RenderType> EMISSIVE_BACKFACE_CULL = (TEXTURE) -> RenderType.create(
@@ -43,11 +44,29 @@ public abstract class AArcanaRenderTypes {
                     .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
                     .createCompositeState(true));
 
+    public static final RenderType LIGHTNING = RenderType.create(
+            "lightning",
+            DefaultVertexFormat.POSITION_COLOR,
+            VertexFormat.Mode.QUADS,
+            256,
+            false,
+            true,
+            RenderType.CompositeState.builder().setShaderState(RenderType.RENDERTYPE_LIGHTNING_SHADER)
+                    .setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
+                    .setTransparencyState(RenderType.LIGHTNING_TRANSPARENCY)
+                    .setCullState(RenderStateShard.NO_CULL)
+                    .setOutputState(RenderType.WEATHER_TARGET)
+                    .createCompositeState(false));
+
     public static RenderType emissiveBackfaceCull(ResourceLocation texture) {
         return EMISSIVE_BACKFACE_CULL.apply(texture);
     }
 
     public static RenderType emissive(ResourceLocation texture) {
         return EMISSIVE.apply(texture);
+    }
+
+    public static RenderType lightning() {
+        return LIGHTNING;
     }
 }
