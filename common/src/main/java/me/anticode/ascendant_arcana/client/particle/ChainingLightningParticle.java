@@ -2,17 +2,14 @@ package me.anticode.ascendant_arcana.client.particle;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import me.anticode.ascendant_arcana.client.render.types.AArcanaRenderTypes;
 import me.anticode.ascendant_arcana.particle.ChainingLightningParticleOption;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
@@ -34,7 +31,7 @@ public class ChainingLightningParticle extends Particle {
 
     @Override
     public void render(VertexConsumer vertexConsumer, Camera camera, float f) {
-        if (age % 3 == 0) return;
+        if (age >= 3 && age <= 4) return;
         Vec3 lastPos = null;
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer vertexConsumer2 = bufferSource.getBuffer(this.renderType);
