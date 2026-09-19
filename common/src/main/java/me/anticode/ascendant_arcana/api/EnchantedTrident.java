@@ -19,8 +19,6 @@ public interface EnchantedTrident {
 
     boolean ascendant_arcana$wasStuck();
 
-    float ascendant_arcana$getRenderTicks();
-
     float ascendant_arcana$getStabTicks();
 
     int ascendant_arcana$getLoyaltyLevel();

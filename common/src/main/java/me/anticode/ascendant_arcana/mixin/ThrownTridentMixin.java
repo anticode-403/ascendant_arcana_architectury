@@ -67,9 +67,6 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
     private int ascendant_arcana$ticksStuck = 0;
 
     @Unique
-    private float ascendant_arcana$renderTicks = 0;
-
-    @Unique
     private float ascendant_arcana$stabTicks = 0;
 
     @Unique
@@ -89,10 +86,6 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
             ascendant_arcana$stuckEntity = ((ThrownTrident)(Object)this).level().getEntity(ascendant_arcana$stuckEntityId);
         }
         return ascendant_arcana$stuckEntity;
-    }
-
-    public float ascendant_arcana$getRenderTicks() {
-        return ascendant_arcana$renderTicks;
     }
 
     public float ascendant_arcana$getStabTicks() {
@@ -190,7 +183,6 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
         nbt.putInt("lifetideLevel", ascendant_arcana$lifetideLevel);
         nbt.putInt("stuckEntityId", ascendant_arcana$stuckEntityId);
         nbt.putInt("ticksStuck", ascendant_arcana$ticksStuck);
-        nbt.putFloat("renderTicks", ascendant_arcana$renderTicks);
         nbt.putFloat("stabTicks", ascendant_arcana$stabTicks);
         nbt.putFloat("relicDamageMultiplier", ascendant_arcana$relicDamageMultiplier);
         nbt.putInt("stormAnchorLevel", ascendant_arcana$stormAnchorLevel);
@@ -204,7 +196,6 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
         this.ascendant_arcana$lifetideLevel = nbt.getInt("lifetideLevel");
         this.ascendant_arcana$stuckEntityId = nbt.getInt("stuckEntityId");
         this.ascendant_arcana$ticksStuck = nbt.getInt("ticksStuck");
-        this.ascendant_arcana$renderTicks = nbt.getFloat("renderTicks");
         this.ascendant_arcana$stabTicks = nbt.getFloat("stabTicks");
         this.ascendant_arcana$relicDamageMultiplier = nbt.getFloat("relicDamageMultiplier");
         this.ascendant_arcana$stormAnchorLevel = nbt.getInt("stormAnchorLevel");
@@ -302,14 +293,12 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
                     trident.setNoPhysics(false);
                     trident.getEntityData().set(ID_LOYALTY, (byte)ascendant_arcana$disabledLoyaltyLevels);
                 }
-                ascendant_arcana$renderTicks += 1 / 20F;
                 ascendant_arcana$stabTicks = Math.max(0, ascendant_arcana$stabTicks - ascendant_arcana$stabTicks / 20F);
             } else if (ascendant_arcana$stuckEntityId != -1) {
                 trident.setNoPhysics(false);
                 trident.getEntityData().set(ID_LOYALTY, (byte)ascendant_arcana$disabledLoyaltyLevels);
                 ascendant_arcana$stuckEntityId = -2;
                 ascendant_arcana$ticksStuck = 0;
-                ascendant_arcana$renderTicks = 0;
                 ascendant_arcana$stabTicks = 0;
             }
         }
