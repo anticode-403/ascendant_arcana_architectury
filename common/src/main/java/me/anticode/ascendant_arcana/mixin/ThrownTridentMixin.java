@@ -301,7 +301,7 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
                 }
                 ascendant_arcana$renderTicks += 1 / 20F;
                 ascendant_arcana$stabTicks = Math.max(0, ascendant_arcana$stabTicks - ascendant_arcana$stabTicks / 20F);
-            } else {
+            } else if (ascendant_arcana$stuckEntityId != -1) {
                 trident.setNoPhysics(false);
                 trident.getEntityData().set(ID_LOYALTY, (byte)ascendant_arcana$disabledLoyaltyLevels);
                 ascendant_arcana$stuckEntityId = -2;
