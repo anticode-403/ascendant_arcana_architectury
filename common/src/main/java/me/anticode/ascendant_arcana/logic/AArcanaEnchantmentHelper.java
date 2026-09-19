@@ -270,7 +270,7 @@ public class AArcanaEnchantmentHelper {
         List<EntityPositionSource> chain = new LinkedList<>();
         List<Entity> chainEntity = new LinkedList<>();
         if (indirectEntity != null) {
-            chain.add(new EntityPositionSource(indirectEntity, indirectEntity.getEyeHeight()));
+            chain.add(new EntityPositionSource(indirectEntity, 0.25F));
             chainEntity.add(indirectEntity);
         }
         chain.add(new EntityPositionSource(victim, (float)victim.getRandomY() - (float)victim.getY()));
