@@ -1,5 +1,6 @@
 package me.anticode.ascendant_arcana.entity;
 
+import me.anticode.ascendant_arcana.init.AArcanaDamage;
 import me.anticode.ascendant_arcana.init.AArcanaEntities;
 import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -43,7 +44,7 @@ public class GlacioclasmEntity extends OwnedEntity {
                 level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(5F), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(this::notOwnerAlly)).forEach(entity -> {
                     LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.setTicksFrozen(strength);
-
+                    livingEntity.hurt(AArcanaDamage.source(level(), AArcanaDamage.GLACIOCLASM, this, getOwner()), 1);
                 });
             }
             discard();
