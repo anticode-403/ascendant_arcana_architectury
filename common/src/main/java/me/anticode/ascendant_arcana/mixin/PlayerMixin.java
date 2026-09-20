@@ -160,7 +160,7 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
         if (source.is(DamageTypeTags.BYPASSES_ENCHANTMENTS) || source.is(DamageTypeTags.BYPASSES_EFFECTS)) return;
         LivingEntity livingEntity = (LivingEntity) (Object) this;
         if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.GLACIOCLASM.get(), livingEntity) > 0) {
-            if ((livingEntity.getHealth() - amount)/livingEntity.getMaxHealth() <= 0.3F) {
+            if ((livingEntity.getHealth() - amount)/livingEntity.getMaxHealth() <= 0.3F && livingEntity.getHealth()/livingEntity.getMaxHealth() > 0.3F) {
                 // The player variant is much stronger than the one in LivingEntity intentionally.
                 GlacioclasmEntity glacioclasm = new GlacioclasmEntity(livingEntity.level(), livingEntity, 0, 500);
                 glacioclasm.setPos(livingEntity.position());

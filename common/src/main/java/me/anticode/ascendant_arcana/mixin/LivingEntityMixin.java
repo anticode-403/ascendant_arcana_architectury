@@ -253,7 +253,7 @@ public abstract class LivingEntityMixin {
         if (source.is(DamageTypeTags.BYPASSES_ENCHANTMENTS) || source.is(DamageTypeTags.BYPASSES_EFFECTS)) return;
         LivingEntity livingEntity = (LivingEntity) (Object) this;
         if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.GLACIOCLASM.get(), livingEntity) > 0) {
-            if ((livingEntity.getHealth() - amount)/livingEntity.getMaxHealth() <= 0.3F) {
+            if ((livingEntity.getHealth() - amount)/livingEntity.getMaxHealth() <= 0.3F && livingEntity.getHealth()/livingEntity.getMaxHealth() > 0.3F) {
                 GlacioclasmEntity glacioclasm = new GlacioclasmEntity(livingEntity.level(), livingEntity, 20, 240);
                 glacioclasm.setPos(livingEntity.position());
                 livingEntity.level().addFreshEntity(glacioclasm);
