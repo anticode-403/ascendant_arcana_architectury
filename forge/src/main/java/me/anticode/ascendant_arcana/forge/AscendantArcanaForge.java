@@ -6,8 +6,12 @@ import dev.architectury.platform.forge.EventBuses;
 import me.anticode.ascendant_arcana.api.ItemEntryAccess;
 import me.anticode.ascendant_arcana.api.LeafEntryAccess;
 import me.anticode.ascendant_arcana.client.AscendantArcanaClient;
+import me.anticode.ascendant_arcana.client.model.entity.GlacioclasmModel;
+import me.anticode.ascendant_arcana.client.model.entity.LightningTurretModel;
 import me.anticode.ascendant_arcana.client.model.entity.SingularityModel;
 import me.anticode.ascendant_arcana.client.render.entity.BlazeboltEntityRenderer;
+import me.anticode.ascendant_arcana.client.render.entity.GlacioclasmEntityRenderer;
+import me.anticode.ascendant_arcana.client.render.entity.LightningTurretEntityRenderer;
 import me.anticode.ascendant_arcana.client.render.entity.SingularityEntityRenderer;
 import me.anticode.ascendant_arcana.client.screen.AArcanaEnchantingScreen;
 import me.anticode.ascendant_arcana.forge.api.LootPoolAccess;
@@ -53,7 +57,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -188,11 +191,15 @@ public final class AscendantArcanaForge {
             event.registerBlockEntityRenderer(AArcanaBlocks.COPPER_ENCHANTING_TABLE_BLOCK_ENTITY.get(), EnchantTableRenderer::new);
             event.registerEntityRenderer(AArcanaEntities.BLAZEBOLT_ENTITY.get(), BlazeboltEntityRenderer::new);
             event.registerEntityRenderer(AArcanaEntities.SINGULARITY_ENTITY.get(), SingularityEntityRenderer::new);
+            event.registerEntityRenderer(AArcanaEntities.LIGHTNING_TURRET_ENTITY.get(), LightningTurretEntityRenderer::new);
+            event.registerEntityRenderer(AArcanaEntities.GLACIOCLASM_ENTITY.get(), GlacioclasmEntityRenderer::new);
         }
 
         @SubscribeEvent
         public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             event.registerLayerDefinition(SingularityModel.LAYER_LOCATION, SingularityModel::createBodyLayer);
+            event.registerLayerDefinition(LightningTurretModel.LAYER_LOCATION, LightningTurretModel::createBodyLayer);
+            event.registerLayerDefinition(GlacioclasmModel.LAYER_LOCATION, GlacioclasmModel::createBodyLayer);
         }
     }
 }
