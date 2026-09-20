@@ -8,6 +8,7 @@ import me.anticode.ascendant_arcana.enchantment.armor.HellWalker;
 import me.anticode.ascendant_arcana.enchantment.TickableAttributeEnchantment;
 import me.anticode.ascendant_arcana.enchantment.armor.TurtleHeart;
 import me.anticode.ascendant_arcana.init.AArcanaAttributes;
+import me.anticode.ascendant_arcana.init.AArcanaDamage;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
@@ -250,10 +251,11 @@ public abstract class LivingEntityMixin {
     private void protectiveEcho(DamageSource source, float amount, CallbackInfo ci) {
         if (amount < 5) return;
         if (source.is(DamageTypeTags.BYPASSES_ENCHANTMENTS) || source.is(DamageTypeTags.BYPASSES_EFFECTS)) return;
-        if (getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get()) != null) return;
-        if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PROTECTIVE_ECHO.get(), (LivingEntity) (Object) this) == 0) return;
-        forceAddEffect(new MobEffectInstance(AArcanaMobEffects.ECHOING_DAMAGE.get(), 5, (int)Math.floor(amount / 5)), (LivingEntity)(Object)this);
-        ci.cancel();
+        if (getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get()) != null) {
+            if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PROTECTIVE_ECHO.get(), (LivingEntity) (Object) this) == 0) return;
+            forceAddEffect(new MobEffectInstance(AArcanaMobEffects.ECHOING_DAMAGE.get(), 5, (int)Math.floor(amount / 5)), (LivingEntity)(Object)this);
+            ci.cancel();
+        }
     }
 
     @Inject(method = "die", at = @At("HEAD"))
@@ -380,7 +382,7 @@ public abstract class LivingEntityMixin {
             if (livingEntity.level().getGameTime() % 20 == 0 && getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get()) != null) {
                 MobEffectInstance instance = getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get());
                 int damage = instance.getAmplifier();
-                hurt(livingEntity.level().damageSources().magic(), damage);
+                hurt(AArcanaDamage.source(livingEntity.level(), AArcanaDamage.ECHOING), damage);
             }
         }
     }

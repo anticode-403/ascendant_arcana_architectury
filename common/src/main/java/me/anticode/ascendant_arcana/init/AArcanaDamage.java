@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class AArcanaDamage {
     public static final ResourceKey<DamageType> BLAZEBOLT = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.tryBuild(AscendantArcana.MOD_ID, "blazebolt"));
+    public static final ResourceKey<DamageType> ECHOING = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.tryBuild(AscendantArcana.MOD_ID, "echoing"));
     public static final ResourceKey<DamageType> JOLTED = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.tryBuild(AscendantArcana.MOD_ID, "jolted"));
     public static final ResourceKey<DamageType> SHATTERSHOT = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.tryBuild(AscendantArcana.MOD_ID, "shattershot"));
     public static final ResourceKey<DamageType> SINGULARITY = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.tryBuild(AscendantArcana.MOD_ID, "singularity"));
