@@ -43,8 +43,6 @@ public abstract class ThrownTridentMixin implements EnchantedTrident {
     @Final
     private static EntityDataAccessor<Byte> ID_LOYALTY;
 
-    @Shadow
-    private ItemStack tridentItem;
     @Unique
     private int ascendant_arcana$singularityLevel;
 
