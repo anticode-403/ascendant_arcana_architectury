@@ -329,7 +329,7 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
                 ascendant_arcana$isWhirlwindCharging = false;
                 ascendant_arcana$isWhirlwinding = true;
                 ascendant_arcana$whirlwindDuration = Mth.floor(ascendant_arcana$whirlwindCharge) * 4;
-                ascendant_arcana$whirlwindCooldown = ascendant_arcana$whirlwindDuration + 100;
+                ascendant_arcana$whirlwindCooldown = ascendant_arcana$whirlwindDuration + 300;
                 player.setDeltaMovement(player.getLookAngle().scale(Mth.floor(ascendant_arcana$whirlwindCharge) * 2));
                 NetworkManager.sendToServer(ServerboundWhirlwindSync.Id, new ServerboundWhirlwindSync(false, true).write());
             }
@@ -409,7 +409,7 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
 
     @Override
     public float ascendant_arcana$getWhirlwindCooldown() {
-        return Math.min(1F, ((float)ascendant_arcana$whirlwindCooldown / 100F));
+        return Math.min(1F, ((float)ascendant_arcana$whirlwindCooldown / 300F));
     }
 
     @Override
