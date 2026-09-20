@@ -1,6 +1,7 @@
 package me.anticode.ascendant_arcana.entity;
 
 import me.anticode.ascendant_arcana.init.AArcanaEntities;
+import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -49,6 +50,7 @@ public class LightningTurretEntity extends OwnedEntity {
                 ServerLevel serverLevel = (ServerLevel) level();
                 List<Entity> targets = level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(5F), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(this::notOwnerAlly));
                 if (!targets.isEmpty()) {
+                    serverLevel.playSound(null, getX(), getY(), getZ(), AArcanaSoundEvents.STORM_ANCHOR_ZAP.get(), getSoundSource(), 0.8F, 1.0F);
                     LivingEntity target = (LivingEntity) targets.get(serverLevel.getRandom().nextIntBetweenInclusive(0, targets.size() - 1));
                     AArcanaEnchantmentHelper.joltTargets(target, (LivingEntity) getOwner(), this, 3);
                 }

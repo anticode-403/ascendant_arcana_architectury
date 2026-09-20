@@ -383,6 +383,11 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerSoundEvent(translationBuilder, AArcanaSoundEvents.SINGULARITY_SUMMON.get(), "Singularity summoned");
             registerSoundEvent(translationBuilder, AArcanaSoundEvents.SINGULARITY.get(), "Singularity pulls");
             registerSoundEvent(translationBuilder, AArcanaSoundEvents.BLAZEBOLT_SHOT.get(), "Blazebolt Crossbow fires");
+            registerSoundEvent(translationBuilder, AArcanaSoundEvents.GLACIOCLASM.get(), "Ice burst");
+            registerSoundEvent(translationBuilder, AArcanaSoundEvents.GLACIOCLASM_SPAWN.get(), "Glacioclasm spawns");
+            registerSoundEvent(translationBuilder, AArcanaSoundEvents.LIGHTNING_ZAP.get(), "Entity jolted");
+            registerSoundEvent(translationBuilder, AArcanaSoundEvents.STORM_ANCHOR_ZAP.get(), "Storm Anchor zaps");
+            registerSoundEvent(translationBuilder, AArcanaSoundEvents.TICK.get(), "Enchantment charges");
             // Other
             translationBuilder.add("pack.ascendant_arcana.ascendant_arcana_classic", "Ascendant Arcana Classic");
             translationBuilder.add("category.ascendant_arcana", "Ascendant Arcana");

@@ -5,6 +5,7 @@ import me.anticode.ascendant_arcana.codecs.EntityListSource;
 import me.anticode.ascendant_arcana.init.AArcanaDamage;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
+import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import me.anticode.ascendant_arcana.particle.ChainingLightningParticleOption;
 import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -12,6 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -25,6 +27,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.gameevent.EntityPositionSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 
@@ -286,6 +289,11 @@ public class AArcanaEnchantmentHelper {
             chain.add(new EntityPositionSource(nextLink, (float)nextLink.getRandomY() - (float)nextLink.getY()));
             chainEntity.add(nextLink);
             lastLink = nextLink;
+        }
+        EntityListSource listSource = new EntityListSource(chain);
+        for (EntityPositionSource positionSource : listSource.entities) {
+            Vec3 pos = positionSource.getPosition(serverLevel).get();
+            serverLevel.playSound(null, pos.x, pos.y, pos.z, AArcanaSoundEvents.LIGHTNING_ZAP.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
         }
         serverLevel.sendParticles(new ChainingLightningParticleOption(new EntityListSource(chain)), victim.getX(), victim.getY(), victim.getZ(), 0, 0, 0, 0, 0);
     }

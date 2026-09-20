@@ -6,7 +6,6 @@ import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -37,8 +36,10 @@ public class GlacioclasmEntity extends OwnedEntity {
 
     @Override
     public void tick() {
-        if (entityData.get(life).equals(entityData.get(maxLife))) {
-            level().playSound(null, getX(), getY(), getZ(), AArcanaSoundEvents.SINGULARITY_SUMMON.get(), SoundSource.PLAYERS, 1.0F, 3.0F);
+        if (entityData.get(life).equals(entityData.get(maxLife)) && entityData.get(maxLife) > 5) {
+            level().playSound(null, getX(), getY(), getZ(), AArcanaSoundEvents.GLACIOCLASM_SPAWN.get(), getSoundSource(), 0.6F, 1.0F);
+        } else if (entityData.get(life) == 4) {
+            level().playSound(null, getX(), getY(), getZ(), AArcanaSoundEvents.GLACIOCLASM.get(), getSoundSource(), 1.0F, 1.0F);
         } else if (entityData.get(life) == 2) {
             if (!level().isClientSide()) {
                 level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(5F), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(this::notOwnerAlly)).forEach(entity -> {

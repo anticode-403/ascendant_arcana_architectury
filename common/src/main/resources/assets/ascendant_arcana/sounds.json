@@ -22,5 +22,25 @@
   "shattershot": {
     "subtitle": "sound.ascendant_arcana.shattershot",
     "sounds": ["ascendant_arcana:shattershot_0","ascendant_arcana:shattershot_1","ascendant_arcana:shattershot_2","ascendant_arcana:shattershot_3"]
+  },
+  "lightning_zap": {
+    "subtitle": "sound.ascendant_arcana.lightning_zap",
+    "sounds": ["ascendant_arcana:lightning_zap_0","ascendant_arcana:lightning_zap_1","ascendant_arcana:lightning_zap_2","ascendant_arcana:lightning_zap_3","ascendant_arcana:lightning_zap_4","ascendant_arcana:lightning_zap_5","ascendant_arcana:lightning_zap_6","ascendant_arcana:lightning_zap_7","ascendant_arcana:lightning_zap_8","ascendant_arcana:lightning_zap_9","ascendant_arcana:lightning_zap_10"]
+  },
+  "glacioclasm_spawn": {
+    "subtitle": "sound.ascendant_arcana.glacioclasm_spawn",
+    "sounds": ["ascendant_arcana:glacioclasm_spawn_0","ascendant_arcana:glacioclasm_spawn_1","ascendant_arcana:glacioclasm_spawn_2"]
+  },
+  "glacioclasm": {
+    "subtitle": "sound.ascendant_arcana.glacioclasm",
+    "sounds": ["ascendant_arcana:glacioclasm_0","ascendant_arcana:glacioclasm_1","ascendant_arcana:glacioclasm_2","ascendant_arcana:glacioclasm_3","ascendant_arcana:glacioclasm_4"]
+  },
+  "storm_anchor_zap": {
+    "subtitle": "sound.ascendant_arcana.storm_anchor_zap",
+    "sounds": ["ascendant_arcana:storm_anchor_zap_0","ascendant_arcana:storm_anchor_zap_1","ascendant_arcana:storm_anchor_zap_2"]
+  },
+  "tick": {
+    "subtitle": "sound.ascendant_arcana.tick",
+    "sounds": ["ascendant_arcana:tick_0","ascendant_arcana:tick_1","ascendant_arcana:tick_2","ascendant_arcana:tick_3"]
   }
 }

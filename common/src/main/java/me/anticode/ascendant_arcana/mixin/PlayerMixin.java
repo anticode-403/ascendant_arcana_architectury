@@ -286,6 +286,9 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
             removeEffect(AArcanaMobEffects.PREPARED.get());
         }
         if (player.isCrouching() && player.onGround() && !player.isFallFlying() && !player.isSwimming() && EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.LAUNCHING.get(), player) > 0) {
+            if (ascendant_arcana$launchingCharge - Mth.floor(ascendant_arcana$launchingCharge) + 0.025F + (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.LAUNCHING.get(), player) * 0.25F) >= 1) {
+                player.playSound(AArcanaSoundEvents.TICK.get(), 1F, 0.35F + (ascendant_arcana$launchingCharge * 0.66F));
+            }
             ascendant_arcana$launchingCharge += 0.025F + (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.LAUNCHING.get(), player) * 0.25F);
             if (ascendant_arcana$launchingCharge >= 3) ascendant_arcana$launchingCharge = 3;
         } else if (ascendant_arcana$launchingCharge != 0) ascendant_arcana$launchingCharge = 0;
@@ -341,6 +344,9 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
         if (!ascendant_arcana$isWhirlwindCharging) {
             ascendant_arcana$isWhirlwindCharging = true;
             NetworkManager.sendToServer(ServerboundWhirlwindSync.Id, new ServerboundWhirlwindSync(true, false).write());
+        }
+        if (ascendant_arcana$whirlwindCharge - Mth.floor(ascendant_arcana$whirlwindCharge) + 0.05F >= 1) {
+            player.playSound(AArcanaSoundEvents.TICK.get(), 1F, 0.35F + (ascendant_arcana$whirlwindCharge * 0.66F));
         }
         ascendant_arcana$whirlwindCharge += 0.05F;
         if (ascendant_arcana$whirlwindCharge >= 3) ascendant_arcana$whirlwindCharge = 3;

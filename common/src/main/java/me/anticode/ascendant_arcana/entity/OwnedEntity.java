@@ -3,10 +3,12 @@ package me.anticode.ascendant_arcana.entity;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -46,6 +48,12 @@ public abstract class OwnedEntity extends Entity implements TraceableEntity {
         if (this.ownerUUID != null) {
             compoundTag.putUUID("Owner", this.ownerUUID);
         }
+    }
+
+    @Override
+    public @NotNull SoundSource getSoundSource() {
+        if (getOwner() != null) return getOwner().getSoundSource();
+        else return SoundSource.PLAYERS;
     }
 
     @Override
