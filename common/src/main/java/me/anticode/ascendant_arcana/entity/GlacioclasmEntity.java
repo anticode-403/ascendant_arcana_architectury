@@ -23,7 +23,7 @@ public class GlacioclasmEntity extends OwnedEntity {
     }
 
     public GlacioclasmEntity(Level level, LivingEntity livingEntity, int delay) {
-        super(AArcanaEntities.SINGULARITY_ENTITY.get(), level);
+        super(AArcanaEntities.GLACIOCLASM_ENTITY.get(), level);
         entityData.set(maxLife, delay + 5);
         entityData.set(life, delay + 5);
         this.noPhysics = true;
