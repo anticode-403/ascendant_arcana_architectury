@@ -46,6 +46,7 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
@@ -184,6 +185,10 @@ public final class AscendantArcanaForge {
             event.enqueueWork(() -> {
                 MenuScreens.register(AArcanaMenus.ENCHANTING.get(), AArcanaEnchantingScreen::new);
             });
+
+            if (ModList.get().isLoaded("appleskin")) {
+                MinecraftForge.EVENT_BUS.register(new AArcanaAppleskinHandler());
+            }
         }
 
         @SubscribeEvent
