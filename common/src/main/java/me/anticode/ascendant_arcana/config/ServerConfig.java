@@ -70,6 +70,16 @@ public class ServerConfig implements ConfigData {
     public int books_tier_bypass = 1;
 
     @Comment("""
+            The maximum horizontal range for bookshelf detection for Enchantment Tables. Unlike vanilla, non-bookshelf
+            blocks do not detract from this maximum. The lowest this value can be set is 2.""")
+    public int bookshelfDetectionWidth = 5;
+
+    @Comment("""
+            The maximum vertical range for bookshelf detection for Enchantment Tables. Unlike vanilla, non-bookshelf
+            blocks do not detract from this maximum. The lowest this value can be set is 1.""")
+    public int bookshelfDetectionHeight = 2;
+
+    @Comment("""
             Ascendant Arcana disables many vanilla enchantments because they stress the capacity system too much with
             'required' enchantments. Enchantments are generally meant to be more interesting and meaningfully impactful
             but this list is configurable so you can enable or disable whatever you want.

@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -28,14 +29,18 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EnchantmentTableBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
+import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AArcanaEnchantingMenu extends AbstractContainerMenu {
     private final Container inventory;
@@ -100,8 +105,8 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
         context.execute((level, pos) -> {
             int i = 0;
 
-            for (BlockPos blockPos : EnchantmentTableBlock.BOOKSHELF_OFFSETS) {
-                if (EnchantmentTableBlock.isValidBookShelf(level, pos, blockPos)) {
+            for (BlockPos blockPos : getOffsetsForTable(level, pos)) {
+                if (level.getBlockState(pos.offset(blockPos)).is(BlockTags.ENCHANTMENT_POWER_PROVIDER)) {
                     if (level.getBlockEntity(pos.offset(blockPos), BlockEntityType.CHISELED_BOOKSHELF).isPresent()) {
                         ChiseledBookShelfBlockEntity chiseledBookshelf = (ChiseledBookShelfBlockEntity) level.getBlockEntity(pos.offset(blockPos));
                         assert chiseledBookshelf != null;
@@ -271,6 +276,15 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
                 if (!this.moveItemStackTo(itemStack, 4, 40, true)) player.drop(itemStack, true);
             }
         }
+    }
+
+    public static List<BlockPos> getOffsetsForTable(Level level, BlockPos pos) {
+        int width = Math.max(2, AscendantArcana.config.bookshelfDetectionWidth);
+        int height = Math.max(1, AscendantArcana.config.bookshelfDetectionHeight);
+        return BlockPos.betweenClosedStream(-width, -height, -width, width, height, width)
+                .filter(p -> Math.abs(p.getX()) > 1 || Math.abs(p.getZ()) > 1)
+                .map(BlockPos::immutable)
+                .collect(Collectors.toList());
     }
 
     private static class EnchantableToolSlot extends Slot {
