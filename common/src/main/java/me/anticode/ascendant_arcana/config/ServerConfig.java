@@ -145,8 +145,6 @@ public class ServerConfig implements ConfigData {
             disabled_enchantments.add("majruszsenchantments:dodge");
             disabled_enchantments.add("majruszsenchantments:enlightenment");
             disabled_enchantments.add("majruszsenchantments:immortality");
-            disabled_enchantments.add("ascendant_arcana:coldheart");
-            disabled_enchantments.add("ascendant_arcana:heart_of_the_storm");
         }
     }
 }
