@@ -44,7 +44,7 @@ public class LightningTurretEntity extends OwnedEntity {
         if (!blockState.isSolidRender(level(), attachPos)) {
             discard();
         }
-        if (life != 300 && life % 40 == 0) {
+        if (life != 300 && life % 30 == 0) {
             if (!level().isClientSide()){
                 ServerLevel serverLevel = (ServerLevel) level();
                 List<Entity> targets = level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(5F), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(this::notOwnerAlly));
