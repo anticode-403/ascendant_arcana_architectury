@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import me.anticode.ascendant_arcana.enchantment.armor.HellWalker;
 import me.anticode.ascendant_arcana.enchantment.TickableAttributeEnchantment;
 import me.anticode.ascendant_arcana.enchantment.armor.TurtleHeart;
+import me.anticode.ascendant_arcana.entity.GlacioclasmEntity;
 import me.anticode.ascendant_arcana.init.AArcanaAttributes;
 import me.anticode.ascendant_arcana.init.AArcanaDamage;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
@@ -249,12 +250,20 @@ public abstract class LivingEntityMixin {
 
     @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatTracker;recordDamage(Lnet/minecraft/world/damagesource/DamageSource;F)V"), cancellable = true)
     private void protectiveEcho(DamageSource source, float amount, CallbackInfo ci) {
-        if (amount < 5) return;
         if (source.is(DamageTypeTags.BYPASSES_ENCHANTMENTS) || source.is(DamageTypeTags.BYPASSES_EFFECTS)) return;
+        LivingEntity livingEntity = (LivingEntity) (Object) this;
+        if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.GLACIOCLASM.get(), livingEntity) > 0) {
+            if ((livingEntity.getHealth() - amount)/livingEntity.getMaxHealth() <= 0.3F) {
+                GlacioclasmEntity glacioclasm = new GlacioclasmEntity(livingEntity.level(), livingEntity, 20, 240);
+                glacioclasm.setPos(livingEntity.position());
+                livingEntity.level().addFreshEntity(glacioclasm);
+            }
+        }
         if (getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get()) != null) {
-            if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PROTECTIVE_ECHO.get(), (LivingEntity) (Object) this) == 0) return;
-            forceAddEffect(new MobEffectInstance(AArcanaMobEffects.ECHOING_DAMAGE.get(), 5, (int)Math.floor(amount / 5)), (LivingEntity)(Object)this);
-            ci.cancel();
+            if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PROTECTIVE_ECHO.get(), livingEntity) > 0 && amount >= 5) {
+                forceAddEffect(new MobEffectInstance(AArcanaMobEffects.ECHOING_DAMAGE.get(), 5, (int)Math.floor(amount / 5)), (LivingEntity)(Object)this);
+                ci.cancel();
+            }
         }
     }
 

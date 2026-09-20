@@ -13,19 +13,22 @@ import net.minecraft.world.phys.AABB;
 public class GlacioclasmEntity extends OwnedEntity {
     public final static EntityDataAccessor<Integer> life = SynchedEntityData.defineId(GlacioclasmEntity.class, EntityDataSerializers.INT);
     public final static EntityDataAccessor<Integer> maxLife = SynchedEntityData.defineId(GlacioclasmEntity.class, EntityDataSerializers.INT);
+    private final int strength;
 
     public GlacioclasmEntity(EntityType<? extends GlacioclasmEntity> entityType, Level level) {
         super(entityType, level);
         entityData.set(maxLife, 35);
         entityData.set(life, 35);
+        this.strength = 240;
         this.noPhysics = true;
         this.noCulling = true;
     }
 
-    public GlacioclasmEntity(Level level, LivingEntity livingEntity, int delay) {
+    public GlacioclasmEntity(Level level, LivingEntity livingEntity, int delay, int strength) {
         super(AArcanaEntities.GLACIOCLASM_ENTITY.get(), level);
         entityData.set(maxLife, delay + 5);
         entityData.set(life, delay + 5);
+        this.strength = strength;
         this.noPhysics = true;
         this.noCulling = true;
         setOwner(livingEntity);
@@ -39,7 +42,7 @@ public class GlacioclasmEntity extends OwnedEntity {
             if (!level().isClientSide()) {
                 level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(5F), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(this::notOwnerAlly)).forEach(entity -> {
                     LivingEntity livingEntity = (LivingEntity) entity;
-                    livingEntity.setTicksFrozen(240);
+                    livingEntity.setTicksFrozen(strength);
 
                 });
             }

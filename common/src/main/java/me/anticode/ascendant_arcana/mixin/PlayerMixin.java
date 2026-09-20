@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import dev.architectury.networking.NetworkManager;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.api.AArcanaPlayer;
+import me.anticode.ascendant_arcana.entity.GlacioclasmEntity;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
@@ -16,6 +17,7 @@ import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -149,13 +151,24 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
 
     @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"), cancellable = true)
     private void protectiveEcho(DamageSource source, float amount, CallbackInfo ci) {
-        if (amount < 5) return;
-        if (getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get()) != null) return;
-        if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PROTECTIVE_ECHO.get(), (LivingEntity) (Object) this) == 0) return;
-        int duration = 100 * Math.max((int)amount / 10, 1);
-        int strength = Math.max((int)amount / (duration / 20), 1);
-        forceAddEffect(new MobEffectInstance(AArcanaMobEffects.ECHOING_DAMAGE.get(), duration + 20, strength), (LivingEntity)(Object)this);
-        ci.cancel();
+        if (source.is(DamageTypeTags.BYPASSES_ENCHANTMENTS) || source.is(DamageTypeTags.BYPASSES_EFFECTS)) return;
+        LivingEntity livingEntity = (LivingEntity) (Object) this;
+        if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.GLACIOCLASM.get(), livingEntity) > 0) {
+            if ((livingEntity.getHealth() - amount)/livingEntity.getMaxHealth() <= 0.3F) {
+                // The player variant is much stronger than the one in LivingEntity intentionally.
+                GlacioclasmEntity glacioclasm = new GlacioclasmEntity(livingEntity.level(), livingEntity, 0, 500);
+                glacioclasm.setPos(livingEntity.position());
+                livingEntity.level().addFreshEntity(glacioclasm);
+            }
+        }
+        if (getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get()) != null) {
+            if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PROTECTIVE_ECHO.get(), livingEntity) > 0 && amount >= 5) {
+                int duration = 100 * Math.max((int)amount / 10, 1);
+                int strength = Math.max((int)amount / (duration / 20), 1);
+                forceAddEffect(new MobEffectInstance(AArcanaMobEffects.ECHOING_DAMAGE.get(), duration + 20, strength), livingEntity);
+                ci.cancel();
+            }
+        }
     }
 
     @Inject(method = "getProjectile", at = @At("HEAD"), cancellable = true)

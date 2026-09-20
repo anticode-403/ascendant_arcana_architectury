@@ -30,6 +30,7 @@ public class AArcanaEnchantments {
     public static RegistrySupplier<Enchantment> DEFLECT = register(new Deflect(), "deflect");
     public static RegistrySupplier<Enchantment> EVOKERS_WRATH = register(new EvokersWrath(), "evokers_wrath");
     public static RegistrySupplier<Enchantment> EXCAVATING = register(new Excavating(), "excavating");
+    public static RegistrySupplier<Enchantment> GLACIOCLASM = register(new Glacioclasm(), "glacioclasm");
     public static RegistrySupplier<Enchantment> GUIDING = register(new Guiding(), "guiding");
     public static RegistrySupplier<Enchantment> HELLWALKER = register(new HellWalker(), "hellwalker");
     public static RegistrySupplier<Enchantment> HOBBLING_SHOT = register(new HobblingShot(), "hobbling_shot");
