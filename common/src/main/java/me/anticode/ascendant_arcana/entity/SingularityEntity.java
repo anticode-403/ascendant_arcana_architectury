@@ -20,7 +20,8 @@ public class SingularityEntity extends OwnedEntity {
 
     public SingularityEntity(EntityType<? extends SingularityEntity> entityType, Level level) {
         super(entityType, level);
-        entityData.set(life, entityData.get(maxLife));
+        entityData.set(maxLife, 30);
+        entityData.set(life, 30);
         this.noPhysics = true;
         this.noCulling = true;
     }
@@ -28,7 +29,7 @@ public class SingularityEntity extends OwnedEntity {
     public SingularityEntity(Level level, LivingEntity livingEntity, int singularityLevel) {
         super(AArcanaEntities.SINGULARITY_ENTITY.get(), level);
         entityData.set(maxLife, 30 * singularityLevel);
-        entityData.set(life, entityData.get(maxLife));
+        entityData.set(life, 30 * singularityLevel);
         this.noPhysics = true;
         this.noCulling = true;
         setOwner(livingEntity);
@@ -68,8 +69,8 @@ public class SingularityEntity extends OwnedEntity {
 
     @Override
     protected void defineSynchedData() {
-        entityData.define(maxLife, 30);
-        entityData.define(life, 30);
+        entityData.define(maxLife, 0);
+        entityData.define(life, 0);
     }
 
     public int getCyclicalLife() {

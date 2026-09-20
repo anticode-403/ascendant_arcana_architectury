@@ -36,13 +36,13 @@ public class SingularityEntityRenderer extends EntityRenderer<SingularityEntity>
         poseStack.pushPose();
         SynchedEntityData entityData = entity.getEntityData();
         int life = entityData.get(SingularityEntity.life);
-        int time = entityData.get(SingularityEntity.maxLife) - life;
+        int time = Math.max(0, entityData.get(SingularityEntity.maxLife) - life);
         int cyclicalTime = 30 - entity.getCyclicalLife();
         float scale = Mth.lerp(g, Math.min((time - 1)/3F, 1F), Math.min(time / 3F, 1F));
         // This is incredibly cursed.
         float ringScale = easeInOutQuad(Mth.lerp(g, Math.min(time - 1, 10F)/10F, Math.min(time, 10F)/10F)) * 10F;
         if (cyclicalTime >= 15 && cyclicalTime <= 20) ringScale = easeInOutQuad(Mth.map(Mth.lerp(g, cyclicalTime - 1, cyclicalTime), 15, 20, 9, 0) / 10F) * 10F + 1;
-        if (cyclicalTime > 20 && life > 30) {
+        if (cyclicalTime > 20 && life >= 30) {
             ringScale = easeInOutQuad(Mth.lerp(g, Math.min(cyclicalTime - 20, 10F)/10F, Math.min(cyclicalTime - 19, 10F)/10F)) * 10F;
         } else if (cyclicalTime > 20) {
             ringScale = 1;
