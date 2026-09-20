@@ -193,7 +193,7 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
         ItemStack secondaryStack = inventory.getItem(3);
 
         // Verifying
-        if (!AscendantArcana.config.disable_xp && levelRecipe.levelCost() > player.experienceLevel) return false;
+        if (!AscendantArcana.config.disable_xp && AscendantArcana.config.recipes_use_xp && levelRecipe.levelCost() > player.experienceLevel) return false;
         if (!AArcanaEnchantmentHelper.testEnchantmentCost(itemStack, AArcanaEnchantmentHelper.getEnchantmentCost(recipe.enchantment))) return false;
         if ((!AscendantArcana.config.books_remove_scrap_cost || !unlockedTreasures.contains(recipe.enchantment)) && levelRecipe.scrapStack() != null) {
             if (!levelRecipe.scrapStack().test(scrapStack)) return false;
