@@ -299,6 +299,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerEnchantment(translationBuilder, AArcanaEnchantments.DEFLECT.get(), "Deflect", "Blocking a projectile with your shield will shoot it back.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.EVOKERS_WRATH.get(), "Evoker's Wrath", "Summons an Evoker Fang when the arrow lands.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.EXCAVATING.get(), "Excavating", "Mine multiple blocks in an area at once.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.GLACIOCLASM.get(), "Glacioclasm", "Release a freezing burst at low health.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.GUIDING.get(), "Guiding", "While holding this bow, fired arrows follow the direction you're looking.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.HELLWALKER.get(), "Hellwalker", "Crystalizes nearby lava so it can be walked on.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.HOBBLING_SHOT.get(), "Hobbling Shot", "Reduces movement speed and jump height, stacking 5 times.");
@@ -320,6 +321,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerEnchantment(translationBuilder, AArcanaEnchantments.SINGULARITY.get(), "Singularity", "Summons a singularity on hit, dealing damage and pulling in nearby enemies after a slight delay.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SLAYING_TEMPO.get(), "Slaying Tempo", "Repeated perfect hits makes the next slain enemy explode.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SMELTING.get(), "Smelting", "Smelts blocks mined.");
+            registerEnchantment(translationBuilder, AArcanaEnchantments.SNOWBALL.get(), "Snowball", "Perfectly hitting an enemy creates a delayed freezing burst.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SONIC_BLAST.get(), "Sonic Blast", "Holding up the shield charges a powerful sonic blast that ignores most forms of protection.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.SOUL_BURST.get(), "Soul Burst", "Slain enemies deal damage to nearby entities based on their maximum health.");
             registerEnchantment(translationBuilder, AArcanaEnchantments.STOPPING_POWER.get(), "Stopping Power", "Deal increased damage to enemies with low health.");
@@ -389,6 +391,8 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add("death.attack.jolted.item", "%1$s was electrocuted");
             translationBuilder.add("death.attack.echoing", "%1$s was destroyed");
             translationBuilder.add("death.attack.echoing.item", "%1$s was destroyed");
+            translationBuilder.add("death.attack.glacioclasm", "%1$s was frozen");
+            translationBuilder.add("death.attack.glacioclasm.item", "%1$s was frozen");
         }
     }
 
@@ -972,6 +976,12 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(Items.AMETHYST_SHARD, 6),
                             IngredientStack.of(Items.COPPER_INGOT, 3),
                             3)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.GLACIOCLASM.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
+                            IngredientStack.of(Items.BLUE_ICE, 3),
+                            IngredientStack.of(Items.FERMENTED_SPIDER_EYE),
+                            3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.GUIDING.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 3),
@@ -1133,6 +1143,17 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
                             IngredientStack.of(Items.BLAZE_POWDER, 4),
                             null,
                             4)));
+            exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SNOWBALL.get())
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.SNOWBALL, 16),
+                            IngredientStack.of(Items.REDSTONE, 16),
+                            3))
+                    .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
+                            IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 2),
+                            IngredientStack.of(Items.SNOWBALL, 8),
+                            IngredientStack.of(Items.REDSTONE, 8),
+                            3)));
             exporter.accept(new EnchantmentRecipeProvider(AArcanaEnchantments.SONIC_BLAST.get())
                     .level(new EnchantmentRecipeProvider.EnchantmentLevelRecipeProvider(
                             IngredientStack.of(AArcanaItems.ENCHANTED_SCRAP.get(), 12),
