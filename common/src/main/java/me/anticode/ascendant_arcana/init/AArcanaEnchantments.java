@@ -51,6 +51,7 @@ public class AArcanaEnchantments {
     public static RegistrySupplier<Enchantment> SHATTERSHOT = register(new Shattershot(), "shattershot");
     public static RegistrySupplier<Enchantment> SINGULARITY = register(new Singularity(), "singularity");
     public static RegistrySupplier<Enchantment> SMELTING = register(new Smelting(), "smelting");
+    public static RegistrySupplier<Enchantment> SNOWBALL = register(new Snowball(), "snowball");
     public static RegistrySupplier<Enchantment> SONIC_BLAST = register(new SonicBlast(), "sonic_blast");
     public static RegistrySupplier<Enchantment> SOUL_BURST = register(new SoulBurst(), "soul_burst");
     public static RegistrySupplier<Enchantment> STOPPING_POWER = register(new StoppingPower(), "stopping_power");

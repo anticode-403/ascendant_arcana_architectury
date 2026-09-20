@@ -123,15 +123,16 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
         Player player = (Player)(Object)this;
         int slayingTempoLevel = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SLAYING_TEMPO.get(), player);
         int allegroLevel = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.ALLEGRO.get(), player);
-        if (slayingTempoLevel != 0 || allegroLevel != 0) {
+        int snowballLevel = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SNOWBALL.get(), player);
+        if (slayingTempoLevel != 0 || allegroLevel != 0 || snowballLevel != 0) {
             float attackStrength = ((float)attackStrengthTicker + 0.5F) / getCurrentItemAttackStrengthDelay();
-            float perfectWindow;
-            if (allegroLevel != 0 && slayingTempoLevel != 0) {
-                if (player.hasEffect(AArcanaMobEffects.ALLEGRO.get())) perfectWindow = 1.2F + ((player.getEffect(AArcanaMobEffects.ALLEGRO.get()).getAmplifier() + 1F) * 0.1F);
-                else perfectWindow = 1.2F;
+            float perfectWindow = 1F;
+            if (snowballLevel != 0) perfectWindow += 0.1F;
+            if (allegroLevel != 0) {
+                perfectWindow += 0.1F;
+                if (player.hasEffect(AArcanaMobEffects.ALLEGRO.get())) perfectWindow += ((player.getEffect(AArcanaMobEffects.ALLEGRO.get()).getAmplifier() + 1F) * 0.1F);
             }
-            else if (player.hasEffect(AArcanaMobEffects.ALLEGRO.get())) perfectWindow = 1.1F + ((player.getEffect(AArcanaMobEffects.ALLEGRO.get()).getAmplifier() + 1F) * 0.1F);
-            else perfectWindow = 1.1F;
+            if (slayingTempoLevel != 0) perfectWindow += 0.1F;
             if (attackStrength < perfectWindow && attackStrength > 1F) {
                 if (slayingTempoLevel != 0) {
                     int amplifier;
@@ -144,6 +145,11 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
                     if (player.hasEffect(AArcanaMobEffects.ALLEGRO.get())) amplifier = player.getEffect(AArcanaMobEffects.ALLEGRO.get()).getAmplifier() + 1;
                     else amplifier = 0;
                     player.addEffect(new MobEffectInstance(AArcanaMobEffects.ALLEGRO.get(), 20 + (allegroLevel * 20), amplifier, false, false, true));
+                }
+                if (snowballLevel != 0) {
+                    GlacioclasmEntity glacioclasm = new GlacioclasmEntity(player.level(), player, 35 - (snowballLevel * 5), 200 + (50 * snowballLevel));
+                    glacioclasm.setPos(entity.position());
+                    player.level().addFreshEntity(glacioclasm);
                 }
             }
         }
