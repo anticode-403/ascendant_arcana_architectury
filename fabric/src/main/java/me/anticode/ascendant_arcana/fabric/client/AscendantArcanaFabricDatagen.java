@@ -258,7 +258,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add("item.ascendant_arcana.relics.name.durability", "Restorine Powder");
             translationBuilder.add("item.ascendant_arcana.relics.name.protection", "Plating");
             translationBuilder.add("item.ascendant_arcana.relics.name.haste", "Haste Oil");
-            translationBuilder.add("item.ascendant_arcana.relics.name.enchantment_capacity", "Relic");
+            translationBuilder.add("item.ascendant_arcana.relics.name.enchantment_capacity", "Crystal");
 
             translationBuilder.add("item.relics.tooltip", "+%1$s%3$s %2$s");
             translationBuilder.add("item.relics.tooltip.applied_any", "When Applied to Item:");
