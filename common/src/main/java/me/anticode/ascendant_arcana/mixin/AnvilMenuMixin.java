@@ -23,7 +23,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
@@ -77,8 +76,8 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
         ci.cancel();
     }
 
-    @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;set(I)V"))
-    private void anvilDoesNotCostLevels(DataSlot instance, int i) {
+    @WrapOperation(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;set(I)V"))
+    private void anvilDoesNotCostLevels(DataSlot instance, int i, Operation<Void> original) {
         // This space intentionally left blank
     }
 
