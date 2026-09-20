@@ -37,11 +37,11 @@ public class GlacioclasmEntityRenderer extends EntityRenderer<GlacioclasmEntity>
         float outerRingScale = ringScale;
         float ringHeightScale = 1F;
         if (life <= 4) {
-            float multiplier = easeOutQuad(Mth.map(life - g, 4, -1, 0, 1));
+            float multiplier = easeOutQuad(Mth.map(life - g, 4, 0, 0, 1));
             ringScale *= 1 + (multiplier * 7.5F);
             outerRingScale *= 1 + (multiplier * 9F);
         } if (life <= 1) {
-            ringHeightScale = easeInOutQuad(Mth.map(life - g, 1, -1, 1, 0));
+            ringHeightScale = easeInOutQuad(Mth.map(life - g, 1, 0, 1, 0));
             scale *= ringHeightScale;
         }
         poseStack.scale(scale, 1, scale);
