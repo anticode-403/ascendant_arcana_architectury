@@ -72,12 +72,12 @@ public class ServerConfig implements ConfigData {
     @Comment("""
             The maximum horizontal range for bookshelf detection for Enchantment Tables. Unlike vanilla, non-bookshelf
             blocks do not detract from this maximum. The lowest this value can be set is 2.""")
-    public int bookshelfDetectionWidth = 5;
+    public int bookshelf_detection_width = 5;
 
     @Comment("""
             The maximum vertical range for bookshelf detection for Enchantment Tables. Unlike vanilla, non-bookshelf
             blocks do not detract from this maximum. The lowest this value can be set is 1.""")
-    public int bookshelfDetectionHeight = 2;
+    public int bookshelf_detection_height = 2;
 
     @Comment("""
             Ascendant Arcana disables many vanilla enchantments because they stress the capacity system too much with

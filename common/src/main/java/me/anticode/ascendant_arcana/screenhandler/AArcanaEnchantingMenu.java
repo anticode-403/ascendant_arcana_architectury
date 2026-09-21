@@ -30,11 +30,8 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.EnchantmentTableBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
-import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -279,8 +276,8 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
     }
 
     public static List<BlockPos> getOffsetsForTable(Level level, BlockPos pos) {
-        int width = Math.max(2, AscendantArcana.config.bookshelfDetectionWidth);
-        int height = Math.max(1, AscendantArcana.config.bookshelfDetectionHeight);
+        int width = Math.max(2, AscendantArcana.config.bookshelf_detection_width);
+        int height = Math.max(1, AscendantArcana.config.bookshelf_detection_height);
         return BlockPos.betweenClosedStream(-width, -height, -width, width, height, width)
                 .filter(p -> Math.abs(p.getX()) > 1 || Math.abs(p.getZ()) > 1)
                 .map(BlockPos::immutable)
