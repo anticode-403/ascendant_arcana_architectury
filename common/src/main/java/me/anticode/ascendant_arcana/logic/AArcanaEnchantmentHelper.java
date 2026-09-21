@@ -2,7 +2,6 @@ package me.anticode.ascendant_arcana.logic;
 
 import dev.architectury.networking.NetworkManager;
 import me.anticode.ascendant_arcana.AscendantArcana;
-import me.anticode.ascendant_arcana.codecs.EntityListSource;
 import me.anticode.ascendant_arcana.init.AArcanaDamage;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
@@ -25,10 +24,8 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.gameevent.EntityPositionSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 
@@ -275,13 +272,13 @@ public class AArcanaEnchantmentHelper {
         }
         ServerLevel serverLevel = (ServerLevel) victim.level();
         Entity lastLink = victim;
-        List<EntityPositionSource> chain = new LinkedList<>();
+        List<Integer> chain = new LinkedList<>();
         List<Entity> chainEntity = new LinkedList<>();
         if (indirectEntity != null) {
-            chain.add(new EntityPositionSource(indirectEntity, 0.25F));
+            chain.add(indirectEntity.getId());
             chainEntity.add(indirectEntity);
         }
-        chain.add(new EntityPositionSource(victim, (float)victim.getRandomY() - (float)victim.getY()));
+        chain.add(victim.getId());
         chainEntity.add(victim);
         if (indirectEntity != null) victim.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, indirectEntity, attacker), 4);
         else victim.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, attacker), 4);
@@ -291,17 +288,13 @@ public class AArcanaEnchantmentHelper {
             Entity nextLink = linkTargets.get(serverLevel.getRandom().nextIntBetweenInclusive(0, linkTargets.size() - 1));
             if (indirectEntity != null) nextLink.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, indirectEntity, attacker), 4);
             else nextLink.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, attacker), 4);
-            chain.add(new EntityPositionSource(nextLink, (float)nextLink.getRandomY() - (float)nextLink.getY()));
+            chain.add(nextLink.getId());
             chainEntity.add(nextLink);
+            serverLevel.playSound(null, nextLink.getX(), nextLink.getY(), nextLink.getZ(), AArcanaSoundEvents.LIGHTNING_ZAP.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
             lastLink = nextLink;
         }
         if (chain.size() <= 1) return;
-        EntityListSource listSource = new EntityListSource(chain);
-        for (EntityPositionSource positionSource : listSource.entities) {
-            Vec3 pos = positionSource.getPosition(serverLevel).get();
-            serverLevel.playSound(null, pos.x, pos.y, pos.z, AArcanaSoundEvents.LIGHTNING_ZAP.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
-        }
-        serverLevel.sendParticles(new ChainingLightningParticleOption(new EntityListSource(chain)), victim.getX(), victim.getY(), victim.getZ(), 0, 0, 0, 0, 0);
+        serverLevel.sendParticles(new ChainingLightningParticleOption(chain), victim.getX(), victim.getY(), victim.getZ(), 0, 0, 0, 0, 0);
     }
 
     public static boolean notAllyToEntity(Entity entity, Entity potentialAlly) {
