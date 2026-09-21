@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class DiggerItemMixin {
     @WrapOperation(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Tier;getSpeed()F"))
     public float getSpeed(Tier instance, Operation<Float> original) {
+        AscendantArcana.initializeConfigIfNull();
         float base = original.call(instance);
         if (base < 6) return Mth.floor(base * Math.max(1 + ((AscendantArcana.config.mining_speed_multiplier - 1)*0.6F), 1F));
         else return Mth.floor(base * Math.max(1F, AscendantArcana.config.mining_speed_multiplier));
