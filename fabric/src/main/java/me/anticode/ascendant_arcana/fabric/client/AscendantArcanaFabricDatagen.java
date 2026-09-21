@@ -388,6 +388,7 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             registerSoundEvent(translationBuilder, AArcanaSoundEvents.LIGHTNING_ZAP.get(), "Entity jolted");
             registerSoundEvent(translationBuilder, AArcanaSoundEvents.STORM_ANCHOR_ZAP.get(), "Storm Anchor zaps");
             registerSoundEvent(translationBuilder, AArcanaSoundEvents.TICK.get(), "Enchantment charges");
+            registerSoundEvent(translationBuilder, AArcanaSoundEvents.BUFF_ACTIVATED.get(), "Buff Activated");
             // Other
             translationBuilder.add("pack.ascendant_arcana.ascendant_arcana_classic", "Ascendant Arcana Classic");
             translationBuilder.add("category.ascendant_arcana", "Ascendant Arcana");

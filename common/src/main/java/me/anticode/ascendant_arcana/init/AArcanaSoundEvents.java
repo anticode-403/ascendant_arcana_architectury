@@ -21,6 +21,7 @@ public class AArcanaSoundEvents {
     public static final RegistrySupplier<SoundEvent> LIGHTNING_ZAP = register("lightning_zap");
     public static final RegistrySupplier<SoundEvent> GLACIOCLASM = register("glacioclasm");
     public static final RegistrySupplier<SoundEvent> GLACIOCLASM_SPAWN = register("glacioclasm_spawn");
+    public static final RegistrySupplier<SoundEvent> BUFF_ACTIVATED = register("buff_activated");
 
     public static RegistrySupplier<SoundEvent> register(String id) {
         return SOUND_EVENTS.register(id, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.tryBuild(AscendantArcana.MOD_ID, id)));

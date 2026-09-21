@@ -3,6 +3,7 @@ package me.anticode.ascendant_arcana.mixin;
 import dev.architectury.networking.NetworkManager;
 import me.anticode.ascendant_arcana.api.AArcanaHorse;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
+import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
 import me.anticode.ascendant_arcana.networking.ChargingSync;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -67,7 +68,8 @@ public class AbstractHorseMixin implements AArcanaHorse {
         }
         double targetAmount = oldAmount < 2D ? oldAmount + 0.01D : 2D;
         horse.getAttributes().getInstance(Attributes.MOVEMENT_SPEED).addTransientModifier(new AttributeModifier(CHARGING_UUID, "charging", targetAmount, AttributeModifier.Operation.MULTIPLY_BASE));
-        if (targetAmount == 2D) {
+        if (targetAmount == 2D && !chargingMaxSpeed) {
+            horse.level().playSound(null, horse, AArcanaSoundEvents.BUFF_ACTIVATED.get(), horse.getOwner().getSoundSource(), 1F, 2F);
             chargingMaxSpeed = true;
             NetworkManager.sendToPlayers(((ServerLevel)horse.level()).players(), ChargingSync.Id, new ChargingSync(horse.getId(), true).write());
         }

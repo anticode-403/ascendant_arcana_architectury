@@ -42,5 +42,9 @@
   "tick": {
     "subtitle": "sound.ascendant_arcana.tick",
     "sounds": ["ascendant_arcana:tick_0","ascendant_arcana:tick_1","ascendant_arcana:tick_2","ascendant_arcana:tick_3"]
+  },
+  "buff_activated": {
+    "subtitle": "sound.ascendant_arcana.buff_activated",
+    "sounds": ["ascendant_arcana:buff_activated_0","ascendant_arcana:buff_activated_1","ascendant_arcana:buff_activated_2"]
   }
 }
