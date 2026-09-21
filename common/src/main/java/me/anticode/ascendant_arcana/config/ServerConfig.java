@@ -26,6 +26,12 @@ public class ServerConfig implements ConfigData {
     @Comment("Levels are linear if enabled. This adjusts the XP required to level up each time. Setting this to 0 disables it.")
     public int xp_per_level = 30;
 
+    @Comment("""
+            The mining speed multiplier applied to all mining tools. This should include modded tools as well. Vanilla
+            values would be 1.0F. The default 2.75F is selected so that the 50% Ascendant Haste relic bonus is slightly
+            better than Efficiency 5 on a Netherite Pickaxe.""")
+    public float mining_speed_multiplier = 2.75F;
+
     @Comment("Some vanilla mobs drop relics on death, like Witches, Wither Skeletons, and bosses. Recommended.")
     public boolean add_relics_to_entities = true;
 
