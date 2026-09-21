@@ -51,7 +51,7 @@ public class AbstractHorseMixin implements AArcanaHorse {
         if (!horse.isAlive()) return;
         LivingEntity rider = horse.getControllingPassenger();
         if (rider == null) return;
-        if (rider.getDeltaMovement().with(Direction.Axis.Y, 0).length() * 43 < horse.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue()) {
+        if (rider.getDeltaMovement().with(Direction.Axis.Y, 0).length() * 43 < horse.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() || horse.isStanding() || horse.horizontalCollision || horse.hurtMarked) {
             if (horse.getAttributes().hasModifier(Attributes.MOVEMENT_SPEED, CHARGING_UUID)) {
                 horse.getAttributes().getInstance(Attributes.MOVEMENT_SPEED).removeModifier(CHARGING_UUID);
                 chargingMaxSpeed = false;
