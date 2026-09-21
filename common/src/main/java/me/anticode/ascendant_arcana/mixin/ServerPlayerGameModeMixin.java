@@ -178,18 +178,30 @@ public abstract class ServerPlayerGameModeMixin {
         }
         else switch (direction.getAxis()) {
             case X:
+                blockPositions.add(originalPos.relative(Direction.UP));
+                blockPositions.add(originalPos.relative(Direction.DOWN));
+                blockPositions.add(originalPos.relative(Direction.NORTH));
+                blockPositions.add(originalPos.relative(Direction.SOUTH));
                 blockPositions.add(originalPos.relative(Direction.UP).relative(Direction.NORTH));
                 blockPositions.add(originalPos.relative(Direction.UP).relative(Direction.SOUTH));
                 blockPositions.add(originalPos.relative(Direction.DOWN).relative(Direction.NORTH));
                 blockPositions.add(originalPos.relative(Direction.DOWN).relative(Direction.SOUTH));
                 break;
             case Y:
+                blockPositions.add(originalPos.relative(Direction.EAST));
+                blockPositions.add(originalPos.relative(Direction.WEST));
+                blockPositions.add(originalPos.relative(Direction.NORTH));
+                blockPositions.add(originalPos.relative(Direction.SOUTH));
                 blockPositions.add(originalPos.relative(Direction.EAST).relative(Direction.NORTH));
                 blockPositions.add(originalPos.relative(Direction.EAST).relative(Direction.SOUTH));
                 blockPositions.add(originalPos.relative(Direction.WEST).relative(Direction.NORTH));
                 blockPositions.add(originalPos.relative(Direction.WEST).relative(Direction.SOUTH));
                 break;
             case Z:
+                blockPositions.add(originalPos.relative(Direction.UP));
+                blockPositions.add(originalPos.relative(Direction.DOWN));
+                blockPositions.add(originalPos.relative(Direction.EAST));
+                blockPositions.add(originalPos.relative(Direction.WEST));
                 blockPositions.add(originalPos.relative(Direction.EAST).relative(Direction.UP));
                 blockPositions.add(originalPos.relative(Direction.EAST).relative(Direction.DOWN));
                 blockPositions.add(originalPos.relative(Direction.WEST).relative(Direction.UP));
