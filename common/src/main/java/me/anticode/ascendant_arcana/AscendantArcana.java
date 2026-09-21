@@ -9,6 +9,7 @@ import me.anticode.ascendant_arcana.api.AArcanaPlayer;
 import me.anticode.ascendant_arcana.config.ServerConfig;
 import me.anticode.ascendant_arcana.config.ServerConfigWrapper;
 import me.anticode.ascendant_arcana.init.*;
+import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import me.anticode.ascendant_arcana.loot.PopulateRelicLootFunction;
 import me.anticode.ascendant_arcana.networking.*;
 import me.anticode.ascendant_arcana.relics.RelicTypes;
@@ -92,6 +93,12 @@ public final class AscendantArcana {
             if (player == null) return;
             ServerLevel serverLevel = (ServerLevel) player.level();
             NetworkManager.sendToPlayers(serverLevel.players(), ClientboundWhirlwindSync.Id, new ClientboundWhirlwindSync(player.getUUID(), packet.charging(), packet.whirlwinding()).write());
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.C2S, ServerboundWhirlwindSync.Id, (buf, packetContext) -> {
+            ServerLevel serverLevel = (ServerLevel) packetContext.getPlayer().level();
+            JoltTargetsPacket packet = JoltTargetsPacket.read(buf, serverLevel);
+            AArcanaEnchantmentHelper.joltTargets(packet.victim(), packet.attacker(), packet.indirectEntity(), packet.chainLength());
         });
 
         LootEvent.MODIFY_LOOT_TABLE.register((dataManager, identifier, context, builtin) -> {

@@ -1,11 +1,13 @@
 package me.anticode.ascendant_arcana.logic;
 
+import dev.architectury.networking.NetworkManager;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.codecs.EntityListSource;
 import me.anticode.ascendant_arcana.init.AArcanaDamage;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
+import me.anticode.ascendant_arcana.networking.JoltTargetsPacket;
 import me.anticode.ascendant_arcana.particle.ChainingLightningParticleOption;
 import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,7 +21,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -268,6 +269,10 @@ public class AArcanaEnchantmentHelper {
     }
 
     public static void joltTargets(LivingEntity victim, Entity attacker, Entity indirectEntity, int chainLength) {
+        if (victim.level().isClientSide()) {
+            NetworkManager.sendToServer(JoltTargetsPacket.Id, new JoltTargetsPacket(victim, attacker, indirectEntity, chainLength).write());
+            return;
+        }
         ServerLevel serverLevel = (ServerLevel) victim.level();
         Entity lastLink = victim;
         List<EntityPositionSource> chain = new LinkedList<>();
@@ -290,6 +295,7 @@ public class AArcanaEnchantmentHelper {
             chainEntity.add(nextLink);
             lastLink = nextLink;
         }
+        if (chain.size() <= 1) return;
         EntityListSource listSource = new EntityListSource(chain);
         for (EntityPositionSource positionSource : listSource.entities) {
             Vec3 pos = positionSource.getPosition(serverLevel).get();
