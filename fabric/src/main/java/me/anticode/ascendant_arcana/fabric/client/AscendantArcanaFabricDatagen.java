@@ -395,10 +395,13 @@ public class AscendantArcanaFabricDatagen implements DataGeneratorEntrypoint {
             translationBuilder.add("gui.anvil.max_capacity", "No Capacity!");
             translationBuilder.add("death.attack.jolted", "%1$s was electrocuted");
             translationBuilder.add("death.attack.jolted.item", "%1$s was electrocuted");
+            translationBuilder.add("death.attack.jolted.player", "%1$s was electrocuted by %2$s");
             translationBuilder.add("death.attack.echoing", "%1$s was destroyed");
             translationBuilder.add("death.attack.echoing.item", "%1$s was destroyed");
-            translationBuilder.add("death.attack.glacioclasm", "%1$s was frozen");
-            translationBuilder.add("death.attack.glacioclasm.item", "%1$s was frozen");
+            translationBuilder.add("death.attack.echoing.player", "%1$s was destroyed whilst fighting by %2$s");
+            translationBuilder.add("death.attack.glacioclasm", "%1$s was flash frozen");
+            translationBuilder.add("death.attack.glacioclasm.item", "%1$s was flash frozen");
+            translationBuilder.add("death.attack.glacioclasm.player", "%1$s was flash frozen by %2$s");
         }
     }
 
