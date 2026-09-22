@@ -3,27 +3,34 @@ package me.anticode.ascendant_arcana.client;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
+import dev.architectury.registry.client.particle.ParticleProviderRegistry;
 import dev.architectury.registry.item.ItemPropertiesRegistry;
+import me.anticode.ascendant_arcana.api.AArcanaHorse;
 import me.anticode.ascendant_arcana.api.AArcanaPlayer;
+import me.anticode.ascendant_arcana.client.model.entity.GlacioclasmModel;
+import me.anticode.ascendant_arcana.client.model.entity.LightningTurretModel;
 import me.anticode.ascendant_arcana.client.model.entity.SingularityModel;
+import me.anticode.ascendant_arcana.client.particle.ChainingLightningParticle;
 import me.anticode.ascendant_arcana.client.render.entity.BlazeboltEntityRenderer;
+import me.anticode.ascendant_arcana.client.render.entity.GlacioclasmEntityRenderer;
+import me.anticode.ascendant_arcana.client.render.entity.LightningTurretEntityRenderer;
 import me.anticode.ascendant_arcana.client.render.entity.SingularityEntityRenderer;
 import me.anticode.ascendant_arcana.init.AArcanaEntities;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.api.EnchantedTrident;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
+import me.anticode.ascendant_arcana.init.AArcanaParticles;
 import me.anticode.ascendant_arcana.item.RelicItem;
-import me.anticode.ascendant_arcana.logic.Relics;
-import me.anticode.ascendant_arcana.networking.AddParticlesPacket;
-import me.anticode.ascendant_arcana.networking.ClientboundShieldBashPacket;
-import me.anticode.ascendant_arcana.networking.EnchantingScreenSync;
-import me.anticode.ascendant_arcana.networking.ForgeTridentSync;
+import me.anticode.ascendant_arcana.networking.*;
+import me.anticode.ascendant_arcana.relics.RelicRegistry;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import me.anticode.ascendant_arcana.screenhandler.AArcanaEnchantingMenu;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.CrossbowItem;
@@ -39,17 +46,20 @@ public class AscendantArcanaClient {
             AArcanaEnchantingMenu menu = (AArcanaEnchantingMenu) player.containerMenu;
             menu.unlockedTreasures = packet.treasures();
         });
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ForgeTridentSync.Id, (buf, context) -> {
-            ForgeTridentSync packet = ForgeTridentSync.read(buf);
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, TridentSync.Id, (buf, context) -> {
+            TridentSync packet = TridentSync.read(buf);
             ThrownTrident trident;
             try {
                 trident = (ThrownTrident) context.getPlayer().level().getEntity(packet.tridentEntityId());
+                EnchantedTrident enchantedTrident = (EnchantedTrident) trident;
+                enchantedTrident.ascendant_arcana$setClientStuckEntity(packet.stuckEntityId());
             } catch (ClassCastException e) {
                 AscendantArcana.LOGGER.warn("Thrown Trident ID not recognized!");
-                return;
+            } catch (NullPointerException e) {
+                AscendantArcana.LOGGER.warn("We expected a trident or player to exist and it doesn't!");
+            } catch (Exception e) {
+                AscendantArcana.LOGGER.warn("Something went wrong while updating a trident!");
             }
-            EnchantedTrident enchantedTrident = (EnchantedTrident) trident;
-            enchantedTrident.ascendant_arcana$setClientStuckEntity(packet.stuckEntityId());
         });
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, AddParticlesPacket.Id, (buf, context) -> {
             AddParticlesPacket packet = AddParticlesPacket.read(buf);
@@ -71,12 +81,39 @@ public class AscendantArcanaClient {
             AArcanaPlayer aPlayer = (AArcanaPlayer) player;
             aPlayer.ascendant_arcana$setShieldBashStatus(packet.status());
         });
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, RelicRegistrySync.Id, (buf, context) -> {
+            RelicRegistry.fromNetwork(buf);
+        });
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ChargingSync.Id, (buf, context) -> {
+            ChargingSync packet = ChargingSync.read(buf);
+            Entity entity = context.getPlayer().level().getEntity(packet.horseId());
+            if (entity == null) return;
+            if (entity instanceof AArcanaHorse horse) horse.ascendant_arcana$setCharging(packet.status());
+        });
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClientboundWhirlwindSync.Id, (buf, context) -> {
+            ClientboundWhirlwindSync packet = ClientboundWhirlwindSync.read(buf);
+            Player player = context.getPlayer().level().getPlayerByUUID(packet.playerId());
+            if (player == null) return;
+            AArcanaPlayer aPlayer = (AArcanaPlayer) player;
+            aPlayer.ascendant_arcana$setWhirlwindCharge(packet.charging());
+            aPlayer.ascendant_arcana$setWhirlwinding(packet.whirlwinding());
+        });
+
+        ParticleProviderRegistry.register(AArcanaParticles.CHAINING_LIGHTNING.get(), ChainingLightningParticle.Provider::new);
 
         EntityRendererRegistry.register(AArcanaEntities.BLAZEBOLT_ENTITY, BlazeboltEntityRenderer::new);
         EntityModelLayerRegistry.register(SingularityModel.LAYER_LOCATION, SingularityModel::createBodyLayer);
         EntityRendererRegistry.register(AArcanaEntities.SINGULARITY_ENTITY, SingularityEntityRenderer::new);
+        EntityModelLayerRegistry.register(LightningTurretModel.LAYER_LOCATION, LightningTurretModel::createBodyLayer);
+        EntityRendererRegistry.register(AArcanaEntities.LIGHTNING_TURRET_ENTITY, LightningTurretEntityRenderer::new);
+        EntityModelLayerRegistry.register(GlacioclasmModel.LAYER_LOCATION, GlacioclasmModel::createBodyLayer);
+        EntityRendererRegistry.register(AArcanaEntities.GLACIOCLASM_ENTITY, GlacioclasmEntityRenderer::new);
 
-        ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "relic_type"), ((itemStack, clientLevel, livingEntity, i) -> Relics.toId(RelicItem.getRelicType(itemStack)) / 5F));
+        ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "damage_relic"), ((itemStack, clientLevel, livingEntity, i) -> RelicItem.getRelicType(itemStack).getType().equals(RelicTypes.DAMAGE) ? 1 : 0));
+        ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "durability_relic"), ((itemStack, clientLevel, livingEntity, i) -> RelicItem.getRelicType(itemStack).getType().equals(RelicTypes.DURABILITY) ? 1 : 0));
+        ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "protection_relic"), ((itemStack, clientLevel, livingEntity, i) -> RelicItem.getRelicType(itemStack).getType().equals(RelicTypes.PROTECTION) ? 1 : 0));
+        ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "haste_relic"), ((itemStack, clientLevel, livingEntity, i) -> RelicItem.getRelicType(itemStack).getType().equals(RelicTypes.HASTE) ? 1 : 0));
+        ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "enchantment_capacity_relic"), ((itemStack, clientLevel, livingEntity, i) -> RelicItem.getRelicType(itemStack).getType().equals(RelicTypes.ENCHANTMENT_CAPACITY) ? 1 : 0));
         ItemPropertiesRegistry.register(AArcanaItems.RELIC.get(), ResourceLocation.tryBuild("minecraft", "relic_strength"), (itemStack, clientWorld, livingEntity, seed) -> RelicItem.getRelicStrength(itemStack) / 5F);
         ItemPropertiesRegistry.register(Items.CROSSBOW, new ResourceLocation(AscendantArcana.MOD_ID, "amethyst_shard"), (stack, level, livingEntity, seed) -> CrossbowItem.containsChargedProjectile(stack, Items.AMETHYST_SHARD) ? 1 : 0);
         ItemPropertiesRegistry.register(Items.CROSSBOW, new ResourceLocation(AscendantArcana.MOD_ID, "blaze_rod"), (stack, level, livingEntity, seed) -> CrossbowItem.containsChargedProjectile(stack, Items.BLAZE_ROD) ? 1 : 0);

@@ -1,16 +1,7 @@
 {
   "type": "ascendant_arcana:relic_crafting_recipe",
-  "category": "misc",
+  "category": "equipment",
   "ingredients": [
-    {
-      "item": "ascendant_arcana:relic"
-    },
-    {
-      "item": "minecraft:clay_ball"
-    },
-    {
-      "item": "minecraft:clay_ball"
-    },
     {
       "item": "minecraft:clay_ball"
     },
@@ -25,8 +16,17 @@
     },
     {
       "item": "minecraft:iron_nugget"
+    },
+    {
+      "item": "minecraft:iron_nugget"
+    },
+    {
+      "item": "minecraft:iron_nugget"
+    },
+    {
+      "item": "minecraft:paper"
     }
   ],
-  "relic": 2,
+  "relic": "ascendant_arcana:protection",
   "strength": 2
 }

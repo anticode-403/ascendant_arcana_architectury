@@ -16,10 +16,12 @@ import me.anticode.ascendant_arcana.init.AArcanaItems;
 import me.anticode.ascendant_arcana.init.AArcanaRecipes;
 import me.anticode.ascendant_arcana.init.AArcanaTags;
 import me.anticode.ascendant_arcana.item.RelicItem;
-import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.recipe.EnchantmentRecipe;
 import me.anticode.ascendant_arcana.recipe.InfusionRecipe;
 import me.anticode.ascendant_arcana.recipe.RelicCraftingRecipe;
+import me.anticode.ascendant_arcana.recipe.UniversalRepairRecipe;
+import me.anticode.ascendant_arcana.relics.RelicEntry;
+import me.anticode.ascendant_arcana.relics.RelicRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -33,6 +35,7 @@ import net.minecraft.world.level.block.Blocks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @EmiEntrypoint
 public class AscendantArcanaEmi implements EmiPlugin {
@@ -51,7 +54,14 @@ public class AscendantArcanaEmi implements EmiPlugin {
 
         RecipeManager manager = emiRegistry.getRecipeManager();
         for (EnchantmentRecipe recipe : manager.getAllRecipesFor(AArcanaRecipes.ENCHANTMENT_RECIPE_TYPE.get())) {
-            emiRegistry.addRecipe(new EmiEnchantmentRecipe(recipe));
+            int i = 1;
+            for (EnchantmentRecipe.EnchantmentLevelRecipe level : recipe.getLevels()) {
+                emiRegistry.addRecipe(new EmiEnchantmentLevelRecipe(recipe, level, i));
+                i++;
+            }
+        }
+        for (UniversalRepairRecipe repairRecipe : manager.getAllRecipesFor(AArcanaRecipes.REPAIR_RECIPE_TYPE.get())) {
+            emiRegistry.addRecipe(new EmiUniversalRepairRecipe(repairRecipe, emiRegistry));
         }
         for (CraftingRecipe recipe : manager.getAllRecipesFor(RecipeType.CRAFTING)) {
             if (recipe instanceof RelicCraftingRecipe relicRecipe) {
@@ -63,13 +73,17 @@ public class AscendantArcanaEmi implements EmiPlugin {
                     }
                     else return EmiIngredient.of(ingredient);
                 }).toList();
-                emiRegistry.addRecipe(new EmiCraftingRecipe(ingredients, EmiStack.of(relicRecipe.getOutput()), relicRecipe.getId(), true));
+                ItemStack outputStack = relicRecipe.getOutput().copy();
+                RelicItem.writeRelicData(outputStack, RelicItem.getRelicType(outputStack), RelicItem.getRelicStrength(outputStack));
+                emiRegistry.addRecipe(new EmiCraftingRecipe(ingredients, EmiStack.of(outputStack), relicRecipe.getId(), true));
             }
         }
         for (SmithingRecipe recipe : manager.getAllRecipesFor(RecipeType.SMITHING)) {
             if (recipe instanceof InfusionRecipe infusionRecipe) {
-                for (int i = 0; i < Relics.values().length; i++) {
-                    Relics relicType = Relics.fromId(i);
+                Map<ResourceLocation, RelicEntry> relicEntryMap = RelicRegistry.getAll();
+                List<RelicEntry> relicEntries = relicEntryMap.values().stream().toList();
+                for (int i = 0; i < relicEntryMap.size(); i++) {
+                    RelicEntry relicType = relicEntries.get(i);
                     ItemStack stack = new ItemStack(AArcanaItems.RELIC.get());
                     RelicItem.writeRelicData(stack, relicType, 1);
                     emiRegistry.addRecipe(new EmiInfusionRecipe(infusionRecipe, stack));
@@ -90,9 +104,6 @@ public class AscendantArcanaEmi implements EmiPlugin {
                 targetedEnchantments.add(enchantment);
             }
             if (emiRegistry.isStackDisabled(EmiStack.of(item))) continue;
-            if (item.getMaxDamage() > 0 && !item.getDefaultInstance().is(AArcanaTags.Items.RESTORINE_BLACKLIST)) {
-                emiRegistry.addRecipe(new EmiRestorineRepairRecipe(EmiStack.of(item), new ResourceLocation(AscendantArcana.MOD_ID, "/repair/").withSuffix(BuiltInRegistries.ITEM.getKey(item).getPath())));
-            }
 
             ItemStack defaultStack = item.getDefaultInstance();
             int acceptableEnchantments = 0;
@@ -117,16 +128,5 @@ public class AscendantArcanaEmi implements EmiPlugin {
             if (id == null) return false;
             return id.getPath().contains("grindstone/disenchanting");
         });
-
-        for (Enchantment e : BuiltInRegistries.ENCHANTMENT.stream().toList()) {
-            if (!e.isCurse()) {
-                int max = Math.min(10, e.getMaxLevel());
-                int min = e.getMinLevel();
-                while (min <= max) {
-                    int level = min;
-                    min++;
-                }
-            }
-        }
     }
 }

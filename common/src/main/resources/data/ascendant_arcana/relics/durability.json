@@ -1,0 +1,12 @@
+{
+  "type": "ascendant_arcana:durability",
+  "target": "durability",
+  "operation": "addition",
+  "strengths": [
+    600,
+    1200,
+    1800,
+    2400,
+    3000
+  ]
+}

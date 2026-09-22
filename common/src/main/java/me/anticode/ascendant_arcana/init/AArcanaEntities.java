@@ -4,6 +4,8 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.entity.BlazeboltEntity;
+import me.anticode.ascendant_arcana.entity.GlacioclasmEntity;
+import me.anticode.ascendant_arcana.entity.LightningTurretEntity;
 import me.anticode.ascendant_arcana.entity.SingularityEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
@@ -17,6 +19,8 @@ public class AArcanaEntities {
 
     public static final RegistrySupplier<EntityType<BlazeboltEntity>> BLAZEBOLT_ENTITY = register("blazebolt", () -> EntityType.Builder.<BlazeboltEntity>of(BlazeboltEntity::new, MobCategory.MISC).sized(EntityType.ARROW.getWidth(), EntityType.ARROW.getHeight()).build("blazebolt"));
     public static final RegistrySupplier<EntityType<SingularityEntity>> SINGULARITY_ENTITY = register("singularity", () -> EntityType.Builder.<SingularityEntity>of(SingularityEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).build("singularity"));
+    public static final RegistrySupplier<EntityType<LightningTurretEntity>> LIGHTNING_TURRET_ENTITY = register("lightning_turret", () -> EntityType.Builder.<LightningTurretEntity>of(LightningTurretEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).build("lightning_turret"));
+    public static final RegistrySupplier<EntityType<GlacioclasmEntity>> GLACIOCLASM_ENTITY = register("glacioclasm", () -> EntityType.Builder.<GlacioclasmEntity>of(GlacioclasmEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).build("glacioclasm"));
 
     public static <T extends Entity> RegistrySupplier<EntityType<T>> register(String name, Supplier<EntityType<T>> entityType) {
         return ENTITIES.register(name, entityType);

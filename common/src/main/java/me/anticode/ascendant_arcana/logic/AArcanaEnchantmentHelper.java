@@ -1,15 +1,22 @@
 package me.anticode.ascendant_arcana.logic;
 
+import dev.architectury.networking.NetworkManager;
 import me.anticode.ascendant_arcana.AscendantArcana;
+import me.anticode.ascendant_arcana.init.AArcanaDamage;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaItems;
+import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
+import me.anticode.ascendant_arcana.networking.JoltTargetsPacket;
+import me.anticode.ascendant_arcana.particle.ChainingLightningParticleOption;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -17,6 +24,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 
 import java.util.*;
@@ -41,6 +49,33 @@ public class AArcanaEnchantmentHelper {
             }
         }
         return enchantments;
+    }
+
+    public static Map<Enchantment, Integer> getEnchantments(ItemStack itemStack) {
+        Map<Enchantment, Integer> enchantments;
+        if (itemStack.getItem() instanceof EnchantedBookItem) enchantments = EnchantmentHelper.deserializeEnchantments(EnchantedBookItem.getEnchantments(itemStack));
+        else enchantments = EnchantmentHelper.getEnchantments(itemStack);
+        return enchantments;
+    }
+
+    public static boolean testAnvilItems(ItemStack leftStack, ItemStack rightStack) {
+        Map<Enchantment, Integer> rightEnchantments = getEnchantments(rightStack);
+        int cost = 0;
+        Map<Enchantment, Integer> leftEnchantments = getEnchantments(leftStack);
+        for (Enchantment enchantment : rightEnchantments.keySet()) {
+            if (leftStack.getItem() instanceof EnchantedBookItem) {
+                if (EnchantmentHelper.isEnchantmentCompatible(leftEnchantments.keySet(), enchantment)) {
+                    if (leftEnchantments.containsKey(enchantment)) cost += Math.max(0, (leftEnchantments.get(enchantment) * getEnchantmentCost(enchantment)) - (rightEnchantments.get(enchantment) * getEnchantmentCost(enchantment)));
+                    else cost += Math.max(0, rightEnchantments.get(enchantment) * getEnchantmentCost(enchantment));
+                }
+            } else {
+                if (enchantment.canEnchant(leftStack) && EnchantmentHelper.isEnchantmentCompatible(leftEnchantments.keySet(), enchantment)) {
+                    if (leftEnchantments.containsKey(enchantment)) cost += Math.max(0, (leftEnchantments.get(enchantment) * getEnchantmentCost(enchantment)) - (rightEnchantments.get(enchantment) * getEnchantmentCost(enchantment)));
+                    else cost += Math.max(0, rightEnchantments.get(enchantment) * getEnchantmentCost(enchantment));
+                }
+            }
+        }
+        return testEnchantmentCost(leftStack, cost);
     }
 
     public static int getTier(Enchantment enchantment) {
@@ -77,7 +112,7 @@ public class AArcanaEnchantmentHelper {
     public static int getEnchantmentUsage(ItemStack stack) {
         if (!stack.isEnchanted() && !(stack.getItem() instanceof EnchantedBookItem)) return 0;
         int cost = 0;
-        for (Map.Entry<Enchantment, Integer> enchantInstance : EnchantmentHelper.getEnchantments(stack).entrySet()) {
+        for (Map.Entry<Enchantment, Integer> enchantInstance : getEnchantments(stack).entrySet()) {
             cost += getEnchantmentCost(enchantInstance.getKey()) * enchantInstance.getValue();
         }
         return cost;
@@ -104,8 +139,7 @@ public class AArcanaEnchantmentHelper {
     }
 
     public static int getEnchantmentCapacity(ItemStack stack) {
-        int bonus_capacity = RelicHelper.getValueFromNbt(stack.getTag(), Relics.ENCHANTMENT_CAPACITY);
-        if (bonus_capacity != 0) bonus_capacity = 5 + (bonus_capacity * 5);
+        int bonus_capacity = Mth.floor(RelicHelper.getAllRawBonusesOfType(RelicTypes.ENCHANTMENT_CAPACITY, stack.getTag()));
         if (stack.hasTag() && stack.getTag().contains(ENCHANTMENT_CAPACITY_KEY)) {
             return stack.getTag().getInt(ENCHANTMENT_CAPACITY_KEY) + bonus_capacity;
         }
@@ -199,23 +233,78 @@ public class AArcanaEnchantmentHelper {
     }
 
     public static ItemStack convertEnchantmentsToScrap(Map<Enchantment, Integer> appliedEnchants) {
-        ItemStack itemStack = new ItemStack(AArcanaItems.ENCHANTED_SCRAP.get());
+        int runningTotal = 0;
         for (Map.Entry<Enchantment, Integer> entry : appliedEnchants.entrySet()) {
             int baseCount = 3;
             if (entry.getKey() != null && !entry.getKey().isCurse()) {
                 baseCount = switch (entry.getKey().getRarity()) {
-                    case COMMON, UNCOMMON -> 1;
+                    case COMMON -> 1;
+                    case UNCOMMON -> 2;
                     case RARE -> 3;
                     case VERY_RARE -> 4;
                 };
                 if (entry.getKey().isTreasureOnly()) baseCount += 1;
             }
             if (entry.getKey() != null && entry.getKey().isCurse()) baseCount = 1;
-            itemStack.setCount(itemStack.getCount() + (baseCount * entry.getValue()));
+            runningTotal += baseCount * entry.getValue();
         }
 
+        ItemStack itemStack;
+        if (runningTotal > 9) {
+            itemStack = new ItemStack(AArcanaItems.ENCHANTED_SCRAP.get());
+            runningTotal /= 2;
+        }
+        else itemStack = new ItemStack(Items.LAPIS_LAZULI);
+
+        itemStack.setCount(runningTotal);
         if (itemStack.getCount() > itemStack.getMaxStackSize()) itemStack.setCount(itemStack.getMaxStackSize());
         return itemStack;
+    }
+
+    public static void joltTargets(LivingEntity victim, Entity attacker, int chainLength) {
+        joltTargets(victim, attacker, null, chainLength);
+    }
+
+    public static void joltTargets(LivingEntity victim, Entity attacker, Entity indirectEntity, int chainLength) {
+        if (victim.level().isClientSide()) {
+            NetworkManager.sendToServer(JoltTargetsPacket.Id, new JoltTargetsPacket(victim, attacker, indirectEntity, chainLength).write());
+            return;
+        }
+        ServerLevel serverLevel = (ServerLevel) victim.level();
+        Entity lastLink = victim;
+        List<Integer> chain = new LinkedList<>();
+        List<Entity> chainEntity = new LinkedList<>();
+        if (indirectEntity != null) {
+            chain.add(indirectEntity.getId());
+            chainEntity.add(indirectEntity);
+        }
+        chain.add(victim.getId());
+        chainEntity.add(victim);
+        if (indirectEntity != null) victim.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, indirectEntity, attacker), 4);
+        else victim.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, attacker), 4);
+        for (int i = 0; i < chainLength; i++) {
+            List<Entity> linkTargets = lastLink.level().getEntities(lastLink, AABB.unitCubeFromLowerCorner(lastLink.position().subtract(0.5, 0.5, 0.5)).inflate(3 + chainLength), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and((entity) -> notAllyToEntity(attacker, entity)).and((entity) -> !chainEntity.contains(entity)));
+            if (linkTargets.isEmpty()) break;
+            Entity nextLink = linkTargets.get(serverLevel.getRandom().nextIntBetweenInclusive(0, linkTargets.size() - 1));
+            if (indirectEntity != null) nextLink.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, indirectEntity, attacker), 4);
+            else nextLink.hurt(AArcanaDamage.source(serverLevel, AArcanaDamage.JOLTED, attacker), 4);
+            chain.add(nextLink.getId());
+            chainEntity.add(nextLink);
+            serverLevel.playSound(null, nextLink.getX(), nextLink.getY(), nextLink.getZ(), AArcanaSoundEvents.LIGHTNING_ZAP.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
+            lastLink = nextLink;
+        }
+        if (chain.size() <= 1) return;
+        serverLevel.sendParticles(new ChainingLightningParticleOption(chain), victim.getX(), victim.getY(), victim.getZ(), 0, 0, 0, 0, 0);
+    }
+
+    public static boolean notAllyToEntity(Entity entity, Entity potentialAlly) {
+        if (entity == null) return true;
+        if (potentialAlly == entity) return false;
+        else if (entity instanceof TraceableEntity traceableEntity && traceableEntity.getOwner() == potentialAlly) return false;
+        else if (potentialAlly instanceof TraceableEntity traceableEntity && traceableEntity.getOwner() == entity) return false;
+        else if (entity instanceof OwnableEntity ownableEntity && ownableEntity.getOwner() == potentialAlly) return false;
+        else if (potentialAlly instanceof OwnableEntity ownableEntity && ownableEntity.getOwner() == entity) return false;
+        else return entity.getTeam() == null || entity.getTeam().isAllowFriendlyFire() || entity.getTeam() != potentialAlly.getTeam();
     }
 
     public static UUID getUUID(String slotID) {

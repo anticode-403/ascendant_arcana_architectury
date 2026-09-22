@@ -1,6 +1,6 @@
 {
   "type": "ascendant_arcana:relic_crafting_recipe",
-  "category": "misc",
+  "category": "equipment",
   "ingredients": [
     {
       "item": "ascendant_arcana:relic"
@@ -24,6 +24,6 @@
       "item": "ascendant_arcana:restorine"
     }
   ],
-  "relic": 1,
+  "relic": "ascendant_arcana:durability",
   "strength": 4
 }

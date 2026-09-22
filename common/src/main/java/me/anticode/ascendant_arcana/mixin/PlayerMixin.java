@@ -4,20 +4,26 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import dev.architectury.networking.NetworkManager;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.api.AArcanaPlayer;
+import me.anticode.ascendant_arcana.entity.GlacioclasmEntity;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
+import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
-import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.networking.ClientboundShieldBashPacket;
 import me.anticode.ascendant_arcana.networking.ServerboundShieldBashPacket;
+import me.anticode.ascendant_arcana.networking.ServerboundWhirlwindSync;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Abilities;
@@ -26,6 +32,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
@@ -37,11 +44,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Map;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 @Mixin(Player.class)
-public class PlayerMixin implements AArcanaPlayer {
+public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer {
     @Shadow
     @Final
     private Inventory inventory;
@@ -50,14 +57,42 @@ public class PlayerMixin implements AArcanaPlayer {
     @Final
     private Abilities abilities;
 
-    @Unique
-    private int shieldBashTicks = 0;
+    @Shadow
+    public abstract float getCurrentItemAttackStrengthDelay();
 
     @Unique
-    private boolean shieldBashing = false;
+    private int ascendant_arcana$shieldBashTicks = 0;
 
     @Unique
-    private Vec3 shieldBashDirection = Vec3.ZERO;
+    private boolean ascendant_arcana$shieldBashing = false;
+
+    @Unique
+    private Vec3 ascendant_arcana$shieldBashDirection = Vec3.ZERO;
+
+    @Unique
+    private boolean ascendant_arcana$isWhirlwindCharging = false;
+
+    @Unique
+    private float ascendant_arcana$whirlwindCharge = 0;
+
+    @Unique
+    private boolean ascendant_arcana$isWhirlwinding = false;
+
+    @Unique
+    private int ascendant_arcana$whirlwindDuration = 0;
+
+    @Unique
+    private int ascendant_arcana$whirlwindCooldown = 0;
+
+    @Unique
+    private float ascendant_arcana$launchingCharge = 0;
+
+    @Unique
+    private static UUID LAUNCHING_BOOST = UUID.fromString("b85134d2-a828-4ec2-95ef-a044c8b12a6b");
+
+    protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
+        super(entityType, level);
+    }
 
     @ModifyReturnValue(method = "getXpNeededForNextLevel", at = @At("RETURN"))
     private int xp(int original) {
@@ -65,14 +100,17 @@ public class PlayerMixin implements AArcanaPlayer {
         return AscendantArcana.config.xp_per_level;
     }
 
+    @ModifyReturnValue(method = "getDestroySpeed", at = @At("RETURN"))
+    private float applyHasteBonus(float original) {
+        return (float) RelicHelper.applyAllRelicsOfType(RelicTypes.HASTE, original, ((Player)(Object)this).getMainHandItem().getTag());
+    }
+
     @ModifyReturnValue(method = "getAttackStrengthScale", at = @At("RETURN"))
     private float modifyAttackCooldownProgress(float original) {
-        LivingEntity livingEntity = (LivingEntity)(Object)this;
-        ItemStack mainStack = livingEntity.getMainHandItem();
+        ItemStack mainStack = getMainHandItem();
         if (mainStack.getItem() instanceof TieredItem && mainStack.hasTag()) {
-            Map<Relics, Integer> relics = RelicHelper.fromNbt(mainStack.getTag());
-            if (relics.containsKey(Relics.HASTE)) {
-                float hasteMultiplier = 1 + (float) RelicHelper.getStrengthFromNbt(Relics.HASTE, mainStack.getTag()) / 2;
+            if (RelicHelper.containsAnyOfType(RelicTypes.HASTE, mainStack.getTag())) {
+                float hasteMultiplier = 1 + ((float) RelicHelper.getAllRawBonusesOfType(RelicTypes.HASTE, mainStack.getTag()) / 2);
                 if (original * hasteMultiplier > 1) return 1;
                 return original * hasteMultiplier;
             }
@@ -80,15 +118,63 @@ public class PlayerMixin implements AArcanaPlayer {
         return original;
     }
 
+    @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getAttackStrengthScale(F)F"))
+    private void giveMeganeuraEffect(Entity entity, CallbackInfo ci) {
+        Player player = (Player)(Object)this;
+        int slayingTempoLevel = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SLAYING_TEMPO.get(), player);
+        int allegroLevel = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.ALLEGRO.get(), player);
+        int snowballLevel = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SNOWBALL.get(), player);
+        if (slayingTempoLevel != 0 || allegroLevel != 0 || snowballLevel != 0) {
+            float attackStrength = ((float)attackStrengthTicker + 0.5F) / getCurrentItemAttackStrengthDelay();
+            float perfectWindow = 1F;
+            if (snowballLevel != 0) perfectWindow += 0.1F;
+            if (allegroLevel != 0) {
+                perfectWindow += 0.1F;
+                if (player.hasEffect(AArcanaMobEffects.ALLEGRO.get())) perfectWindow += ((player.getEffect(AArcanaMobEffects.ALLEGRO.get()).getAmplifier() + 1F) * 0.1F);
+            }
+            if (slayingTempoLevel != 0) perfectWindow += 0.1F;
+            if (attackStrength < perfectWindow && attackStrength > 1F) {
+                if (slayingTempoLevel != 0) {
+                    int amplifier;
+                    if (player.hasEffect(AArcanaMobEffects.MEGANEURA.get())) amplifier = player.getEffect(AArcanaMobEffects.MEGANEURA.get()).getAmplifier() + 1;
+                    else amplifier = 0;
+                    player.addEffect(new MobEffectInstance(AArcanaMobEffects.MEGANEURA.get(), 100, amplifier, false, false, true));
+                }
+                if (allegroLevel != 0) {
+                    int amplifier;
+                    if (player.hasEffect(AArcanaMobEffects.ALLEGRO.get())) amplifier = player.getEffect(AArcanaMobEffects.ALLEGRO.get()).getAmplifier() + 1;
+                    else amplifier = 0;
+                    player.addEffect(new MobEffectInstance(AArcanaMobEffects.ALLEGRO.get(), 20 + (allegroLevel * 20), amplifier, false, false, true));
+                }
+                if (snowballLevel != 0) {
+                    GlacioclasmEntity glacioclasm = new GlacioclasmEntity(player.level(), player, 35 - (snowballLevel * 5), 200 + (50 * snowballLevel));
+                    glacioclasm.setPos(entity.position());
+                    player.level().addFreshEntity(glacioclasm);
+                }
+            }
+        }
+    }
+
     @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"), cancellable = true)
     private void protectiveEcho(DamageSource source, float amount, CallbackInfo ci) {
-        if (amount < 5) return;
-        if (((LivingEntity)(Object)this).getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get()) != null) return;
-        if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PROTECTIVE_ECHO.get(), (LivingEntity) (Object) this) == 0) return;
-        int duration = 100 * Math.max((int)amount / 10, 1);
-        int strength = Math.max((int)amount / (duration / 20), 1);
-        ((LivingEntity)(Object)this).forceAddEffect(new MobEffectInstance(AArcanaMobEffects.ECHOING_DAMAGE.get(), duration + 20, strength), (LivingEntity)(Object)this);
-        ci.cancel();
+        if (source.is(DamageTypeTags.BYPASSES_ENCHANTMENTS) || source.is(DamageTypeTags.BYPASSES_EFFECTS)) return;
+        LivingEntity livingEntity = (LivingEntity) (Object) this;
+        if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.GLACIOCLASM.get(), livingEntity) > 0) {
+            if ((livingEntity.getHealth() - amount)/livingEntity.getMaxHealth() <= 0.3F && livingEntity.getHealth()/livingEntity.getMaxHealth() > 0.3F) {
+                // The player variant is much stronger than the one in LivingEntity intentionally.
+                GlacioclasmEntity glacioclasm = new GlacioclasmEntity(livingEntity.level(), livingEntity, 0, 500);
+                glacioclasm.setPos(livingEntity.position());
+                livingEntity.level().addFreshEntity(glacioclasm);
+            }
+        }
+        if (getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get()) != null) {
+            if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PROTECTIVE_ECHO.get(), livingEntity) > 0 && amount >= 5) {
+                int duration = 100 * Math.max((int)amount / 10, 1);
+                int strength = Math.max((int)amount / (duration / 20), 1);
+                forceAddEffect(new MobEffectInstance(AArcanaMobEffects.ECHOING_DAMAGE.get(), duration + 20, strength), livingEntity);
+                ci.cancel();
+            }
+        }
     }
 
     @Inject(method = "getProjectile", at = @At("HEAD"), cancellable = true)
@@ -145,7 +231,7 @@ public class PlayerMixin implements AArcanaPlayer {
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;tick()V"))
     private void shieldBash(CallbackInfo ci) {
         Player player = (Player)(Object)this;
-        if (shieldBashing) {
+        if (ascendant_arcana$shieldBashing) {
             int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BASHING.get(), player.getUseItem());
             if (shieldBashLevel < 0) {
                 if (player.level() instanceof ServerLevel serverLevel) {
@@ -155,15 +241,15 @@ public class PlayerMixin implements AArcanaPlayer {
                     NetworkManager.sendToServer(ServerboundShieldBashPacket.Id, new ServerboundShieldBashPacket(false).write());
                 }
             } else {
-                AABB shieldbashBox = player.getBoundingBox().move(shieldBashDirection.scale(player.getBoundingBox().getXsize())).inflate(0.75);
-                int stepLength = shieldBashTicks >= 3 ? 2 : 1;
+                AABB shieldbashBox = player.getBoundingBox().move(ascendant_arcana$shieldBashDirection.scale(player.getBoundingBox().getXsize())).inflate(0.75);
+                int stepLength = ascendant_arcana$shieldBashTicks >= 3 ? 2 : 1;
                 for (int i = 0; i < stepLength; i++) {
                     boolean doBreak = false;
-                    for (Entity entity : player.level().getEntities(player, shieldbashBox.move(shieldBashDirection.scale(i)))) {
+                    for (Entity entity : player.level().getEntities(player, shieldbashBox.move(ascendant_arcana$shieldBashDirection.scale(i)))) {
                         if (entity == player) continue;
                         if (entity instanceof LivingEntity livingEntity) {
                             livingEntity.hurt(player.damageSources().playerAttack(player), 4);
-                            livingEntity.knockback(0.8 * shieldBashLevel, -shieldBashDirection.x, -shieldBashDirection.z);
+                            livingEntity.knockback(0.8 * shieldBashLevel, -ascendant_arcana$shieldBashDirection.x, -ascendant_arcana$shieldBashDirection.z);
                         }
                         if (player.level() instanceof ServerLevel serverLevel) {
                             NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), false).write());
@@ -183,10 +269,10 @@ public class PlayerMixin implements AArcanaPlayer {
                         break;
                     }
                 }
-                player.move(MoverType.SELF, shieldBashDirection.scale(stepLength));
+                player.move(MoverType.SELF, ascendant_arcana$shieldBashDirection.scale(stepLength));
                 player.hasImpulse = true;
-                shieldBashTicks--;
-                if (shieldBashTicks == 0) {
+                ascendant_arcana$shieldBashTicks--;
+                if (ascendant_arcana$shieldBashTicks == 0) {
                     if (player.level() instanceof ServerLevel serverLevel) {
                         NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), false).write());
                         ascendant_arcana$setShieldBashStatus(false);
@@ -196,21 +282,90 @@ public class PlayerMixin implements AArcanaPlayer {
                 }
             }
         }
+        if (hasEffect(AArcanaMobEffects.PREPARED.get()) && (!isUsingItem() || EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.PREPARED_SHOT.get(), getUseItem()) == 0)) {
+            removeEffect(AArcanaMobEffects.PREPARED.get());
+        }
+        if (player.isCrouching() && player.onGround() && !player.isFallFlying() && !player.isSwimming() && EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.LAUNCHING.get(), player) > 0) {
+            if (ascendant_arcana$launchingCharge - Mth.floor(ascendant_arcana$launchingCharge) + 0.025F + (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.LAUNCHING.get(), player) * 0.025F) >= 1) {
+                player.playSound(AArcanaSoundEvents.TICK.get(), 1F, 0.35F + (ascendant_arcana$launchingCharge * 0.66F));
+            }
+            ascendant_arcana$launchingCharge += 0.025F + (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.LAUNCHING.get(), player) * 0.025F);
+            if (ascendant_arcana$launchingCharge >= 3) ascendant_arcana$launchingCharge = 3;
+        } else if (ascendant_arcana$launchingCharge != 0) ascendant_arcana$launchingCharge = 0;
+    }
+
+    @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;crit(Lnet/minecraft/world/entity/Entity;)V"))
+    private void applyJoltedEffectOnCrit(Entity entity, CallbackInfo ci) {
+        if (entity instanceof LivingEntity livingEntity) {
+            if (livingEntity.hasEffect(AArcanaMobEffects.JOLTED.get())) {
+                AArcanaEnchantmentHelper.joltTargets(livingEntity, this, livingEntity.getEffect(AArcanaMobEffects.JOLTED.get()).getAmplifier() + 2);
+            }
+        }
+    }
+
+    @Inject(method = "jumpFromGround", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;jumpFromGround()V", shift = At.Shift.AFTER))
+    private void applyLaunchingJumpBoost(CallbackInfo ci) {
+        double multiplier = 1 + (Mth.floor(ascendant_arcana$launchingCharge) * 0.5);
+        if (multiplier > 1) {
+            Player player = (Player)(Object)this;
+            player.setDeltaMovement(player.getDeltaMovement().x, player.getDeltaMovement().y * multiplier, player.getDeltaMovement().z);
+        }
+    }
+
+    @Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;travel(Lnet/minecraft/world/phys/Vec3;)V", shift = At.Shift.AFTER))
+    private void whirlwindInject(Vec3 vec3, CallbackInfo ci) {
+        Player player = (Player)(Object)this;
+        if (ascendant_arcana$whirlwindCooldown > 0) ascendant_arcana$whirlwindCooldown--;
+        if (ascendant_arcana$isWhirlwinding) {
+            ascendant_arcana$whirlwindDuration--;
+            if (ascendant_arcana$whirlwindDuration <= 0) {
+                ascendant_arcana$isWhirlwinding = false;
+                NetworkManager.sendToServer(ServerboundWhirlwindSync.Id, new ServerboundWhirlwindSync(false, false).write());
+            }
+            player.setDeltaMovement(player.getDeltaMovement().add(player.getLookAngle().scale(-0.3)));
+        }
+        if (!player.isFallFlying() || !player.isCrouching() || EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.WHIRLWIND.get(), player) <= 0) {
+            if (player.isFallFlying() && ascendant_arcana$isWhirlwindCharging && EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.WHIRLWIND.get(), player) > 0) {
+                ascendant_arcana$isWhirlwindCharging = false;
+                ascendant_arcana$isWhirlwinding = true;
+                ascendant_arcana$whirlwindDuration = Mth.floor(ascendant_arcana$whirlwindCharge) * 4;
+                ascendant_arcana$whirlwindCooldown = ascendant_arcana$whirlwindDuration + 300;
+                player.setDeltaMovement(player.getLookAngle().scale(Mth.floor(ascendant_arcana$whirlwindCharge) * 2));
+                NetworkManager.sendToServer(ServerboundWhirlwindSync.Id, new ServerboundWhirlwindSync(false, true).write());
+            }
+            ascendant_arcana$whirlwindCharge = 0;
+            return;
+        }
+        if (ascendant_arcana$whirlwindCooldown > 0) return;
+        ascendant_arcana$isWhirlwinding = false;
+        ascendant_arcana$whirlwindDuration = 0;
+        Vec3 oldMovement = player.getDeltaMovement();
+        player.setDeltaMovement(oldMovement.x * 0.9, oldMovement.y * 0.5, oldMovement.z * 0.9);
+        if (!ascendant_arcana$isWhirlwindCharging) {
+            ascendant_arcana$isWhirlwindCharging = true;
+            NetworkManager.sendToServer(ServerboundWhirlwindSync.Id, new ServerboundWhirlwindSync(true, false).write());
+        }
+        if (ascendant_arcana$whirlwindCharge - Mth.floor(ascendant_arcana$whirlwindCharge) + 0.05F >= 1) {
+            player.playSound(AArcanaSoundEvents.TICK.get(), 1F, 0.35F + (ascendant_arcana$whirlwindCharge * 0.66F));
+        }
+        ascendant_arcana$whirlwindCharge += 0.05F;
+        if (ascendant_arcana$whirlwindCharge >= 3) ascendant_arcana$whirlwindCharge = 3;
+
     }
 
     @Override
     public void ascendant_arcana$setShieldBashStatus(boolean status) {
-        if (shieldBashing == status) return;
+        if (ascendant_arcana$shieldBashing == status) return;
         Player player = (Player)(Object)this;
-        shieldBashing = status;
-        if (shieldBashing) {
+        ascendant_arcana$shieldBashing = status;
+        if (ascendant_arcana$shieldBashing) {
             if (!(player.getUseItem().getItem() instanceof ShieldItem)) {
-                shieldBashing = false;
+                ascendant_arcana$shieldBashing = false;
                 return;
             }
             int shieldBashLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.BASHING.get(), player.getUseItem());
-            shieldBashTicks = 1 + (shieldBashLevel < 3 ? shieldBashLevel * 2 : 5);
-            shieldBashDirection = player.getLookAngle().with(Direction.Axis.Y, 0).normalize();
+            ascendant_arcana$shieldBashTicks = 1 + (shieldBashLevel < 3 ? shieldBashLevel * 2 : 5);
+            ascendant_arcana$shieldBashDirection = player.getLookAngle().with(Direction.Axis.Y, 0).normalize();
             if (!player.level().isClientSide()) {
                 player.level().playSound(null, player, AArcanaSoundEvents.SHIELD_BASH_START.get(), SoundSource.PLAYERS, 1f, 2f);
                 player.getUseItem().hurtAndBreak(3, player, (livingEntity) -> livingEntity.broadcastBreakEvent(player.getUsedItemHand()));
@@ -218,27 +373,67 @@ public class PlayerMixin implements AArcanaPlayer {
         } else {
             player.getCooldowns().addCooldown(Items.SHIELD, 400);
             player.stopUsingItem();
-            if (shieldBashTicks != 0) {
-                player.move(MoverType.SELF, shieldBashDirection);
+            if (ascendant_arcana$shieldBashTicks != 0) {
+                player.move(MoverType.SELF, ascendant_arcana$shieldBashDirection);
             }
-            shieldBashTicks = 0;
-            shieldBashDirection = Vec3.ZERO;
+            ascendant_arcana$shieldBashTicks = 0;
+            ascendant_arcana$shieldBashDirection = Vec3.ZERO;
             player.setDeltaMovement(player.getDeltaMovement().multiply(0, 1, 0));
         }
     }
 
     @Override
+    public void ascendant_arcana$setWhirlwindCharge(boolean status) {
+        ascendant_arcana$isWhirlwindCharging = status;
+    }
+
+    @Override
+    public boolean ascendant_arcana$isWhirlwindCharging() {
+        return ascendant_arcana$isWhirlwindCharging;
+    }
+
+    @Override
+    public int ascendant_arcana$getWhirlwindCharge() {
+        return Mth.floor(ascendant_arcana$whirlwindCharge);
+    }
+
+    @Override
+    public void ascendant_arcana$setWhirlwinding(boolean status) {
+        ascendant_arcana$isWhirlwinding = status;
+    }
+
+    @Override
+    public boolean ascendant_arcana$isWhirlwinding() {
+        return ascendant_arcana$isWhirlwinding;
+    }
+
+    @Override
+    public float ascendant_arcana$getWhirlwindCooldown() {
+        return Math.min(1F, ((float)ascendant_arcana$whirlwindCooldown / 300F));
+    }
+
+    @Override
+    public int ascendant_arcana$getLaunchingCharge() {
+        return Mth.floor(ascendant_arcana$launchingCharge);
+    }
+
+    @Override
+    public boolean ascendant_arcana$isLaunching() {
+        return ascendant_arcana$launchingCharge != 0;
+    }
+
+    @Override
     public boolean ascendant_arcana$getShieldBashStatus() {
-        return shieldBashing;
+        return ascendant_arcana$shieldBashing;
     }
 
     @Override
     public int ascendant_arcana$getShieldBashTicks() {
-        return shieldBashTicks;
+        return ascendant_arcana$shieldBashTicks;
     }
 
     @Override
     public Vec3 ascendant_arcana$getShieldBashDirection() {
-        return shieldBashDirection;
+        return ascendant_arcana$shieldBashDirection;
     }
 }

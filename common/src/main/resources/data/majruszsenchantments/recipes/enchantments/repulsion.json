@@ -1,18 +1,27 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "majruszsenchantments:repulsion",
-  "level_cost": 3,
-  "magical_scrap_cost": 3,
-  "primary_ingredient": {
-    "count": 2,
-    "ingredient": {
-      "item": "minecraft:scute"
+  "levels": [
+    {
+      "level_cost": 3,
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:scute"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:piston"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 2,
-    "ingredient": {
-      "item": "minecraft:piston"
-    }
-  }
+  ]
 }

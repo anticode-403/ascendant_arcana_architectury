@@ -7,7 +7,9 @@ import com.google.gson.JsonSerializationContext;
 import me.anticode.ascendant_arcana.init.AArcanaLootFunctionTypes;
 import me.anticode.ascendant_arcana.item.RelicItem;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
-import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.relics.RelicEntry;
+import me.anticode.ascendant_arcana.relics.RelicRegistry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
@@ -24,25 +26,24 @@ import java.util.List;
 
 public class PopulateRelicLootFunction extends LootItemConditionalFunction{
     final NumberProvider strength;
-    final int[] relicTypes;
+    final ResourceLocation[] relicEntries;
 
-    protected PopulateRelicLootFunction(LootItemCondition[] conditions, NumberProvider strength, int[] relicTypes) {
+    protected PopulateRelicLootFunction(LootItemCondition[] conditions, NumberProvider strength, ResourceLocation[] relicTypes) {
         super(conditions);
         this.strength = strength;
-        this.relicTypes = relicTypes;
+        this.relicEntries = relicTypes;
     }
 
     @Override
     protected @NotNull ItemStack run(ItemStack stack, LootContext context) {
         RandomSource random = context.getRandom();
-        List<Relics> relics = new ArrayList<>();
+        List<ResourceLocation> relics = new ArrayList<>();
         int str = strength.getInt(context);
-        for (int relicType : this.relicTypes) {
-            Relics relic = Relics.fromId(relicType);
-            if (RelicHelper.canApplyRelic(stack, relic, str)) relics.add(relic);
+        for (ResourceLocation relicEntry : this.relicEntries) {
+            if (RelicHelper.canApplyRelic(stack, RelicRegistry.get(relicEntry), str)) relics.add(relicEntry);
         }
         stack.getOrCreateTag().putInt(RelicItem.RELIC_STRENGTH_KEY, str);
-        stack.getOrCreateTag().putInt(RelicItem.RELIC_TYPE_KEY, Relics.toId(relics.get(random.nextIntBetweenInclusive(0, relics.size() - 1))));
+        stack.getOrCreateTag().putString(RelicItem.RELIC_TYPE_KEY, relics.get(random.nextIntBetweenInclusive(0, relics.size() - 1)).toString());
         return stack;
     }
 
@@ -51,15 +52,15 @@ public class PopulateRelicLootFunction extends LootItemConditionalFunction{
         return AArcanaLootFunctionTypes.POPULATE_RELIC.get();
     }
 
-    public static Builder builder(NumberProvider strength, int[] relicTypes) {
+    public static Builder builder(NumberProvider strength, ResourceLocation[] relicTypes) {
         return new Builder(strength, relicTypes);
     }
 
     public static class Builder extends LootItemConditionalFunction.Builder<Builder> {
         public final NumberProvider strength;
-        public final int[] relicTypes;
+        public final ResourceLocation[] relicTypes;
 
-        public Builder(NumberProvider strength, int[] relicTypes) {
+        public Builder(NumberProvider strength, ResourceLocation[] relicTypes) {
             this.strength = strength;
             this.relicTypes = relicTypes;
         }
@@ -81,8 +82,8 @@ public class PopulateRelicLootFunction extends LootItemConditionalFunction{
             super.serialize(jsonObject, conditionalLootFunction, jsonSerializationContext);
             jsonObject.add("strength", jsonSerializationContext.serialize(conditionalLootFunction.strength));
             JsonArray serializedArray = new JsonArray();
-            for (int value : conditionalLootFunction.relicTypes) {
-                serializedArray.add(value);
+            for (ResourceLocation value : conditionalLootFunction.relicEntries) {
+                serializedArray.add(value.toString());
             }
             jsonObject.add("relics", serializedArray);
         }
@@ -91,9 +92,9 @@ public class PopulateRelicLootFunction extends LootItemConditionalFunction{
         public @NotNull PopulateRelicLootFunction deserialize(JsonObject jsonObject, JsonDeserializationContext context, LootItemCondition[] conditions) {
             NumberProvider strength = GsonHelper.convertToObject(jsonObject, "strength", context, NumberProvider.class);
             JsonArray array = GsonHelper.getAsJsonArray(jsonObject, "relics");
-            int[] relicTypes = new int[array.size()];
+            ResourceLocation[] relicTypes = new ResourceLocation[array.size()];
             for (int i = 0; i < array.size(); i++) {
-                relicTypes[i] = array.get(i).getAsInt();
+                relicTypes[i] = ResourceLocation.tryParse(array.get(i).getAsString());
             }
             return new PopulateRelicLootFunction(conditions, strength, relicTypes);
         }

@@ -1,12 +1,13 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
   "ingredients": [
     {
       "item": "ascendant_arcana:restorine_block"
     }
   ],
   "result": {
-    "item": "ascendant_arcana:restorine",
-    "count": 4
+    "count": 4,
+    "item": "ascendant_arcana:restorine"
   }
 }

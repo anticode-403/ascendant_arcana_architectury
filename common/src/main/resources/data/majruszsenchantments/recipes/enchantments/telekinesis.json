@@ -1,18 +1,27 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "majruszsenchantments:telekinesis",
-  "level_cost": 3,
-  "magical_scrap_cost": 3,
-  "primary_ingredient": {
-    "count": 4,
-    "ingredient": {
-      "item": "minecraft:ender_pearl"
+  "levels": [
+    {
+      "level_cost": 3,
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "primary_ingredient": {
+        "count": 4,
+        "ingredient": {
+          "item": "minecraft:ender_pearl"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:hopper"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:hopper"
-    }
-  }
+  ]
 }

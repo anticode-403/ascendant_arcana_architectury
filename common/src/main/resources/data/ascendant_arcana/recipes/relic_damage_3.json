@@ -1,23 +1,17 @@
 {
   "type": "ascendant_arcana:relic_crafting_recipe",
-  "category": "misc",
+  "category": "equipment",
   "ingredients": [
     {
-      "item": "ascendant_arcana:relic"
+      "item": "minecraft:deepslate"
     },
     {
-      "item": "minecraft:torchflower_seeds"
+      "item": "minecraft:deepslate"
     },
     {
-      "item": "minecraft:torchflower_seeds"
-    },
-    {
-      "item": "minecraft:bone"
-    },
-    {
-      "item": "minecraft:bone"
+      "item": "minecraft:leather"
     }
   ],
-  "relic": 0,
+  "relic": "ascendant_arcana:damage",
   "strength": 3
 }

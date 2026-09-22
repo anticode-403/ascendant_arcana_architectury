@@ -1,18 +1,42 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "minecraft:respiration",
-  "level_cost": 3,
-  "magical_scrap_cost": 3,
-  "primary_ingredient": {
-    "count": 2,
-    "ingredient": {
-      "item": "minecraft:glass_bottle"
+  "levels": [
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:glass_bottle"
+        }
+      },
+      "scrap_stack": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:bamboo"
+        }
+      }
+    },
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:glass_bottle"
+        }
+      },
+      "scrap_stack": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:bamboo"
-    }
-  }
+  ]
 }

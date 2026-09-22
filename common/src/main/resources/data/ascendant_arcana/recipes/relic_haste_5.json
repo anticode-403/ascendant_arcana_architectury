@@ -1,20 +1,20 @@
 {
   "type": "ascendant_arcana:relic_crafting_recipe",
-  "category": "misc",
+  "category": "equipment",
   "ingredients": [
     {
-      "item": "ascendant_arcana:relic"
+      "item": "minecraft:warped_roots"
     },
     {
-      "item": "ascendant_arcana:relic"
+      "item": "minecraft:warped_roots"
     },
     {
-      "item": "minecraft:diamond"
+      "item": "minecraft:blaze_powder"
     },
     {
       "item": "minecraft:gold_ingot"
     }
   ],
-  "relic": 3,
+  "relic": "ascendant_arcana:haste",
   "strength": 5
 }

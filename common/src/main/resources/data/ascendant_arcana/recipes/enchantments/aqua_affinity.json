@@ -1,12 +1,21 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "minecraft:aqua_affinity",
-  "level_cost": 3,
-  "magical_scrap_cost": 3,
-  "primary_ingredient": {
-    "count": 4,
-    "ingredient": {
-      "item": "minecraft:prismarine_crystals"
+  "levels": [
+    {
+      "level_cost": 6,
+      "primary_ingredient": {
+        "count": 3,
+        "ingredient": {
+          "item": "minecraft:prismarine_crystals"
+        }
+      },
+      "scrap_stack": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:lapis_lazuli"
+        }
+      }
     }
-  }
+  ]
 }

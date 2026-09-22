@@ -1,34 +1,27 @@
 package me.anticode.ascendant_arcana.entity;
 
+import me.anticode.ascendant_arcana.init.AArcanaDamage;
 import me.anticode.ascendant_arcana.init.AArcanaEntities;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.init.AArcanaSoundEvents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
-public class SingularityEntity extends Entity implements TraceableEntity {
-    @Nullable
-    private UUID ownerUUID;
-    @Nullable
-    private Entity cachedOwner;
+public class SingularityEntity extends OwnedEntity {
     public final static EntityDataAccessor<Integer> maxLife = SynchedEntityData.defineId(SingularityEntity.class, EntityDataSerializers.INT);
     public final static EntityDataAccessor<Integer> life = SynchedEntityData.defineId(SingularityEntity.class, EntityDataSerializers.INT);
 
     public SingularityEntity(EntityType<? extends SingularityEntity> entityType, Level level) {
         super(entityType, level);
-        entityData.set(life, entityData.get(maxLife));
+        entityData.set(maxLife, 30);
+        entityData.set(life, 30);
         this.noPhysics = true;
         this.noCulling = true;
     }
@@ -36,31 +29,10 @@ public class SingularityEntity extends Entity implements TraceableEntity {
     public SingularityEntity(Level level, LivingEntity livingEntity, int singularityLevel) {
         super(AArcanaEntities.SINGULARITY_ENTITY.get(), level);
         entityData.set(maxLife, 30 * singularityLevel);
-        entityData.set(life, entityData.get(maxLife));
+        entityData.set(life, 30 * singularityLevel);
         this.noPhysics = true;
         this.noCulling = true;
         setOwner(livingEntity);
-
-    }
-
-    public void setOwner(@Nullable Entity entity) {
-        if (entity != null) {
-            this.ownerUUID = entity.getUUID();
-            this.cachedOwner = entity;
-        }
-
-    }
-
-    @Override
-    public Entity getOwner() {
-        if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
-            return this.cachedOwner;
-        } else if (this.ownerUUID != null && this.level() instanceof ServerLevel) {
-            this.cachedOwner = ((ServerLevel)this.level()).getEntity(this.ownerUUID);
-            return this.cachedOwner;
-        } else {
-            return null;
-        }
     }
 
     @Override
@@ -88,40 +60,17 @@ public class SingularityEntity extends Entity implements TraceableEntity {
                 level().getEntities(getOwner(), AABB.unitCubeFromLowerCorner(position().subtract(0.5F, 0.5F, 0.5F)).inflate(0.05F), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(this::notOwnerAlly)).forEach(entity -> {
                     LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.addEffect(new MobEffectInstance(AArcanaMobEffects.HOBBLED.get(), 40, 2, false, false, true));
-                    livingEntity.hurt(damageSources().indirectMagic(this, getOwner()), 1F);
+                    livingEntity.hurt(AArcanaDamage.source(livingEntity.level(), AArcanaDamage.SINGULARITY), 1F);
                 });
             }
         }
         entityData.set(life, entityData.get(life) - 1);
     }
 
-    private boolean notOwnerAlly(Entity entity) {
-        if (getOwner() == null) return true;
-        if (entity == getOwner()) return false;
-        else if (entity instanceof TraceableEntity traceableEntity && traceableEntity.getOwner() == getOwner()) return false;
-        else if (getOwner().getTeam() != null && !getOwner().getTeam().isAllowFriendlyFire() && getOwner().getTeam() == entity.getTeam()) return false;
-        else return true;
-    }
-
     @Override
     protected void defineSynchedData() {
-        entityData.define(maxLife, 30);
-        entityData.define(life, 30);
-    }
-
-    @Override
-    protected void readAdditionalSaveData(CompoundTag compoundTag) {
-        if (compoundTag.hasUUID("Owner")) {
-            this.ownerUUID = compoundTag.getUUID("Owner");
-            this.cachedOwner = null;
-        }
-    }
-
-    @Override
-    protected void addAdditionalSaveData(CompoundTag compoundTag) {
-        if (this.ownerUUID != null) {
-            compoundTag.putUUID("Owner", this.ownerUUID);
-        }
+        entityData.define(maxLife, 0);
+        entityData.define(life, 0);
     }
 
     public int getCyclicalLife() {

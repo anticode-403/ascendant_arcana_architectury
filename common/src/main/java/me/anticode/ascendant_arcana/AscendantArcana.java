@@ -9,11 +9,10 @@ import me.anticode.ascendant_arcana.api.AArcanaPlayer;
 import me.anticode.ascendant_arcana.config.ServerConfig;
 import me.anticode.ascendant_arcana.config.ServerConfigWrapper;
 import me.anticode.ascendant_arcana.init.*;
+import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import me.anticode.ascendant_arcana.loot.PopulateRelicLootFunction;
-import me.anticode.ascendant_arcana.networking.ClientboundShieldBashPacket;
-import me.anticode.ascendant_arcana.networking.EnchantingScreenRemoveRecipe;
-import me.anticode.ascendant_arcana.networking.EnchantingScreenSendRecipe;
-import me.anticode.ascendant_arcana.networking.ServerboundShieldBashPacket;
+import me.anticode.ascendant_arcana.networking.*;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import me.anticode.ascendant_arcana.screenhandler.AArcanaEnchantingMenu;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -22,11 +21,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -60,6 +57,7 @@ public final class AscendantArcana {
         AArcanaFeatures.initialize();
         AArcanaEntities.initialize();
         AArcanaSoundEvents.initialize();
+        AArcanaParticles.initialize();
         TABS.register();
 
         NetworkManager.registerReceiver(NetworkManager.Side.C2S, EnchantingScreenRemoveRecipe.Id, (buf, packetContext) -> {
@@ -89,6 +87,20 @@ public final class AscendantArcana {
             NetworkManager.sendToPlayers(serverLevel.players(), ClientboundShieldBashPacket.Id, new ClientboundShieldBashPacket(player.getUUID(), packet.status()).write());
         });
 
+        NetworkManager.registerReceiver(NetworkManager.Side.C2S, ServerboundWhirlwindSync.Id, (buf, packetContext) -> {
+            ServerboundWhirlwindSync packet = ServerboundWhirlwindSync.read(buf);
+            Player player = packetContext.getPlayer();
+            if (player == null) return;
+            ServerLevel serverLevel = (ServerLevel) player.level();
+            NetworkManager.sendToPlayers(serverLevel.players(), ClientboundWhirlwindSync.Id, new ClientboundWhirlwindSync(player.getUUID(), packet.charging(), packet.whirlwinding()).write());
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.C2S, ServerboundWhirlwindSync.Id, (buf, packetContext) -> {
+            ServerLevel serverLevel = (ServerLevel) packetContext.getPlayer().level();
+            JoltTargetsPacket packet = JoltTargetsPacket.read(buf, serverLevel);
+            AArcanaEnchantmentHelper.joltTargets(packet.victim(), packet.attacker(), packet.indirectEntity(), packet.chainLength());
+        });
+
         LootEvent.MODIFY_LOOT_TABLE.register((dataManager, identifier, context, builtin) -> {
             if (builtin && (config.add_boss_drops || config.add_relics_to_entities)) {
                 if (identifier.equals(ResourceLocation.tryBuild("minecraft", "entities/warden"))) {
@@ -97,29 +109,29 @@ public final class AscendantArcana {
                         context.addPool(heartPool.build());
                     }
                     if (config.add_relics_to_entities) {
-                        LootPool.Builder relicPool = LootPool.lootPool().add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(ConstantValue.exactly(5), new int[]{0,2,4})));
+                        LootPool.Builder relicPool = LootPool.lootPool().add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(ConstantValue.exactly(5), new ResourceLocation[]{RelicTypes.DAMAGE,RelicTypes.PROTECTION,RelicTypes.ENCHANTMENT_CAPACITY})));
                         context.addPool(relicPool.build());
                     }
                 }
                 else if (config.add_relics_to_entities) {
                     if (identifier.equals(ResourceLocation.tryBuild("minecraft", "entities/witch"))) {
-                        LootPool.Builder poolBuilder = LootPool.lootPool().add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new int[]{4})).setWeight(1)).add(EmptyLootItem.emptyItem().setWeight(19));
+                        LootPool.Builder poolBuilder = LootPool.lootPool().add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new ResourceLocation[]{RelicTypes.ENCHANTMENT_CAPACITY})).setWeight(1)).add(EmptyLootItem.emptyItem().setWeight(19));
                         context.addPool(poolBuilder.build());
                     }
                     else if (identifier.equals(ResourceLocation.tryBuild("minecraft", "entities/wither"))) {
-                        LootPool.Builder relicPool = LootPool.lootPool().add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(ConstantValue.exactly(5), new int[]{1,2,3})));
+                        LootPool.Builder relicPool = LootPool.lootPool().add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(ConstantValue.exactly(5), new ResourceLocation[]{RelicTypes.DURABILITY,RelicTypes.PROTECTION,RelicTypes.HASTE})));
                         context.addPool(relicPool.build());
                     }
                     else if (identifier.equals(ResourceLocation.tryBuild("minecraft", "entities/ender_dragon"))) {
-                        LootPool.Builder relicPool = LootPool.lootPool().add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(ConstantValue.exactly(5), new int[]{2,3})));
+                        LootPool.Builder relicPool = LootPool.lootPool().add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(ConstantValue.exactly(5), new ResourceLocation[]{RelicTypes.PROTECTION,RelicTypes.HASTE})));
                         context.addPool(relicPool.build());
                     }
                     else if (identifier.equals(ResourceLocation.tryBuild("minecraft", "entities/wither_skeleton"))) {
-                        LootPool.Builder poolBuilder = LootPool.lootPool().add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new int[]{0})).setWeight(1)).add(EmptyLootItem.emptyItem().setWeight(19));
+                        LootPool.Builder poolBuilder = LootPool.lootPool().add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new ResourceLocation[]{RelicTypes.DAMAGE})).setWeight(1)).add(EmptyLootItem.emptyItem().setWeight(19));
                         context.addPool(poolBuilder.build());
                     }
                     else if (identifier.equals(ResourceLocation.tryBuild("minecraft", "entities/evoker"))) {
-                        LootPool.Builder poolBuilder = LootPool.lootPool().add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new int[]{4})).setWeight(1)).add(EmptyLootItem.emptyItem().setWeight(19));
+                        LootPool.Builder poolBuilder = LootPool.lootPool().add(LootItem.lootTableItem(AArcanaItems.RELIC.get()).apply(PopulateRelicLootFunction.builder(UniformGenerator.between(2, 4), new ResourceLocation[]{RelicTypes.ENCHANTMENT_CAPACITY})).setWeight(1)).add(EmptyLootItem.emptyItem().setWeight(19));
                         context.addPool(poolBuilder.build());
                     }
                 }

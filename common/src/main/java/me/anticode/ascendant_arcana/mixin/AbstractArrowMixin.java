@@ -8,7 +8,9 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import me.anticode.ascendant_arcana.api.EnchantedArrow;
 import me.anticode.ascendant_arcana.api.EnchantedTrident;
 import me.anticode.ascendant_arcana.api.PotionArrow;
+import me.anticode.ascendant_arcana.entity.LightningTurretEntity;
 import me.anticode.ascendant_arcana.entity.SingularityEntity;
+import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import net.minecraft.core.BlockPos;
@@ -30,6 +32,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.*;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -46,6 +49,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Mixin(AbstractArrow.class)
@@ -70,6 +75,9 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
     @Shadow
     @Nullable
     private IntOpenHashSet piercingIgnoreEntityIds;
+
+    @Shadow
+    public abstract boolean isCritArrow();
 
     @Unique
     private int ascendant_arcana$archersGambitLevel;
@@ -102,6 +110,12 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
     @Unique
     private int ascendant_arcana$miasmaLevel = 0;
 
+    @Unique
+    private int ascendant_arcana$guidingLevel = 0;
+
+    @Unique
+    private int ascendant_arcana$preparedLevel = 0;
+
     @Override
     public void ascendant_arcana$setArchersGambitLevel(int value) {
         this.ascendant_arcana$archersGambitLevel = value;
@@ -132,6 +146,15 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         this.ascendant_arcana$miasmaLevel = value;
     }
 
+    @Override
+    public void ascendant_arcana$setGuidingLevel(int value) {
+        this.ascendant_arcana$guidingLevel = value;
+    }
+
+    public void ascendant_arcana$setPreparedLevel(int value) {
+        this.ascendant_arcana$preparedLevel = value;
+    }
+
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     private void writeCustomAttributes(CompoundTag nbt, CallbackInfo ci) {
         nbt.putInt("archersGambitLevel", ascendant_arcana$archersGambitLevel);
@@ -139,6 +162,8 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         nbt.putInt("rejuvenatingShotLevel", ascendant_arcana$rejuvenatingShotLevel);
         nbt.putInt("ricochetLevel", ascendant_arcana$ricochetLevel);
         nbt.putInt("miasmaLevel", ascendant_arcana$miasmaLevel);
+        nbt.putInt("guidingLevel", ascendant_arcana$guidingLevel);
+        nbt.putInt("preparedLevel", ascendant_arcana$preparedLevel);
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
@@ -148,12 +173,23 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         this.ascendant_arcana$rejuvenatingShotLevel = nbt.getInt("rejuvenatingShotLevel");
         this.ascendant_arcana$ricochetLevel = nbt.getInt("ricochetLevel");
         this.ascendant_arcana$miasmaLevel = nbt.getInt("miasmaLevel");
+        this.ascendant_arcana$guidingLevel = nbt.getInt("guidingLevel");
+        this.ascendant_arcana$preparedLevel = nbt.getInt("preparedLevel");
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void willRicochet(CallbackInfo ci) {
         Projectile projectile = (Projectile)((Object)this);
         if (projectile.level().isClientSide()) return;
+
+        if (!inGround && ascendant_arcana$guidingLevel > 0 && projectile.getOwner() != null) {
+            if (projectile.getOwner() instanceof LivingEntity livingEntity) {
+                if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.GUIDING.get(), livingEntity.getMainHandItem()) != 0) {
+                    projectile.setDeltaMovement(projectile.getOwner().getLookAngle().scale(projectile.getDeltaMovement().length()));
+                    projectile.hurtMarked = true;
+                }
+            }
+        }
 
         Vec3 vel = projectile.getDeltaMovement();
         Vec3 pos = projectile.position();
@@ -196,12 +232,15 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
     private void healInsteadOfDamage(EntityHitResult entityHitResult, CallbackInfo ci) {
         if (ascendant_arcana$rejuvenatingShotLevel < 1) return;
         AbstractArrow projectile = (AbstractArrow) (Object) this;
-        Entity entity2 = projectile.getOwner();
-        Entity attacker = entityHitResult.getEntity();
+        Entity owner = projectile.getOwner();
+        Entity target = entityHitResult.getEntity();
         int damage = Mth.ceil(Mth.clamp((double)projectile.getDeltaMovement().length() * projectile.getBaseDamage(), (double)0.0F, (double)Integer.MAX_VALUE));;
-        if (attacker instanceof LivingEntity livingTarget) {
-            if (attacker == entity2) return;
-            if (livingTarget.getMobType() == MobType.UNDEAD) livingTarget.hurt(projectile.damageSources().arrow(projectile, entity2), (float) damage / 2);
+        if (target instanceof LivingEntity livingTarget) {
+            if (isCritArrow() && livingTarget.hasEffect(AArcanaMobEffects.JOLTED.get())) {
+                AArcanaEnchantmentHelper.joltTargets(livingTarget, owner, livingTarget.getEffect(AArcanaMobEffects.JOLTED.get()).getAmplifier() + 2);
+            }
+            if (target == owner) return;
+            if (livingTarget.getMobType() == MobType.UNDEAD) livingTarget.hurt(projectile.damageSources().arrow(projectile, owner), (float) damage / 2);
             livingTarget.heal((float) damage / 2);
             doPostHurtEffects(livingTarget);
             if (!projectile.level().isClientSide()) {
@@ -214,8 +253,8 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
                 if (projectile.getOwner() != null) soundCategory = projectile.getOwner().getSoundSource();
                 livingTarget.level().playSound(null, livingTarget.getX(), livingTarget.getY(), livingTarget.getZ(), SoundEvents.ARROW_HIT_PLAYER, soundCategory, 1.0F, 1.0F);
             }
-            if (livingTarget instanceof Player && entity2 instanceof ServerPlayer && !projectile.isSilent()) {
-                ((ServerPlayer) entity2).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
+            if (livingTarget instanceof Player && owner instanceof ServerPlayer && !projectile.isSilent()) {
+                ((ServerPlayer) owner).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
             }
         }
         if (getPierceLevel() <= 0) {
@@ -235,7 +274,16 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         else if (ascendant_arcana$ricochetLevel >= 1 && ascendant_arcana$ricochetBounces > 0) {
             amount += ascendant_arcana$ricochetBounces * 2;
         }
-        return original.call(instance, damageSource, amount);
+        if (ascendant_arcana$preparedLevel >= 1) {
+            amount += ascendant_arcana$preparedLevel * 4;
+        }
+        boolean didHurt = original.call(instance, damageSource, amount);
+        if (didHurt && instance instanceof LivingEntity livingEntity) {
+            if (livingEntity.isDeadOrDying() && ascendant_arcana$preparedLevel >= 1) {
+                livingEntity.level().explode(((AbstractArrow)(Object)this).getOwner(), livingEntity.getX(), livingEntity.getRandomY(), livingEntity.getZ(), 1.4F + (ascendant_arcana$preparedLevel * 0.1F), Level.ExplosionInteraction.NONE);
+            }
+        }
+        return didHurt;
     }
 
     @Inject(method = "onHitEntity", at = @At("TAIL"))
@@ -304,11 +352,21 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
         Level level = projectile.level();
         if (projectile instanceof ThrownTrident trident) {
             EnchantedTrident enchantedTrident = (EnchantedTrident)trident;
-            if (enchantedTrident.ascendant_arcana$getSingularityLevel() >= 1) {
-                SingularityEntity singularity = new SingularityEntity(projectile.level(), (LivingEntity) projectile.getOwner(), enchantedTrident.ascendant_arcana$getSingularityLevel());
+            if (enchantedTrident.ascendant_arcana$getSingularityLevel() >= 1 && !enchantedTrident.ascendant_arcana$wasStuck()) {
+                SingularityEntity singularity = new SingularityEntity(level, (LivingEntity) projectile.getOwner(), enchantedTrident.ascendant_arcana$getSingularityLevel());
                 Vec3 averagePosition = projectile.position().add(blockHitResult.getLocation()).multiply(0.5, 0.5, 0.5);
                 singularity.setPos(averagePosition);
-                projectile.level().addFreshEntity(singularity);
+                level.addFreshEntity(singularity);
+                enchantedTrident.ascendant_arcana$stickEntity(singularity);
+            }
+            if (enchantedTrident.ascendant_arcana$getStormAnchorLevel() >= 1 && !enchantedTrident.ascendant_arcana$wasStuck()) {
+                BlockState blockState = level.getBlockState(blockHitResult.getBlockPos());
+                if (blockState.isSolidRender(level, blockHitResult.getBlockPos())) {
+                    LightningTurretEntity lightningTurret = new LightningTurretEntity(level, (LivingEntity) projectile.getOwner(), blockHitResult.getDirection().getOpposite());
+                    lightningTurret.setPos(blockHitResult.getLocation().relative(blockHitResult.getDirection(), 0.9));
+                    level.addFreshEntity(lightningTurret);
+                    enchantedTrident.ascendant_arcana$stickEntity(lightningTurret);
+                }
             }
         } else {
             if (ascendant_arcana$evokersWrathLevel >= 1) {
@@ -330,32 +388,52 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
     @Unique
     private void ascendant_arcana$summonEvokersWrathFangs(LivingEntity owner, Projectile projectile, Vec3 pos, Level level) {
         if (ascendant_arcana$evokersWrathLevel >= 1) {
-            BlockPos blockPos = BlockPos.containing(pos);
-            boolean bl = false;
-            double d = 0.0D;
+            List<BlockPos> blockPositions = new ArrayList<>();
+            BlockPos source = BlockPos.containing(pos);
+            blockPositions.add(source);
+            if (ascendant_arcana$evokersWrathLevel >= 2) {
+                blockPositions.add(source.relative(Direction.NORTH));
+                blockPositions.add(source.relative(Direction.EAST));
+                blockPositions.add(source.relative(Direction.SOUTH));
+                blockPositions.add(source.relative(Direction.WEST));
+            }
+            if (ascendant_arcana$evokersWrathLevel >= 3) {
+                blockPositions.add(source.relative(Direction.NORTH, 2));
+                blockPositions.add(source.relative(Direction.EAST, 2));
+                blockPositions.add(source.relative(Direction.SOUTH, 2));
+                blockPositions.add(source.relative(Direction.WEST, 2));
+                blockPositions.add(source.relative(Direction.NORTH).relative(Direction.EAST));
+                blockPositions.add(source.relative(Direction.NORTH).relative(Direction.WEST));
+                blockPositions.add(source.relative(Direction.SOUTH).relative(Direction.EAST));
+                blockPositions.add(source.relative(Direction.SOUTH).relative(Direction.WEST));
+            }
+            for (BlockPos blockPos : blockPositions) {
+                boolean bl = false;
+                double d = 0.0D;
 
-            do {
-                BlockPos blockPos2 = blockPos.below();
-                BlockState blockState = level.getBlockState(blockPos2);
-                if (blockState.isFaceSturdy(level, blockPos2, Direction.UP)) {
-                    if (!level.isEmptyBlock(blockPos)) {
-                        BlockState blockState2 = level.getBlockState(blockPos);
-                        VoxelShape voxelShape = blockState2.getCollisionShape(level, blockPos);
-                        if (!voxelShape.isEmpty()) {
-                            d = voxelShape.max(Direction.Axis.Y);
+                do {
+                    BlockPos blockPos2 = blockPos.below();
+                    BlockState blockState = level.getBlockState(blockPos2);
+                    if (blockState.isFaceSturdy(level, blockPos2, Direction.UP)) {
+                        if (!level.isEmptyBlock(blockPos)) {
+                            BlockState blockState2 = level.getBlockState(blockPos);
+                            VoxelShape voxelShape = blockState2.getCollisionShape(level, blockPos);
+                            if (!voxelShape.isEmpty()) {
+                                d = voxelShape.max(Direction.Axis.Y);
+                            }
                         }
+
+                        bl = true;
+                        break;
                     }
 
-                    bl = true;
-                    break;
+                    blockPos = blockPos.below();
+                } while(blockPos.getY() >= level.getMinBuildHeight());
+
+                if (bl) {
+                    Vec3 Vec3 = blockPos.getCenter();
+                    level.addFreshEntity(new EvokerFangs(level, Vec3.x(), blockPos.getY() + d, Vec3.z(), projectile.getYRot(), 0, owner));
                 }
-
-                blockPos = blockPos.below();
-            } while(blockPos.getY() >= level.getMinBuildHeight());
-
-            if (bl) {
-                Vec3 Vec3 = blockPos.getCenter();
-                level.addFreshEntity(new EvokerFangs(level, Vec3.x(), blockPos.getY() + d, Vec3.z(), projectile.getYRot(), 0, owner));
             }
         }
     }
@@ -407,6 +485,7 @@ public abstract class AbstractArrowMixin implements EnchantedArrow {
             }
 
             projectile.level().addFreshEntity(areaEffectCloud);
+            projectile.discard();
         }
     }
 }

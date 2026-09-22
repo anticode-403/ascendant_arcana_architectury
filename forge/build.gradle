@@ -46,6 +46,8 @@ dependencies {
     modApi("me.shedaniel.cloth:cloth-config-forge:$rootProject.cloth_config_version")
     modRuntimeOnly("dev.emi:emi-forge:$rootProject.emi_version")
     modCompileOnly("dev.emi:emi-forge:$rootProject.emi_version:api")
+    modCompileOnly("squeek.appleskin:appleskin-forge:$rootProject.appleskin_version_forge:api")
+    modRuntimeOnly("squeek.appleskin:appleskin-forge:$rootProject.appleskin_version_forge")
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
@@ -56,6 +58,11 @@ processResources {
 
     filesMatching('META-INF/mods.toml') {
         expand version: project.version
+    }
+
+    from(rootProject.file("common/src/main/resources")) {
+        include("**/**")
+        duplicatesStrategy = DuplicatesStrategy.WARN
     }
 }
 

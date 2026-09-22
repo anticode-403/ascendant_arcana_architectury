@@ -1,0 +1,48 @@
+{
+  "type": "ascendant_arcana:enchantment_recipe",
+  "enchantment": "ascendant_arcana:snowball",
+  "levels": [
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 16,
+        "ingredient": {
+          "item": "minecraft:snowball"
+        }
+      },
+      "scrap_stack": {
+        "count": 2,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 16,
+        "ingredient": {
+          "item": "minecraft:redstone"
+        }
+      }
+    },
+    {
+      "level_cost": 3,
+      "primary_ingredient": {
+        "count": 8,
+        "ingredient": {
+          "item": "minecraft:snowball"
+        }
+      },
+      "scrap_stack": {
+        "count": 2,
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 8,
+        "ingredient": {
+          "item": "minecraft:redstone"
+        }
+      }
+    }
+  ]
+}

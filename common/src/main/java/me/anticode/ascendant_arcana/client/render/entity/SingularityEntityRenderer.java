@@ -4,10 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.client.model.entity.SingularityModel;
+import me.anticode.ascendant_arcana.client.render.types.AArcanaRenderTypes;
 import me.anticode.ascendant_arcana.entity.SingularityEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -22,7 +22,7 @@ public class SingularityEntityRenderer extends EntityRenderer<SingularityEntity>
 
     public SingularityEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.shadowRadius = 0.3F;
+        this.shadowRadius = 0.0F;
         singularity = new SingularityModel(context.bakeLayer(SingularityModel.LAYER_LOCATION));
     }
 
@@ -36,13 +36,13 @@ public class SingularityEntityRenderer extends EntityRenderer<SingularityEntity>
         poseStack.pushPose();
         SynchedEntityData entityData = entity.getEntityData();
         int life = entityData.get(SingularityEntity.life);
-        int time = entityData.get(SingularityEntity.maxLife) - life;
+        int time = Math.max(0, entityData.get(SingularityEntity.maxLife) - life);
         int cyclicalTime = 30 - entity.getCyclicalLife();
         float scale = Mth.lerp(g, Math.min((time - 1)/3F, 1F), Math.min(time / 3F, 1F));
         // This is incredibly cursed.
         float ringScale = easeInOutQuad(Mth.lerp(g, Math.min(time - 1, 10F)/10F, Math.min(time, 10F)/10F)) * 10F;
         if (cyclicalTime >= 15 && cyclicalTime <= 20) ringScale = easeInOutQuad(Mth.map(Mth.lerp(g, cyclicalTime - 1, cyclicalTime), 15, 20, 9, 0) / 10F) * 10F + 1;
-        if (cyclicalTime > 20 && life > 30) {
+        if (cyclicalTime > 20 && life >= 30) {
             ringScale = easeInOutQuad(Mth.lerp(g, Math.min(cyclicalTime - 20, 10F)/10F, Math.min(cyclicalTime - 19, 10F)/10F)) * 10F;
         } else if (cyclicalTime > 20) {
             ringScale = 1;
@@ -54,13 +54,13 @@ public class SingularityEntityRenderer extends EntityRenderer<SingularityEntity>
         }
         poseStack.scale(ringScale, 1, ringScale);
         poseStack.mulPose(Axis.YP.rotation((Minecraft.getInstance().getFrameTime() - entity.getEntityData().get(SingularityEntity.life)) * 0.2F));
-        singularity.ring.render(poseStack, multiBufferSource.getBuffer(RenderType.dragonExplosionAlpha(TEXTURE)), i, OverlayTexture.NO_OVERLAY);
+        singularity.ring.render(poseStack, multiBufferSource.getBuffer(AArcanaRenderTypes.emissive(TEXTURE)), i, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
         poseStack.pushPose();
         poseStack.scale(scale, scale, scale);
         poseStack.mulPose(Axis.YP.rotation((Minecraft.getInstance().getFrameTime() - entity.getEntityData().get(SingularityEntity.life)) * -0.1F));
-        singularity.outline.render(poseStack, multiBufferSource.getBuffer(RenderType.eyes(TEXTURE)), i, OverlayTexture.NO_OVERLAY);
-        singularity.singularity.render(poseStack, multiBufferSource.getBuffer(RenderType.dragonExplosionAlpha(TEXTURE)), i, OverlayTexture.NO_OVERLAY);
+        singularity.outline.render(poseStack, multiBufferSource.getBuffer(AArcanaRenderTypes.emissiveBackfaceCull(TEXTURE)), i, OverlayTexture.NO_OVERLAY);
+        singularity.singularity.render(poseStack, multiBufferSource.getBuffer(AArcanaRenderTypes.emissive(TEXTURE)), i, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
         super.render(entity, f, g, poseStack, multiBufferSource, i);
     }

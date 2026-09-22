@@ -1,20 +1,14 @@
 {
   "type": "ascendant_arcana:relic_crafting_recipe",
-  "category": "misc",
+  "category": "equipment",
   "ingredients": [
     {
-      "item": "ascendant_arcana:relic"
-    },
-    {
-      "item": "ascendant_arcana:relic"
-    },
-    {
-      "item": "minecraft:diamond"
+      "item": "minecraft:gold_ingot"
     },
     {
       "item": "minecraft:netherite_scrap"
     }
   ],
-  "relic": 2,
+  "relic": "ascendant_arcana:protection",
   "strength": 5
 }

@@ -1,18 +1,27 @@
 {
   "type": "ascendant_arcana:enchantment_recipe",
   "enchantment": "majruszsenchantments:death_wish",
-  "level_cost": 3,
-  "magical_scrap_cost": 3,
-  "primary_ingredient": {
-    "count": 2,
-    "ingredient": {
-      "item": "minecraft:fermented_spider_eye"
+  "levels": [
+    {
+      "level_cost": 3,
+      "scrap_stack": {
+        "ingredient": {
+          "item": "ascendant_arcana:enchanted_scrap"
+        },
+        "count": 3
+      },
+      "primary_ingredient": {
+        "count": 2,
+        "ingredient": {
+          "item": "minecraft:fermented_spider_eye"
+        }
+      },
+      "secondary_ingredient": {
+        "count": 1,
+        "ingredient": {
+          "item": "minecraft:wither_skeleton_skull"
+        }
+      }
     }
-  },
-  "secondary_ingredient": {
-    "count": 1,
-    "ingredient": {
-      "item": "minecraft:wither_skeleton_skull"
-    }
-  }
+  ]
 }

@@ -6,6 +6,7 @@ import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.recipe.EnchantmentRecipe;
 import me.anticode.ascendant_arcana.recipe.InfusionRecipe;
 import me.anticode.ascendant_arcana.recipe.RelicCraftingRecipe;
+import me.anticode.ascendant_arcana.recipe.UniversalRepairRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -18,8 +19,10 @@ public class AArcanaRecipes {
     public static RegistrySupplier<RecipeSerializer<InfusionRecipe>> INFUSION_RECIPE_SERIALIZER = register("infusion_smithing_recipe", new InfusionRecipe.Serializer());
     public static RegistrySupplier<RecipeSerializer<EnchantmentRecipe>> ENCHANTMENT_RECIPE_SERIALIZER = register("enchantment_recipe", new EnchantmentRecipe.Serializer());
     public static RegistrySupplier<RecipeSerializer<RelicCraftingRecipe>> RELIC_CRAFTING_RECIPE_SERIALIZER = register("relic_crafting_recipe", new RelicCraftingRecipe.Serializer());
+    public static RegistrySupplier<RecipeSerializer<UniversalRepairRecipe>> REPAIR_RECIPE_SERIALIZER = register("repair_recipe", new UniversalRepairRecipe.Serializer());
 
     public static RegistrySupplier<RecipeType<EnchantmentRecipe>> ENCHANTMENT_RECIPE_TYPE = register("enchantment_recipe");
+    public static RegistrySupplier<RecipeType<UniversalRepairRecipe>> REPAIR_RECIPE_TYPE = register("repair_recipe");
 
     private static <S extends RecipeSerializer<T>, T extends Recipe<?>> RegistrySupplier<S> register(String name, S serializer) {
         return RECIPE_SERIALIZERS.register(name, () -> serializer);

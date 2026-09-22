@@ -4,9 +4,8 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
-import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.logic.RemovedRegistryEntry;
-import net.minecraft.core.registries.BuiltInRegistries;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -53,15 +52,6 @@ public class EnchantmentHelperMixin {
             return 0;
         }
         return original;
-    }
-
-    @ModifyReturnValue(method = "getBlockEfficiency", at = @At("RETURN"))
-    private static int modifyBlockEfficiency(int original, @Local(argsOnly = true)LivingEntity livingEntity) {
-        // This is technically a 500% increase, rather than 50% but let's be real the way that this works is stupid anyways.
-        // 50% haste only gives 25% when attacking so who even cares, you probably didn't even notice the difference until
-        // you looked at the code.
-        float multiplier = (float) RelicHelper.getStrengthFromNbt(Relics.HASTE, livingEntity.getMainHandItem().getTag()) * 10;
-        return Mth.floor(multiplier);
     }
 
     @Inject(method = "selectEnchantment", at = @At(value = "RETURN", ordinal = 1))

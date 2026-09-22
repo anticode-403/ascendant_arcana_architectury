@@ -5,7 +5,6 @@ import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Config(name = "server")
 public class ServerConfig implements ConfigData {
@@ -18,11 +17,20 @@ public class ServerConfig implements ConfigData {
     @Comment("XP is by default disabled in Ascendant Arcana, but can be optionally enabled and is fully supported if you do so.")
     public boolean disable_xp = true;
 
+    @Comment("If XP is enabled, should enchantments require XP to obtain?")
+    public boolean recipes_use_xp = true;
+
     @Comment("Hiding the XP bar can sometimes cause issues with other mods that modify the HUD, this mitigates those issues.")
     public boolean hide_xp_bar = true;
 
     @Comment("Levels are linear if enabled. This adjusts the XP required to level up each time. Setting this to 0 disables it.")
     public int xp_per_level = 30;
+
+    @Comment("""
+            The mining speed multiplier applied to all mining tools. This should include modded tools as well. Vanilla
+            values would be 1.0F. The default 2.75F is selected so that the 50% Ascendant Haste relic bonus is slightly
+            better than Efficiency 5 on a Netherite Pickaxe.""")
+    public float mining_speed_multiplier = 2.75F;
 
     @Comment("Some vanilla mobs drop relics on death, like Witches, Wither Skeletons, and bosses. Recommended.")
     public boolean add_relics_to_entities = true;
@@ -35,6 +43,11 @@ public class ServerConfig implements ConfigData {
 
     @Comment("Add unique boss drops, like the Warden Heart. Disabling this will make some enchantments unobtainable.")
     public boolean add_boss_drops = true;
+
+    @Comment("""
+            While this is enabled all infusion type recipes will be ignored, relic infusion cannot be done at the
+            Smithing Table, and the Infusion Smithing Template item will not be registered.""")
+    public boolean anvil_relics = false;
 
     @Comment("The minimum amount of power (bookshelves and enchanted books within range of an enchanting table) to enchant.")
     public int minimum_enchanting_power = 0;
@@ -63,13 +76,23 @@ public class ServerConfig implements ConfigData {
     public int books_tier_bypass = 1;
 
     @Comment("""
+            The maximum horizontal range for bookshelf detection for Enchantment Tables. Unlike vanilla, non-bookshelf
+            blocks do not detract from this maximum. The lowest this value can be set is 2.""")
+    public int bookshelf_detection_width = 5;
+
+    @Comment("""
+            The maximum vertical range for bookshelf detection for Enchantment Tables. Unlike vanilla, non-bookshelf
+            blocks do not detract from this maximum. The lowest this value can be set is 1.""")
+    public int bookshelf_detection_height = 2;
+
+    @Comment("""
             Ascendant Arcana disables many vanilla enchantments because they stress the capacity system too much with
             'required' enchantments. Enchantments are generally meant to be more interesting and meaningfully impactful
             but this list is configurable so you can enable or disable whatever you want.
             
             Do note that most enchantments on this list by default DO NOT come with recipes, so in order to see them in
             the Enchanting Table you must create your own enchantment recipes for them with a datapack.""")
-    public Set<String> disabled_enchantments;
+    public List<String> disabled_enchantments;
 
     @Comment("Items which have their base relic capacity value overwritten.")
     public Map<String, Integer> base_relic_capacity_overrides = new HashMap<>(Map.of(
@@ -116,87 +139,11 @@ public class ServerConfig implements ConfigData {
             Map.entry("veinmining:vein_mining", 1)
     ));
 
-    @Comment("""
-            Damage Relics apply to thrown Tridents, melee weapons, as well as arrows and rockets fired from bows and
-            crossbows.
-            Percentages are written as decimal values. For example, a 10% damage increase is written as 0.10 here.""")
-    public Map<String, Double> damage_relic_strengths = new HashMap<>(Map.ofEntries(
-            Map.entry("1", 0.10),
-            Map.entry("2", 0.16),
-            Map.entry("3", 0.22),
-            Map.entry("4", 0.26),
-            Map.entry("5", 0.30)
-    ));
-
-    @Comment("""
-            If this is true, infusing a durability relic applies the below bonus additively (i.e. the item's base
-            durability + the relic durability).
-            If this is false, infusing a durability relic applies the below bonus multiplicatively (i.e. the item's
-            base durability * the relic durability).""")
-    public boolean durability_additive = true;
-
-    @Comment("""
-            Durability Relics can apply to any item with a durability value. For all vanilla items, the default
-            values are better than Unbreaking 3.
-            If durability_additive is true, these values must be integers.
-            If durability_additive is false, these values are calculated as so: base * (1 + relic_strength)
-            For example, a relic strength of 0.5 is a multiplier of 1.5.""")
-    public Map<String, Double> durability_relic_strengths = new HashMap<>(Map.ofEntries(
-            Map.entry("1", 600D),
-            Map.entry("2", 1200D),
-            Map.entry("3", 1800D),
-            Map.entry("4", 2400D),
-            Map.entry("5", 3000D)
-    ));
-
-    @Comment("""
-            Protection Relics reduce the damage taken from most sources. Generally, this is any instance of damage
-            that the original Protection enchantment would protect you from. The default values here are slightly
-            weaker than the original benefits of protection by 1% per level, meaning Protection 4 is 16% DR and
-            an Ascendant Protection Relic is 15%.
-            Percentages are written as decimal values. For example, a 3% damage resistance is written as 0.03 here.""")
-    public Map<String, Double> protection_relic_strengths = new HashMap<>(Map.ofEntries(
-            Map.entry("1", 0.03),
-            Map.entry("2", 0.06),
-            Map.entry("3", 0.09),
-            Map.entry("4", 0.12),
-            Map.entry("5", 0.15)
-    ));
-
-
-    @Comment("""
-            Haste Relics behave in a way that is technically not accurate. On weapons, Haste relics apply half of
-            their benefit (like other Haste effects in Minecraft). But for mining, Haste relics act as a level
-            of Efficiency. That level is obtained by multiplying the value of the haste relic by 10 and rounding down.
-            For example, a value of 0.10 (a 10% relic) becomes 1 level of Efficiency.
-            This behavior is likely to be changed in the future.
-            Percentages are written as decimal values. For example, a 10% haste increase is written as 0.10 here.""")
-    public Map<String, Double> haste_relic_strengths = new HashMap<>(Map.ofEntries(
-            Map.entry("1", 0.10),
-            Map.entry("2", 0.20),
-            Map.entry("3", 0.30),
-            Map.entry("4", 0.40),
-            Map.entry("5", 0.50)
-    ));
-
-
-    @Comment("""
-            Enchantment Capacity Relics are used to expand your item's capability to hold powerful enchantments.
-            These relics are additive.
-            Because Enchantment Capacity is an integer, you cannot add a decimal value here.""")
-    public Map<String, Integer> enchantment_capacity_relic_strengths = new HashMap<>(Map.ofEntries(
-            Map.entry("1", 5),
-            Map.entry("2", 10),
-            Map.entry("3", 15),
-            Map.entry("4", 20),
-            Map.entry("5", 25)
-    ));
-
     @Override
     public void validatePostLoad() throws ValidationException {
         ConfigData.super.validatePostLoad();
         if (disabled_enchantments == null) {
-            disabled_enchantments = new LinkedHashSet<>();
+            disabled_enchantments = new LinkedList<>();
             disabled_enchantments.add("minecraft:protection");
             disabled_enchantments.add("minecraft:sharpness");
             disabled_enchantments.add("minecraft:efficiency");
@@ -217,8 +164,6 @@ public class ServerConfig implements ConfigData {
             disabled_enchantments.add("majruszsenchantments:dodge");
             disabled_enchantments.add("majruszsenchantments:enlightenment");
             disabled_enchantments.add("majruszsenchantments:immortality");
-            disabled_enchantments.add("ascendant_arcana:coldheart");
-            disabled_enchantments.add("ascendant_arcana:heart_of_the_storm");
         }
     }
 }

@@ -1,5 +1,7 @@
 package me.anticode.ascendant_arcana.api;
 
+import net.minecraft.world.entity.Entity;
+
 public interface EnchantedTrident {
     void ascendant_arcana$setSingularityLevel(int singularityLevel);
 
@@ -13,13 +15,19 @@ public interface EnchantedTrident {
 
     void ascendant_arcana$setSunderingLevel(int sunderingLevel);
 
-    net.minecraft.world.entity.LivingEntity ascendant_arcana$getStuckEntity();
+    Entity ascendant_arcana$getStuckEntity();
 
-    float ascendant_arcana$getRenderTicks();
+    boolean ascendant_arcana$wasStuck();
 
     float ascendant_arcana$getStabTicks();
 
     int ascendant_arcana$getLoyaltyLevel();
 
     void ascendant_arcana$setClientStuckEntity(int stuck);
+
+    int ascendant_arcana$getStormAnchorLevel();
+
+    void ascendant_arcana$setStormAnchorLevel(int stormAnchorLevel);
+
+    void ascendant_arcana$stickEntity(Entity entity);
 }

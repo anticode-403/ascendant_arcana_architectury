@@ -5,9 +5,12 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import me.anticode.ascendant_arcana.api.AArcanaHorse;
 import me.anticode.ascendant_arcana.api.AArcanaPlayer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.layers.SpinAttackEffectLayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +20,8 @@ import org.spongepowered.asm.mixin.injection.At;
 public class SpinAttackEffectLayerMixin<T extends LivingEntity> {
     @WrapOperation(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isAutoSpinAttack()Z"))
     public boolean isAutoSpinAttackOrShieldBash(LivingEntity instance, Operation<Boolean> original) {
-        if (instance instanceof AArcanaPlayer player) return original.call(instance) || player.ascendant_arcana$getShieldBashStatus();
+        if (instance instanceof AArcanaPlayer player) return original.call(instance) || player.ascendant_arcana$getShieldBashStatus() || player.ascendant_arcana$isWhirlwinding() || player.ascendant_arcana$isWhirlwindCharging();
+        else if (instance instanceof AArcanaHorse horse) return horse.ascendant_arcana$getCharging() && (instance.getControllingPassenger() != Minecraft.getInstance().player || !Minecraft.getInstance().options.getCameraType().isFirstPerson());
         return original.call(instance);
     }
 
@@ -30,6 +34,15 @@ public class SpinAttackEffectLayerMixin<T extends LivingEntity> {
             instance.mulPose(Axis.XP.rotationDegrees(90));
             original.call(instance, Axis.YP.rotationDegrees(n));
             instance.scale(1.75F, 1.75F, 1.75F);
+        } else if (livingEntity instanceof AArcanaHorse horse && horse.ascendant_arcana$getCharging()) {
+            AbstractHorse abstractHorse = (AbstractHorse) horse;
+            instance.translate(0, 0.5F, -2F);
+            LivingEntity rider = abstractHorse.getControllingPassenger();
+            if (rider == null) return;
+            instance.mulPose(Axis.YP.rotationDegrees((float)Math.atan2(rider.getDeltaMovement().normalize().x, rider.getDeltaMovement().normalize().z)));
+            instance.mulPose(Axis.XP.rotationDegrees(90));
+            original.call(instance, Axis.YP.rotationDegrees(n * 0.5F));
+            instance.scale(2F, 2F, 2F);
         } else original.call(instance, quaternionf);
     }
 }

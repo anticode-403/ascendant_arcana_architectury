@@ -5,7 +5,8 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import me.anticode.ascendant_arcana.item.*;
-import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.relics.RelicEntry;
+import me.anticode.ascendant_arcana.relics.RelicRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -13,8 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class AArcanaItems {
@@ -30,7 +30,7 @@ public class AArcanaItems {
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(AscendantArcana.MOD_ID, Registries.ITEM);
 
-    public static final RegistrySupplier<Item> INFUSION_SMITHING_TEMPLATE = register(() -> new SmithingTemplateItem(
+    public static final RegistrySupplier<Item> INFUSION_SMITHING_TEMPLATE = AscendantArcana.config.anvil_relics ? null : register(() -> new SmithingTemplateItem(
             Component.translatable("item.ascendant_arcana.smithing_template.infusion.applies_to").withStyle(ChatFormatting.BLUE),
             Component.translatable("item.ascendant_arcana.smithing_template.infusion.ingredients").withStyle(ChatFormatting.BLUE),
             Component.translatable("item.ascendant_arcana.smithing_template.infusion.title").withStyle(ChatFormatting.GRAY),
@@ -64,20 +64,7 @@ public class AArcanaItems {
     public static void initialize() {
         ITEMS.register();
 
-        List<Supplier<ItemStack>> relicEntries = new ArrayList<>();
-        for (int i = 0; i < Relics.values().length * 5; i++) {
-            int relicId = Mth.floor((double) i / 5);
-            int strength = i + 1 - (relicId * 5);
-            Relics relicType = Relics.fromId(relicId);
-            relicEntries.add(() -> {
-                ItemStack relic = new ItemStack(RELIC.get());
-                RelicItem.writeRelicData(relic, relicType, strength);
-                return relic;
-            });
-        }
-
-        CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, ENCHANTED_SCRAP, RESTORINE, WARDEN_HEART, INFUSION_SMITHING_TEMPLATE);
-
-        CreativeTabRegistry.appendStack(AscendantArcana.ASCENDANT_ARCANA_TAB, relicEntries.stream());
+        CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, ENCHANTED_SCRAP, RESTORINE, WARDEN_HEART);
+        if (!AscendantArcana.config.anvil_relics) CreativeTabRegistry.append(AscendantArcana.ASCENDANT_ARCANA_TAB, INFUSION_SMITHING_TEMPLATE);
     }
 }

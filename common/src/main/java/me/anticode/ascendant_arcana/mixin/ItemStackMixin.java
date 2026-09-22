@@ -11,7 +11,8 @@ import me.anticode.ascendant_arcana.init.AArcanaAttributes;
 import me.anticode.ascendant_arcana.logic.AArcanaEnchantmentHelper;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
-import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.relics.RelicEntry;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -92,8 +93,9 @@ public abstract class ItemStackMixin {
 
     @ModifyReturnValue(method = "getMaxDamage", at = @At("RETURN"))
     private int implementDurabilityRelic(int maxDamage) {
-        if (AscendantArcana.config.durability_additive) return Mth.floor(maxDamage + RelicHelper.getStrengthFromNbt(Relics.DURABILITY, getTag()));
-        else return Mth.floor(maxDamage * (1 + RelicHelper.getStrengthFromNbt(Relics.DURABILITY, getTag())));
+        return Mth.floor(
+                RelicHelper.applyAllRelicsOfType(RelicTypes.DURABILITY, maxDamage, getTag())
+        );
     }
 
     @ModifyReturnValue(method = "getAttributeModifiers", at = @At("RETURN"))
@@ -112,7 +114,7 @@ public abstract class ItemStackMixin {
                 case FEET -> UUID.fromString("93ef9100-4f32-45e0-8568-f837918e9b43");
                 default -> null;
             };
-            float protectionValue = (float) RelicHelper.getStrengthFromNbt(Relics.PROTECTION, getTag());
+            float protectionValue = (float) RelicHelper.getAllRawBonusesOfType(RelicTypes.PROTECTION, getTag());
             if (protectionValue != 0) {
                 AttributeModifier modifier = new AttributeModifier(uuid, "Protection Relic Bonus", protectionValue, AttributeModifier.Operation.MULTIPLY_BASE);
                 modifiers.put(AArcanaAttributes.PROTECTION.get(), modifier);
@@ -120,10 +122,10 @@ public abstract class ItemStackMixin {
         }
         else if (getItem().getMaxDamage() > 1) {
             if (slot != EquipmentSlot.MAINHAND) return modifiers;
-            Map<Relics, Integer> relics = RelicHelper.fromNbt(getTag());
+            Map<RelicEntry, Integer> relics = RelicHelper.fromNbt(getTag());
             if (relics.isEmpty()) return modifiers;
-            if (relics.containsKey(Relics.DAMAGE)) {
-                double damageValue = RelicHelper.getStrengthFromNbt(Relics.DAMAGE, getTag());
+            if (RelicHelper.containsAnyOfType(RelicTypes.DAMAGE, getTag())) {
+                double damageValue = RelicHelper.getAllRawBonusesOfType(RelicTypes.DAMAGE, getTag());
                 List<AttributeModifier> oldDamageModifiers = modifiers.get(Attributes.ATTACK_DAMAGE).stream().toList();
                 List<AttributeModifier> newModifiers = ItemHelper.multiplyAttributeList(oldDamageModifiers, damageValue);
                 modifiers.replaceValues(Attributes.ATTACK_DAMAGE, newModifiers);
@@ -131,10 +133,10 @@ public abstract class ItemStackMixin {
         }
         else if (getItem() instanceof CrossbowItem || getItem() instanceof BowItem || getItem() instanceof TridentItem) {
             if (slot != EquipmentSlot.MAINHAND && slot != EquipmentSlot.OFFHAND) return modifiers;
-            Map<Relics, Integer> relics = RelicHelper.fromNbt(getTag());
+            Map<RelicEntry, Integer> relics = RelicHelper.fromNbt(getTag());
             if (relics.isEmpty()) return modifiers;
-            if (relics.containsKey(Relics.HASTE)) {
-                double hasteValue = RelicHelper.getStrengthFromNbt(Relics.HASTE, getTag()) / 2;
+            if (RelicHelper.containsAnyOfType(RelicTypes.HASTE, getTag())) {
+                double hasteValue = RelicHelper.getAllRawBonusesOfType(RelicTypes.HASTE, getTag()) / 2;
                 AttributeModifier modifier = new AttributeModifier(UUID.fromString("f2bb3e62-513f-4804-a194-2965d232c7ad"), "Haste Relic Bonus", hasteValue, AttributeModifier.Operation.MULTIPLY_BASE);
                 modifiers.put(AArcanaAttributes.DRAW_SPEED.get(), modifier);
             }
@@ -146,15 +148,15 @@ public abstract class ItemStackMixin {
     private void addRelicTooltipInfo(Player player, TooltipFlag tooltipFlag, CallbackInfoReturnable<List<Component>> cir) {
         List<Component> tooltip = cir.getReturnValue();
         if (!hasTag()) return;
-        Map<Relics, Integer> relics = RelicHelper.fromNbt(getTag());
+        Map<RelicEntry, Integer> relics = RelicHelper.fromNbt(getTag());
         if (relics.isEmpty()) return;
         int i = 1;
         tooltip.add(i++, Component.empty());
         tooltip.add(i++, Component.translatable("item.relics.tooltip.on_tool", relics.size(), RelicHelper.getRelicCapacity((ItemStack)(Object)this)).withStyle(ChatFormatting.GRAY));
-        for (Map.Entry<Relics, Integer> entry : relics.entrySet()) {
+        for (Map.Entry<RelicEntry, Integer> entry : relics.entrySet()) {
             int visualStrength = RelicHelper.getTooltipStrength(entry.getKey(), entry.getValue());
-            Component relicName = Component.translatable("item.relics.type." + entry.getKey().toString().toLowerCase());
-            String hasPercent = (entry.getKey() == Relics.HASTE || entry.getKey() == Relics.PROTECTION || entry.getKey() == Relics.DAMAGE || (entry.getKey() == Relics.DURABILITY && !AscendantArcana.config.durability_additive)) ? "%" : "";
+            Component relicName = RelicHelper.getRelicTypeText(entry.getKey());
+            String hasPercent = (entry.getKey().getOperation() == RelicEntry.Operation.multiply_total) ? "%" : "";
             Component line = Component.translatable("item.relics.tooltip", visualStrength, relicName, hasPercent).withStyle(ChatFormatting.BLUE);
             tooltip.add(i++, line);
         }

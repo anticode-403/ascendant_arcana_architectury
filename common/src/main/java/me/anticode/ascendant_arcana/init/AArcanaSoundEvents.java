@@ -16,6 +16,12 @@ public class AArcanaSoundEvents {
     public static final RegistrySupplier<SoundEvent> SHIELD_BASH_START = register("shield_bash_start");
     public static final RegistrySupplier<SoundEvent> SHIELD_BASH_HIT = register("shield_bash_hit");
     public static final RegistrySupplier<SoundEvent> SHATTERSHOT = register("shattershot");
+    public static final RegistrySupplier<SoundEvent> TICK = register("tick");
+    public static final RegistrySupplier<SoundEvent> STORM_ANCHOR_ZAP = register("storm_anchor_zap");
+    public static final RegistrySupplier<SoundEvent> LIGHTNING_ZAP = register("lightning_zap");
+    public static final RegistrySupplier<SoundEvent> GLACIOCLASM = register("glacioclasm");
+    public static final RegistrySupplier<SoundEvent> GLACIOCLASM_SPAWN = register("glacioclasm_spawn");
+    public static final RegistrySupplier<SoundEvent> BUFF_ACTIVATED = register("buff_activated");
 
     public static RegistrySupplier<SoundEvent> register(String id) {
         return SOUND_EVENTS.register(id, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.tryBuild(AscendantArcana.MOD_ID, id)));

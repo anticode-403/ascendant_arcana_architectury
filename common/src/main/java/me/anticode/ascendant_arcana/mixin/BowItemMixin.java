@@ -3,10 +3,12 @@ package me.anticode.ascendant_arcana.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import me.anticode.ascendant_arcana.api.EnchantedArrow;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
+import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
 import me.anticode.ascendant_arcana.logic.RelicHelper;
-import me.anticode.ascendant_arcana.logic.Relics;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,6 +34,12 @@ public class BowItemMixin {
         int piercing = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, stack);
         projectile.setPierceLevel((byte) piercing);
 
+        if (EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.PREPARED_SHOT.get(), stack) >= 1 && user.hasEffect(AArcanaMobEffects.PREPARED.get())) {
+            int prepared = user.getEffect(AArcanaMobEffects.PREPARED.get()).getAmplifier() + 1;
+            ((EnchantedArrow) projectile).ascendant_arcana$setPreparedLevel(prepared);
+            user.removeEffect(AArcanaMobEffects.PREPARED.get());
+        }
+
         RandomSource random = RandomSource.createNewThreadLocalInstance();
         int inaccuracy = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.INACCURACY_CURSE.get(), stack);
         if (inaccuracy == 0) return;
@@ -44,7 +52,7 @@ public class BowItemMixin {
 
     @WrapOperation(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/BowItem;getPowerForTime(I)F"))
     private float modifyGetPower(int i, Operation<Float> original, @Local(argsOnly = true) ItemStack itemStack) {
-        float hasteMultiplier = 1 + (float) RelicHelper.getStrengthFromNbt(Relics.HASTE, itemStack.getTag())/2;
+        float hasteMultiplier = 1 + ((float) RelicHelper.getAllRawBonusesOfType(RelicTypes.HASTE, itemStack.getTag()) / 2);
         return original.call(Mth.ceil(i * hasteMultiplier));
     }
 }

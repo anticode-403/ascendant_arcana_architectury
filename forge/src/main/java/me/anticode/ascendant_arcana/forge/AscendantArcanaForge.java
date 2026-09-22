@@ -1,24 +1,34 @@
 package me.anticode.ascendant_arcana.forge;
 
+import dev.architectury.networking.NetworkManager;
 import me.anticode.ascendant_arcana.AscendantArcana;
 import dev.architectury.platform.forge.EventBuses;
 import me.anticode.ascendant_arcana.api.ItemEntryAccess;
 import me.anticode.ascendant_arcana.api.LeafEntryAccess;
 import me.anticode.ascendant_arcana.client.AscendantArcanaClient;
+import me.anticode.ascendant_arcana.client.model.entity.GlacioclasmModel;
+import me.anticode.ascendant_arcana.client.model.entity.LightningTurretModel;
 import me.anticode.ascendant_arcana.client.model.entity.SingularityModel;
 import me.anticode.ascendant_arcana.client.render.entity.BlazeboltEntityRenderer;
+import me.anticode.ascendant_arcana.client.render.entity.GlacioclasmEntityRenderer;
+import me.anticode.ascendant_arcana.client.render.entity.LightningTurretEntityRenderer;
 import me.anticode.ascendant_arcana.client.render.entity.SingularityEntityRenderer;
 import me.anticode.ascendant_arcana.client.screen.AArcanaEnchantingScreen;
 import me.anticode.ascendant_arcana.forge.api.LootPoolAccess;
 import me.anticode.ascendant_arcana.forge.api.LootTableAccess;
 import me.anticode.ascendant_arcana.init.*;
-import me.anticode.ascendant_arcana.item.RelicItem;
-import me.anticode.ascendant_arcana.logic.Relics;
 import me.anticode.ascendant_arcana.loot.PopulateRelicLootFunction;
+import me.anticode.ascendant_arcana.networking.RelicRegistrySync;
+import me.anticode.ascendant_arcana.relics.RelicRegistry;
+import me.anticode.ascendant_arcana.relics.RelicTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.EnchantTableRenderer;
-import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -36,13 +46,19 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +83,24 @@ public final class AscendantArcanaForge {
                 event.add(entityType, AArcanaAttributes.DRAW_SPEED.get());
                 event.add(entityType, AArcanaAttributes.DAMAGE_TAKEN.get());
             }
+        }
+
+        @SubscribeEvent
+        public static void addPackFinders(AddPackFindersEvent event) {
+            if (event.getPackType() != PackType.CLIENT_RESOURCES) return;
+            Path packPath = ModList.get().getModFileById(AscendantArcana.MOD_ID).getFile().findResource("resourcepacks", "ascendant_arcana_classic");
+            event.addRepositorySource(consumer -> consumer.accept(Pack.readMetaAndCreate(
+                    "builtin/ascendant_arcana_classic",
+                    Component.translatable("pack.ascendant_arcana.ascendant_arcana_classic"),
+                    false,
+                    (path) -> new PathPackResources(
+                            path,
+                            packPath,
+                            false),
+                    PackType.CLIENT_RESOURCES,
+                    Pack.Position.BOTTOM,
+                    PackSource.BUILT_IN
+            )));
         }
     }
 
@@ -101,7 +135,7 @@ public final class AscendantArcanaForge {
                                 entryBuilder.setWeight(((LeafEntryAccess) entry).ascendantArcana$getWeight());
                                 addedWeights += ((LeafEntryAccess) entry).ascendantArcana$getWeight();
                                 entryBuilder.setQuality(((LeafEntryAccess) entry).ascendantArcana$getQuality());
-                                entryBuilder.apply(PopulateRelicLootFunction.builder(UniformGenerator.between(1, !bonus ? 3 : 4), new int[]{0, 1, 2, 4}));
+                                entryBuilder.apply(PopulateRelicLootFunction.builder(UniformGenerator.between(1, !bonus ? 3 : 4), new ResourceLocation[]{RelicTypes.DAMAGE, RelicTypes.DURABILITY, RelicTypes.PROTECTION, RelicTypes.HASTE, RelicTypes.ENCHANTMENT_CAPACITY}));
                                 // I can't figure out how to replicate conditions, so in the off chance the enchanted book has a conditional drop, we will unfortunately ignore it
                                 poolBuilder.add(entryBuilder);
                             } else if ((((ItemEntryAccess)entry).ascendantArcana$getItem() == Items.AMETHYST_SHARD || ((ItemEntryAccess)entry).ascendantArcana$getItem() == Items.DIAMOND) && AscendantArcana.config.add_restorine_to_chests) {
@@ -129,6 +163,17 @@ public final class AscendantArcanaForge {
                 }
             }
         }
+
+        @SubscribeEvent
+        public static void serverStarting(ServerStartingEvent event) {
+            RelicRegistry.loadRelics(event.getServer().getResourceManager());
+        }
+
+        @SubscribeEvent
+        public static void datapackSync(OnDatapackSyncEvent event) {
+            if (event.getPlayer() == null) return;
+            NetworkManager.sendToPlayer(event.getPlayer(), RelicRegistrySync.Id, RelicRegistry.toNetwork());
+        }
     }
 
     @Mod.EventBusSubscriber(modid = AscendantArcana.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -140,6 +185,10 @@ public final class AscendantArcanaForge {
             event.enqueueWork(() -> {
                 MenuScreens.register(AArcanaMenus.ENCHANTING.get(), AArcanaEnchantingScreen::new);
             });
+
+            if (ModList.get().isLoaded("appleskin")) {
+                MinecraftForge.EVENT_BUS.register(new AArcanaAppleskinHandler());
+            }
         }
 
         @SubscribeEvent
@@ -147,11 +196,15 @@ public final class AscendantArcanaForge {
             event.registerBlockEntityRenderer(AArcanaBlocks.COPPER_ENCHANTING_TABLE_BLOCK_ENTITY.get(), EnchantTableRenderer::new);
             event.registerEntityRenderer(AArcanaEntities.BLAZEBOLT_ENTITY.get(), BlazeboltEntityRenderer::new);
             event.registerEntityRenderer(AArcanaEntities.SINGULARITY_ENTITY.get(), SingularityEntityRenderer::new);
+            event.registerEntityRenderer(AArcanaEntities.LIGHTNING_TURRET_ENTITY.get(), LightningTurretEntityRenderer::new);
+            event.registerEntityRenderer(AArcanaEntities.GLACIOCLASM_ENTITY.get(), GlacioclasmEntityRenderer::new);
         }
 
         @SubscribeEvent
         public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
             event.registerLayerDefinition(SingularityModel.LAYER_LOCATION, SingularityModel::createBodyLayer);
+            event.registerLayerDefinition(LightningTurretModel.LAYER_LOCATION, LightningTurretModel::createBodyLayer);
+            event.registerLayerDefinition(GlacioclasmModel.LAYER_LOCATION, GlacioclasmModel::createBodyLayer);
         }
     }
 }

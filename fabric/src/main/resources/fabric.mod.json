@@ -18,6 +18,9 @@
   "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
+    "fabric-datagen": [
+      "me.anticode.ascendant_arcana.fabric.client.AscendantArcanaFabricDatagen"
+    ],
     "main": [
       "me.anticode.ascendant_arcana.fabric.AscendantArcanaFabric"
     ],
@@ -26,6 +29,9 @@
     ],
     "emi": [
       "me.anticode.ascendant_arcana.client.emi.AscendantArcanaEmi"
+    ],
+    "appleskin": [
+      "me.anticode.ascendant_arcana.fabric.client.AArcanaAppleskinHandler"
     ]
   },
   "mixins": [

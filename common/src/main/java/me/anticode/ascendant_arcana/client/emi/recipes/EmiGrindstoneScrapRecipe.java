@@ -12,6 +12,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
@@ -48,7 +49,7 @@ public class EmiGrindstoneScrapRecipe implements EmiRecipe {
 
     @Override
     public List<EmiStack> getOutputs() {
-        return List.of(EmiStack.of(AArcanaItems.ENCHANTED_SCRAP.get()));
+        return List.of(EmiStack.of(AArcanaItems.ENCHANTED_SCRAP.get()), EmiStack.of(Items.LAPIS_LAZULI));
     }
 
     @Override

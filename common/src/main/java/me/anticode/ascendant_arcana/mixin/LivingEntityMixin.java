@@ -4,10 +4,12 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import me.anticode.ascendant_arcana.enchantment.HellWalker;
+import me.anticode.ascendant_arcana.enchantment.armor.HellWalker;
 import me.anticode.ascendant_arcana.enchantment.TickableAttributeEnchantment;
-import me.anticode.ascendant_arcana.enchantment.TurtleHeart;
+import me.anticode.ascendant_arcana.enchantment.armor.TurtleHeart;
+import me.anticode.ascendant_arcana.entity.GlacioclasmEntity;
 import me.anticode.ascendant_arcana.init.AArcanaAttributes;
+import me.anticode.ascendant_arcana.init.AArcanaDamage;
 import me.anticode.ascendant_arcana.init.AArcanaEnchantments;
 import me.anticode.ascendant_arcana.init.AArcanaMobEffects;
 import me.anticode.ascendant_arcana.logic.ItemHelper;
@@ -30,15 +32,14 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -83,6 +84,12 @@ public abstract class LivingEntityMixin {
     @Shadow
     public abstract LivingEntity getLastAttacker();
 
+    @Shadow
+    public abstract float getMaxHealth();
+
+    @Shadow
+    public abstract float getHealth();
+
     @Unique
     private Map<AArcanaEnchantments.IndirectHeartDamageTypes, Integer> heartAttackers = new EnumMap<>(AArcanaEnchantments.IndirectHeartDamageTypes.class);
 
@@ -102,7 +109,7 @@ public abstract class LivingEntityMixin {
         if (level <= 0) return;
         int useTime = getTicksUsingItem();
         if (useTime <= 0) return;
-        if (useTime > 5 + 5 * level) return;
+        if (useTime > 5 * level) return;
         MobEffectInstance crossCounter = new MobEffectInstance(AArcanaMobEffects.CROSS_COUNTER.get(), 15 * level, 0, false, false, true);
         addEffect(crossCounter, (LivingEntity)(Object)this);
     }
@@ -141,6 +148,13 @@ public abstract class LivingEntityMixin {
         else return original.call(instance, tag);
     }
 
+    @WrapOperation(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))
+    private void doNotKnockbackNoImpacts(LivingEntity instance, double d, double e, double f, Operation<Void> original, @Local(argsOnly = true) DamageSource damageSource) {
+        if (!damageSource.is(DamageTypeTags.NO_IMPACT)) {
+            original.call(instance, d, e, f);
+        }
+    }
+
     @ModifyReturnValue(method = "getDamageAfterMagicAbsorb", at = @At("RETURN"))
     private float applyProtectionStat(float original, @Local(argsOnly = true) DamageSource source) {
         if (source.is(DamageTypeTags.BYPASSES_ENCHANTMENTS)) return original;
@@ -176,6 +190,7 @@ public abstract class LivingEntityMixin {
 
     @ModifyReturnValue(method = "getDamageAfterMagicAbsorb", at = @At("TAIL"))
     private float injectDamageModifiers(float damage, @Local(argsOnly = true) DamageSource source) {
+        LivingEntity livingEntity = (LivingEntity)(Object)this;
         if (heartAttackers == null) {
             heartAttackers = new EnumMap<>(AArcanaEnchantments.IndirectHeartDamageTypes.class);
         }
@@ -195,7 +210,9 @@ public abstract class LivingEntityMixin {
                     && (source.is(DamageTypeTags.IS_PROJECTILE) || source.is(DamageTypes.PLAYER_ATTACK)))
                 damage *= 1.2F;
             if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PINCUSHION.get(), attacker) > 0) {
-                damage *= 0.9F + (0.1F * ((LivingEntity)(Object)this).getArrowCount());
+                damage *= 0.9F + (0.1F * livingEntity.getArrowCount());
+            } else if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.STOPPING_POWER.get(), attacker) > 0 && getHealth() / getMaxHealth() <= 0.3) {
+                damage *= 1.3F;
             }
         }
 
@@ -205,7 +222,7 @@ public abstract class LivingEntityMixin {
         damage *= (float) damage_taken;
 
         if (source.is(DamageTypes.FLY_INTO_WALL)) {
-            int cushioning = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.CUSHIONING.get(), ((LivingEntity)(Object)this));
+            int cushioning = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.CUSHIONING.get(), livingEntity);
             damage *= 1 - (0.2F * cushioning);
         }
 
@@ -218,23 +235,48 @@ public abstract class LivingEntityMixin {
             damage *= 2;
         if (source.is(DamageTypeTags.IS_FREEZING) && heartAttackers.containsKey(AArcanaEnchantments.IndirectHeartDamageTypes.COLD))
             damage *= 2;
+        if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SURROUNDED.get(), livingEntity) > 0) {
+            if (livingEntity.level().getEntities(livingEntity, AABB.unitCubeFromLowerCorner(livingEntity.position().subtract(0.5, 0.5, 0.5)).inflate(5), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(EntitySelector.NO_CREATIVE_OR_SPECTATOR).and((entity) -> {
+                if (entity instanceof OwnableEntity ownableEntity) {
+                    return ownableEntity.getOwner() != livingEntity;
+                }
+                return true;
+            })).size() >= 3) {
+                damage *= 0.7F;
+            }
+        }
         return damage;
     }
 
     @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatTracker;recordDamage(Lnet/minecraft/world/damagesource/DamageSource;F)V"), cancellable = true)
     private void protectiveEcho(DamageSource source, float amount, CallbackInfo ci) {
-        if (amount < 5) return;
         if (source.is(DamageTypeTags.BYPASSES_ENCHANTMENTS) || source.is(DamageTypeTags.BYPASSES_EFFECTS)) return;
-        if (getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get()) != null) return;
-        if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PROTECTIVE_ECHO.get(), (LivingEntity) (Object) this) == 0) return;
-        forceAddEffect(new MobEffectInstance(AArcanaMobEffects.ECHOING_DAMAGE.get(), 5, (int)Math.floor(amount / 5)), (LivingEntity)(Object)this);
-        ci.cancel();
+        LivingEntity livingEntity = (LivingEntity) (Object) this;
+        if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.GLACIOCLASM.get(), livingEntity) > 0) {
+            if ((livingEntity.getHealth() - amount)/livingEntity.getMaxHealth() <= 0.3F && livingEntity.getHealth()/livingEntity.getMaxHealth() > 0.3F) {
+                GlacioclasmEntity glacioclasm = new GlacioclasmEntity(livingEntity.level(), livingEntity, 20, 240);
+                glacioclasm.setPos(livingEntity.position());
+                livingEntity.level().addFreshEntity(glacioclasm);
+            }
+        }
+        if (getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get()) != null) {
+            if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.PROTECTIVE_ECHO.get(), livingEntity) > 0 && amount >= 5) {
+                forceAddEffect(new MobEffectInstance(AArcanaMobEffects.ECHOING_DAMAGE.get(), 5, (int)Math.floor(amount / 5)), (LivingEntity)(Object)this);
+                ci.cancel();
+            }
+        }
     }
 
     @Inject(method = "die", at = @At("HEAD"))
     private void onDeathEnchantments(DamageSource damageSource, CallbackInfo ci) {
         if (damageSource.getEntity() instanceof LivingEntity attackingEntity) {
             LivingEntity livingEntity = (LivingEntity) (Object) this;
+
+            if (EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SLAYING_TEMPO.get(), attackingEntity) != 0 && attackingEntity.hasEffect(AArcanaMobEffects.MEGANEURA.get())) {
+                int meganeuraLevel = attackingEntity.getEffect(AArcanaMobEffects.MEGANEURA.get()).getAmplifier() + 1;
+                livingEntity.level().explode(attackingEntity, livingEntity.getX(), (livingEntity.getY() + livingEntity.getEyeY()) / 2, livingEntity.getZ(), 1F + (0.4F * meganeuraLevel), Level.ExplosionInteraction.NONE);
+                attackingEntity.removeEffect(AArcanaMobEffects.MEGANEURA.get());
+            }
 
             int soulBurstLevel = EnchantmentHelper.getEnchantmentLevel(AArcanaEnchantments.SOUL_BURST.get(), attackingEntity);
             if (soulBurstLevel > 0) {
@@ -349,9 +391,14 @@ public abstract class LivingEntityMixin {
             if (livingEntity.level().getGameTime() % 20 == 0 && getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get()) != null) {
                 MobEffectInstance instance = getEffect(AArcanaMobEffects.ECHOING_DAMAGE.get());
                 int damage = instance.getAmplifier();
-                hurt(livingEntity.level().damageSources().magic(), damage);
+                hurt(AArcanaDamage.source(livingEntity.level(), AArcanaDamage.ECHOING), damage);
             }
         }
+    }
+
+    @ModifyConstant(method = "isBlocking", constant = @Constant(intValue = 5))
+    private int noShieldDelay(int value) {
+        return 0;
     }
 
     @Unique
