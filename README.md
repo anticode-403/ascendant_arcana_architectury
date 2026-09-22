@@ -25,12 +25,14 @@ Mending has also been removed. **Instead, caves can now generate with a new reso
 Additionally, Ascendant Arcana makes many smaller changes to make both enchantments and combat feel better and most consistent;
  - Infinity no longer requires and arrow
  - Crossbows cannot load rockets by default, now requiring the Rocketry enchantment
+ - Elytra cannot use rockets to fly by default, now requiring the Rocket Riding enchantment
  - Piercing applies to bows only, not crossbows.
  - Arrows bypass vanilla i-frames when shot by the same entity, allowing enchantments like Multishot and Salvo to deal more damage if you hit the same entity multiple times with a single shot.
  - The Enchanting Table can no longer be obscured from bookshelves.
  - The Enchanting Table's range is increased (this is configurable)
  - Base mining speed for all tools is drastically increased (this is configurable)
  - Shields no longer have a 5 tick delay between raising the shield and actually being able to block attacks.
+ - Damage types in the `minecraft:no_impact` tag no longer deal knockback when the damage instance has an attacker.
 
 ## What's Next?
 
