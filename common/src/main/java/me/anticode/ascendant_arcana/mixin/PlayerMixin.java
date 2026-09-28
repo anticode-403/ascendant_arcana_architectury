@@ -138,12 +138,14 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
                     int amplifier;
                     if (player.hasEffect(AArcanaMobEffects.MEGANEURA.get())) amplifier = player.getEffect(AArcanaMobEffects.MEGANEURA.get()).getAmplifier() + 1;
                     else amplifier = 0;
+                    if (amplifier > 4) amplifier = 4;
                     player.addEffect(new MobEffectInstance(AArcanaMobEffects.MEGANEURA.get(), 100, amplifier, false, false, true));
                 }
                 if (allegroLevel != 0) {
                     int amplifier;
                     if (player.hasEffect(AArcanaMobEffects.ALLEGRO.get())) amplifier = player.getEffect(AArcanaMobEffects.ALLEGRO.get()).getAmplifier() + 1;
                     else amplifier = 0;
+                    if (amplifier > 2) amplifier = 2;
                     player.addEffect(new MobEffectInstance(AArcanaMobEffects.ALLEGRO.get(), 20 + (allegroLevel * 20), amplifier, false, false, true));
                 }
                 if (snowballLevel != 0) {
