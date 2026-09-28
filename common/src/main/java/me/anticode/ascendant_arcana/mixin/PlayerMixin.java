@@ -182,6 +182,7 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
     @Inject(method = "getProjectile", at = @At("HEAD"), cancellable = true)
     private void getProjectileType(ItemStack itemStack, CallbackInfoReturnable<ItemStack> cir) {
         if (itemStack.getItem() instanceof ProjectileWeaponItem weapon) {
+            Predicate<ItemStack> original = weapon.getAllSupportedProjectiles();
             int infinityLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, itemStack);
             if (infinityLevel > 0) {
                 ItemStack arrowStack = Items.ARROW.getDefaultInstance();
@@ -191,7 +192,7 @@ public abstract class PlayerMixin extends LivingEntity implements AArcanaPlayer 
                 }
             }
             if (itemStack.getItem() instanceof CrossbowItem) {
-                Predicate<ItemStack> predicate = (item) -> item.is(ItemTags.ARROWS);
+                Predicate<ItemStack> predicate = original;
                 ItemStack creativeItemStack = new ItemStack(Items.ARROW);
 
                 int rocketryLevel = EnchantmentHelper.getItemEnchantmentLevel(AArcanaEnchantments.ROCKETRY.get(), itemStack);
