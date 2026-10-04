@@ -95,7 +95,7 @@ public final class AscendantArcana {
             NetworkManager.sendToPlayers(serverLevel.players(), ClientboundWhirlwindSync.Id, new ClientboundWhirlwindSync(player.getUUID(), packet.charging(), packet.whirlwinding()).write());
         });
 
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, ServerboundWhirlwindSync.Id, (buf, packetContext) -> {
+        NetworkManager.registerReceiver(NetworkManager.Side.C2S, JoltTargetsPacket.Id, (buf, packetContext) -> {
             ServerLevel serverLevel = (ServerLevel) packetContext.getPlayer().level();
             JoltTargetsPacket packet = JoltTargetsPacket.read(buf, serverLevel);
             AArcanaEnchantmentHelper.joltTargets(packet.victim(), packet.attacker(), packet.indirectEntity(), packet.chainLength());
