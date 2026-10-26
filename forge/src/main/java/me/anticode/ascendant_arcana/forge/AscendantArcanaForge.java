@@ -18,6 +18,7 @@ import me.anticode.ascendant_arcana.forge.api.LootPoolAccess;
 import me.anticode.ascendant_arcana.forge.api.LootTableAccess;
 import me.anticode.ascendant_arcana.init.*;
 import me.anticode.ascendant_arcana.loot.PopulateRelicLootFunction;
+import me.anticode.ascendant_arcana.networking.ConfigSync;
 import me.anticode.ascendant_arcana.networking.RelicRegistrySync;
 import me.anticode.ascendant_arcana.relics.RelicRegistry;
 import me.anticode.ascendant_arcana.relics.RelicTypes;
@@ -173,6 +174,7 @@ public final class AscendantArcanaForge {
         public static void datapackSync(OnDatapackSyncEvent event) {
             if (event.getPlayer() == null) return;
             NetworkManager.sendToPlayer(event.getPlayer(), RelicRegistrySync.Id, RelicRegistry.toNetwork());
+            NetworkManager.sendToPlayer(event.getPlayer(), ConfigSync.Id, AscendantArcana.config.toNetwork());
         }
     }
 
@@ -182,9 +184,7 @@ public final class AscendantArcanaForge {
         public static void onClientSetup(final FMLClientSetupEvent event) {
             AscendantArcanaClient.initialize();
 
-            event.enqueueWork(() -> {
-                MenuScreens.register(AArcanaMenus.ENCHANTING.get(), AArcanaEnchantingScreen::new);
-            });
+            event.enqueueWork(() -> MenuScreens.register(AArcanaMenus.ENCHANTING.get(), AArcanaEnchantingScreen::new));
 
             if (ModList.get().isLoaded("appleskin")) {
                 MinecraftForge.EVENT_BUS.register(new AArcanaAppleskinHandler());

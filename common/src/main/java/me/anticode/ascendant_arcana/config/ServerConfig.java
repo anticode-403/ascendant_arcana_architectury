@@ -1,8 +1,10 @@
 package me.anticode.ascendant_arcana.config;
 
+import io.netty.buffer.Unpooled;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.*;
 
@@ -165,5 +167,63 @@ public class ServerConfig implements ConfigData {
             disabled_enchantments.add("majruszsenchantments:enlightenment");
             disabled_enchantments.add("majruszsenchantments:immortality");
         }
+    }
+
+    public FriendlyByteBuf toNetwork() {
+        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        buf.writeDouble(capacity_multiplier);
+        buf.writeInt(base_relic_capacity);
+        buf.writeBoolean(disable_xp);
+        buf.writeBoolean(recipes_use_xp);
+        buf.writeBoolean(hide_xp_bar);
+        buf.writeInt(xp_per_level);
+        buf.writeFloat(mining_speed_multiplier);
+        buf.writeBoolean(add_relics_to_entities);
+        buf.writeBoolean(add_relics_to_chests);
+        buf.writeBoolean(add_restorine_to_chests);
+        buf.writeBoolean(add_boss_drops);
+        buf.writeBoolean(anvil_relics);
+        buf.writeInt(minimum_enchanting_power);
+        buf.writeInt(uncommon_enchanting_power);
+        buf.writeInt(rare_enchanting_power);
+        buf.writeInt(very_rare_enchanting_power);
+        buf.writeBoolean(single_enchantment_books);
+        buf.writeBoolean(books_remove_scrap_cost);
+        buf.writeInt(books_tier_bypass);
+        buf.writeInt(bookshelf_detection_width);
+        buf.writeInt(bookshelf_detection_height);
+        buf.writeCollection(disabled_enchantments, FriendlyByteBuf::writeUtf);
+        buf.writeMap(base_relic_capacity_overrides, FriendlyByteBuf::writeUtf, FriendlyByteBuf::writeInt);
+        buf.writeMap(base_enchantment_capacity_overrides, FriendlyByteBuf::writeUtf, FriendlyByteBuf::writeInt);
+        buf.writeMap(overwritten_rarities, FriendlyByteBuf::writeUtf, FriendlyByteBuf::writeInt);
+        return buf;
+    }
+
+    public boolean compareNetwork(FriendlyByteBuf buf) {
+        return capacity_multiplier == buf.readDouble()
+                && base_relic_capacity == buf.readInt()
+                && disable_xp == buf.readBoolean()
+                && recipes_use_xp == buf.readBoolean()
+                && hide_xp_bar == buf.readBoolean()
+                && xp_per_level == buf.readInt()
+                && mining_speed_multiplier == buf.readFloat()
+                && add_relics_to_entities == buf.readBoolean()
+                && add_relics_to_chests == buf.readBoolean()
+                && add_restorine_to_chests == buf.readBoolean()
+                && add_boss_drops == buf.readBoolean()
+                && anvil_relics == buf.readBoolean()
+                && minimum_enchanting_power == buf.readInt()
+                && uncommon_enchanting_power == buf.readInt()
+                && rare_enchanting_power == buf.readInt()
+                && very_rare_enchanting_power == buf.readInt()
+                && single_enchantment_books == buf.readBoolean()
+                && books_remove_scrap_cost == buf.readBoolean()
+                && books_tier_bypass == buf.readInt()
+                && bookshelf_detection_width == buf.readInt()
+                && bookshelf_detection_height == buf.readInt()
+                && disabled_enchantments.equals(buf.readList(FriendlyByteBuf::readUtf))
+                && base_relic_capacity_overrides.equals(buf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readInt))
+                && base_enchantment_capacity_overrides.equals(buf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readInt))
+                && overwritten_rarities.equals(buf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readInt));
     }
 }

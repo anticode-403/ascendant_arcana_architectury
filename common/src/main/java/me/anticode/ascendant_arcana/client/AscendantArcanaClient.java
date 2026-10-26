@@ -1,5 +1,7 @@
 package me.anticode.ascendant_arcana.client;
 
+import dev.architectury.event.events.client.ClientLifecycleEvent;
+import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
@@ -97,6 +99,10 @@ public class AscendantArcanaClient {
             AArcanaPlayer aPlayer = (AArcanaPlayer) player;
             aPlayer.ascendant_arcana$setWhirlwindCharge(packet.charging());
             aPlayer.ascendant_arcana$setWhirlwinding(packet.whirlwinding());
+        });
+
+        ClientPlayerEvent.CLIENT_PLAYER_JOIN.register(player -> {
+            NetworkManager.sendToServer(ConfigSync.Id, AscendantArcana.config.toNetwork());
         });
 
         ParticleProviderRegistry.register(AArcanaParticles.CHAINING_LIGHTNING.get(), ChainingLightningParticle.Provider::new);

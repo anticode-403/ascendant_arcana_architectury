@@ -17,10 +17,12 @@ import me.anticode.ascendant_arcana.screenhandler.AArcanaEnchantingMenu;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -36,6 +38,17 @@ public final class AscendantArcana {
     public static final String MOD_ID = "ascendant_arcana";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static ServerConfig config;
+
+    private static final Component CONFIG_DISCONNECT_MESSAGE = Component.literal("Ascendant Arcana").withStyle(ChatFormatting.BLUE)
+            .append(Component.literal(" is installed but your configuration does not match the server's.").withStyle(ChatFormatting.GRAY))
+            .append(Component.literal("\n\nPlease ensure that your configuration file matches the server's.").withStyle(ChatFormatting.GRAY))
+            .append(Component.literal("\n\nThe config file should be located in ").withStyle(ChatFormatting.RED))
+            .append(Component.literal("config/ascendant_arcana/server.json5").withStyle(ChatFormatting.GREEN))
+            .append(Component.literal(".").withStyle(ChatFormatting.RED))
+            .append(Component.literal("\n\nAscendant Arcana").withStyle(ChatFormatting.BLUE))
+            .append(Component.literal("'s config loads when the game starts and cannot be changed while the game is running.").withStyle(ChatFormatting.GRAY))
+            .append(Component.literal("\n\nThis is not a bug.").withStyle(ChatFormatting.RED));
+
 
     private static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(MOD_ID, Registries.CREATIVE_MODE_TAB);
     public static final RegistrySupplier<CreativeModeTab> ASCENDANT_ARCANA_TAB = TABS.register("ascendant_arcana", () -> CreativeTabRegistry.create(
@@ -99,6 +112,10 @@ public final class AscendantArcana {
             ServerLevel serverLevel = (ServerLevel) packetContext.getPlayer().level();
             JoltTargetsPacket packet = JoltTargetsPacket.read(buf, serverLevel);
             AArcanaEnchantmentHelper.joltTargets(packet.victim(), packet.attacker(), packet.indirectEntity(), packet.chainLength());
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.C2S, ConfigSync.Id, (buf, context) -> {
+            if (!AscendantArcana.config.compareNetwork(buf)) ((ServerPlayer)context.getPlayer()).connection.disconnect(CONFIG_DISCONNECT_MESSAGE);
         });
 
         LootEvent.MODIFY_LOOT_TABLE.register((dataManager, identifier, context, builtin) -> {
