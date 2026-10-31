@@ -29,7 +29,7 @@ public class RelicItem extends Item {
     @Override
     public @NotNull Component getName(ItemStack stack) {
         if (getRelicStrength(stack) == 0 || getRelicType(stack) == null) return Component.translatable("item.relics.unknown");
-        return Component.translatable(getDescriptionId(), RelicHelper.getRelicStrengthName(getRelicStrength(stack)), RelicHelper.getRelicTypeName(getRelicType(stack)));
+        return Component.translatable("item.ascendant_arcana.relic", RelicHelper.getRelicStrengthName(getRelicStrength(stack)), RelicHelper.getRelicTypeName(getRelicType(stack)));
     }
 
     @Override
