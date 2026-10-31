@@ -28,8 +28,13 @@ public class RelicItem extends Item {
 
     @Override
     public @NotNull Component getName(ItemStack stack) {
-        if (getRelicStrength(stack) == 0) return Component.translatable("item.relics.unknown");
+        if (getRelicStrength(stack) == 0 || getRelicType(stack) == null) return Component.translatable("item.relics.unknown");
         return Component.translatable(getDescriptionId(), RelicHelper.getRelicStrengthName(getRelicStrength(stack)), RelicHelper.getRelicTypeName(getRelicType(stack)));
+    }
+
+    @Override
+    public @NotNull String getOrCreateDescriptionId() {
+        return "item.relics.unknown";
     }
 
     @Override
@@ -50,7 +55,7 @@ public class RelicItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
-        if (getRelicStrength(stack) == 0) return;
+        if (getRelicStrength(stack) == 0 || getRelicType(stack) == null) return;
         RelicEntry relicEntry = getRelicType(stack);
         int visualStrength = RelicHelper.getTooltipStrength(relicEntry, getRelicStrength(stack));
         Component relicName = RelicHelper.getRelicTypeText(relicEntry);
