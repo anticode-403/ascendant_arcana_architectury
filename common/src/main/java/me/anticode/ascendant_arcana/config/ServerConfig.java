@@ -66,6 +66,9 @@ public class ServerConfig implements ConfigData {
     @Comment("Enchanted Books can only have one enchantment on them. Otherwise, they use the regular capacity system.")
     public boolean single_enchantment_books = true;
 
+    @Comment("If single_enchantment_books is true, setting this option to true will destroy extra enchantments on books.")
+    public boolean update_old_books = false;
+
     @Comment("Enchanted Books placed in Chiseled Bookshelves near an Enchanting Table will remove the scrap cost for that enchantment.")
     public boolean books_remove_scrap_cost = false;
 
@@ -188,6 +191,7 @@ public class ServerConfig implements ConfigData {
         buf.writeInt(rare_enchanting_power);
         buf.writeInt(very_rare_enchanting_power);
         buf.writeBoolean(single_enchantment_books);
+        buf.writeBoolean(update_old_books);
         buf.writeBoolean(books_remove_scrap_cost);
         buf.writeInt(books_tier_bypass);
         buf.writeInt(bookshelf_detection_width);
@@ -217,6 +221,7 @@ public class ServerConfig implements ConfigData {
                 && rare_enchanting_power == buf.readInt()
                 && very_rare_enchanting_power == buf.readInt()
                 && single_enchantment_books == buf.readBoolean()
+                && update_old_books == buf.readBoolean()
                 && books_remove_scrap_cost == buf.readBoolean()
                 && books_tier_bypass == buf.readInt()
                 && bookshelf_detection_width == buf.readInt()

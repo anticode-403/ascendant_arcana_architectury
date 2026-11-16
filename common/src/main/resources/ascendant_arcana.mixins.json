@@ -23,7 +23,7 @@
     "EnchantmentHelperMixin",
     "EnchantmentMixin",
     "EnchantRandomlyFunctionSerializerMixin",
-    "EnchnatedBookItemMixin",
+    "EnchantedBookItemMixin",
     "EntityMixin",
     "ExperienceOrbMixin",
     "FireworkRocketEntityMixin",
