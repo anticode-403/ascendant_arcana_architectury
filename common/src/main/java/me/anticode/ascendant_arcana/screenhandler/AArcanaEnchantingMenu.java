@@ -143,11 +143,13 @@ public class AArcanaEnchantingMenu extends AbstractContainerMenu {
             stackCopy = moveStack.copy();
             if (index <= 3) {
                 if (!this.moveItemStackTo(moveStack, 4, 40, true)) return ItemStack.EMPTY;
-            } else if (moveStack.isEnchantable() || moveStack.isEnchanted() || moveStack.is(Items.BOOK) || moveStack.is(Items.ENCHANTED_BOOK)) {
+            } else if ((moveStack.isEnchantable() || moveStack.isEnchanted() || moveStack.is(Items.BOOK) || moveStack.is(Items.ENCHANTED_BOOK)) && !this.slots.get(0).hasItem()) {
                 if (moveStack.is(Items.BOOK)) {
-                    stackCopy = moveStack.copyWithCount(1);
+                    ItemStack targetStack = moveStack.copyWithCount(1);
                     moveStack.shrink(1);
-                    ((Slot)this.slots.get(0)).setByPlayer(stackCopy);
+                    ((Slot)this.slots.get(0)).setByPlayer(targetStack);
+                    slot.set(moveStack);
+                    return stackCopy;
                 }
                 else if (!this.moveItemStackTo(moveStack, 0, 1, false)) return ItemStack.EMPTY;
             } else if (moveStack.is(AArcanaItems.ENCHANTED_SCRAP.get()) || moveStack.is(Items.LAPIS_LAZULI)) {
